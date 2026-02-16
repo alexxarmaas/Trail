@@ -4,12 +4,40 @@ import Button from './Button';
 import Badge from './Badge';
 import GlassCard from './GlassCard';
 import { useLanguage } from '../context/LanguageContext';
+import { useUser } from '../context/UserContext';
 
-const RaceDetail = ({ race, similarRaces = [], onClose }) => {
+  // Define Mandatory Gear items with IDs
+  const MANDATORY_GEAR = [
+    { id: 'water', key: 'race.detail.gear.items.water' },
+    { id: 'blanket', key: 'race.detail.gear.items.blanket' },
+    { id: 'whistle', key: 'race.detail.gear.items.whistle' },
+    { id: 'jacket', key: 'race.detail.gear.items.jacket' },
+    { id: 'lamp', key: 'race.detail.gear.items.lamp' }
+  ];
+
+  const RaceDetail = ({ race, similarRaces = [], onClose }) => {
   const { t } = useLanguage();
+  const { userProfile } = useUser();
   const [isFavorite, setIsFavorite] = useState(false);
   const [activeTab, setActiveTab] = useState('info'); // info, strategy
   const [activeView, setActiveView] = useState('profile'); // profile, map
+
+  // Gear Checklist State (Persisted in LocalStorage)
+  const [gearState, setGearState] = useState(() => {
+    const saved = localStorage.getItem(`trail-companion-gear-${race?.id}`);
+    return saved ? JSON.parse(saved) : {};
+  });
+
+  const toggleGearItem = (id) => {
+    setGearState(prev => {
+        const newState = { ...prev, [id]: !prev[id] };
+        localStorage.setItem(`trail-companion-gear-${race?.id}`, JSON.stringify(newState));
+        return newState;
+    });
+  };
+
+  const completedGearCount = Object.values(gearState).filter(Boolean).length;
+  const gearProgress = Math.round((completedGearCount / MANDATORY_GEAR.length) * 100);
   
   // Initialize with the first course if available, otherwise null (uses default race data)
   const [selectedCourse, setSelectedCourse] = useState(race?.courses?.[0] || null);
@@ -25,29 +53,79 @@ const RaceDetail = ({ race, similarRaces = [], onClose }) => {
     };
   }, [race, selectedCourse]);
 
+  // Dynamic Strategy Calculation
   const strategy = useMemo(() => {
     if (!displayRace.distVal || !displayRace.elevVal) return null;
     
-    // Effort Points = Distance (km) + Elevation (m) / 100
-    const effortPoints = displayRace.distVal + (displayRace.elevVal / 100);
+    // Personalized formulas
+    let waterPerHour = 0.5; // Base 500ml/h
+    let carbsPerHour = 60; // Base 60g/h
     
-    // Estimated Water (Liters): Effort Points / 6 * 0.5
-    const water = (effortPoints / 6) * 0.5;
+    if (userProfile && userProfile.weight) {
+        // Water: Base 300ml + (Weight * 5ml)
+        waterPerHour = 0.3 + (userProfile.weight * 0.005);
+        // Carbs: 1g per kg per hour is recommended for ultras
+        carbsPerHour = userProfile.weight; 
+    }
+
+    // Better time estimation: Naismith's Rule (1h for 5km + 1h for 600m ascent)
+    const estTimeHours = (displayRace.distVal / 5) + (displayRace.elevVal / 600);
     
-    // Carbs (Grams): Effort Points / 6 * 60
-    const carbs = (effortPoints / 6) * 60;
-    
-    // Est. Time (Hours): Effort Points / 6 (Assuming average pace)
-    const hoursDecimal = effortPoints / 6;
-    const hours = Math.floor(hoursDecimal);
-    const minutes = Math.round((hoursDecimal - hours) * 60);
-    
+    const totalWater = Math.round(waterPerHour * estTimeHours * 10) / 10;
+    const totalCarbs = Math.round(carbsPerHour * estTimeHours);
+
+    // Format time
+    const h = Math.floor(estTimeHours);
+    const m = Math.round((estTimeHours - h) * 60);
+
     return {
-        water: water.toFixed(1),
-        carbs: Math.round(carbs),
-        time: `${hours}:${minutes.toString().padStart(2, '0')}`
+        water: totalWater, // Liters
+        carbs: totalCarbs, // Grams
+        time: `${h}h ${m}m`,
+        isPersonalized: !!(userProfile && userProfile.weight)
     };
-  }, [displayRace]);
+  }, [displayRace, userProfile]);
+
+  // Calendar Export
+  const downloadIcsFile = () => {
+    if (!displayRace) return;
+    
+    // Parse date (Assuming "Oct 2, 2026" format)
+    const raceDate = new Date(displayRace.date);
+    // Set default start time to 06:00
+    raceDate.setHours(6, 0, 0);
+    
+    const formatDate = (date) => {
+        return date.toISOString().replace(/-|:|\.\d+/g, '');
+    };
+
+    const start = formatDate(raceDate);
+    // End time + 12 hours
+    const endDate = new Date(raceDate);
+    endDate.setHours(18, 0, 0);
+    const end = formatDate(endDate);
+
+    const icsContent = [
+        'BEGIN:VCALENDAR',
+        'VERSION:2.0',
+        'BEGIN:VEVENT',
+        `DTSTART:${start}`,
+        `DTEND:${end}`,
+        `SUMMARY:${displayRace.name} - ${displayRace.distance}`,
+        `DESCRIPTION:Race day! ${displayRace.distance} with ${displayRace.elevation} elevation gain.`,
+        `LOCATION:${displayRace.location}`,
+        'END:VEVENT',
+        'END:VCALENDAR'
+    ].join('\n');
+
+    const blob = new Blob([icsContent], { type: 'text/calendar;charset=utf-8' });
+    const link = document.createElement('a');
+    link.href = window.URL.createObjectURL(blob);
+    link.setAttribute('download', `${displayRace.name.replace(/\s+/g, '_')}.ics`);
+    document.body.appendChild(link);
+    link.click();
+    document.body.removeChild(link);
+  };
 
   if (!race) return null;
 
@@ -160,7 +238,7 @@ const RaceDetail = ({ race, similarRaces = [], onClose }) => {
                     <div className="flex justify-between items-start mb-4 z-10">
                         <div>
                             <h3 className="font-bold text-gray-900">{t('race.detail.weather.title')}</h3>
-                            <p className="text-xs text-gray-500">Historical Avg.</p>
+                            <p className="text-xs text-gray-500">{t('race.detail.weather.historical')}</p>
                         </div>
                     </div>
 
@@ -220,13 +298,13 @@ const RaceDetail = ({ race, similarRaces = [], onClose }) => {
                             onClick={() => setActiveView('profile')}
                             className={`px-3 py-1 rounded-md text-xs font-medium transition-all ${activeView === 'profile' ? 'bg-white shadow-sm text-gray-900' : 'text-gray-500 hover:text-gray-700'}`}
                         >
-                            Profile
+                            {t('race.detail.toggle.profile')}
                         </button>
                          <button
                             onClick={() => setActiveView('map')}
                             className={`px-3 py-1 rounded-md text-xs font-medium transition-all ${activeView === 'map' ? 'bg-white shadow-sm text-gray-900' : 'text-gray-500 hover:text-gray-700'}`}
                         >
-                            Map
+                            {t('race.detail.toggle.map')}
                         </button>
                     </div>
                 </div>
@@ -306,29 +384,65 @@ const RaceDetail = ({ race, similarRaces = [], onClose }) => {
                         <div className="absolute inset-0 opacity-50 bg-[url('https://upload.wikimedia.org/wikipedia/commons/e/ec/World_map_blank_without_borders.svg')] bg-cover bg-center" />
                         <div className="z-10 bg-white/80 backdrop-blur-md p-4 rounded-xl shadow-sm text-center">
                             <MapPin size={32} className="mx-auto text-primary mb-2" />
-                            <p className="font-bold text-gray-900">Interactive Map</p>
-                            <p className="text-xs text-gray-500">Coming soon</p>
+                            <p className="font-bold text-gray-900">{t('race.detail.map')}</p>
+                            <p className="text-xs text-gray-500">{t('race.detail.mapPlaceholder.subtitle')}</p>
                         </div>
                     </div>
                 )}
             </div>
 
             {/* Mandatory Gear */}
+            {/* Mandatory Gear (Interactive Checklist) */}
             <div>
-                <h3 className="text-xl font-bold text-gray-900 mb-4 flex items-center gap-2">
-                    <Shield size={20} />
-                    {t('race.detail.mandatoryGear')}
-                </h3>
+                <div className="flex items-center justify-between mb-4">
+                    <h3 className="text-xl font-bold text-gray-900 flex items-center gap-2">
+                        <Shield size={20} />
+                        {t('race.detail.mandatoryGear')}
+                    </h3>
+                    <span className="text-xs font-bold bg-gray-100 text-gray-600 px-2 py-1 rounded-full">
+                        {completedGearCount}/{MANDATORY_GEAR.length}
+                    </span>
+                </div>
+                
+                {/* Progress Bar */}
+                <div className="h-2 w-full bg-gray-100 rounded-full mb-4 overflow-hidden">
+                    <div 
+                        className={`h-full transition-all duration-500 rounded-full ${gearProgress === 100 ? 'bg-green-500' : 'bg-primary'}`} 
+                        style={{ width: `${gearProgress}%` }} 
+                    />
+                </div>
+
                 <ul className="space-y-3">
-                    {['Water Container (1L min)', 'Survival Blanket', 'Whistle', 'Waterproof Jacket with hood', 'Headlamp + Spare batteries'].map((item, i) => (
-                        <li key={i} className="flex items-center gap-3 p-3 bg-white border border-gray-100 rounded-xl shadow-sm">
-                            <div className="w-6 h-6 rounded-full bg-green-100 text-green-600 flex items-center justify-center shrink-0">
-                                <CheckCircle size={14} />
-                            </div>
-                            <span className="text-gray-700 font-medium">{item}</span>
-                        </li>
-                    ))}
+                    {MANDATORY_GEAR.map((item) => {
+                        const isChecked = gearState[item.id] || false;
+                        return (
+                            <li 
+                                key={item.id} 
+                                onClick={() => toggleGearItem(item.id)}
+                                className={`flex items-center gap-3 p-3 border rounded-xl shadow-sm cursor-pointer transition-all active:scale-[0.99] select-none ${
+                                    isChecked 
+                                        ? 'bg-green-50 border-green-200' 
+                                        : 'bg-white border-gray-100 hover:border-primary/30'
+                                }`}
+                            >
+                                <div className={`w-6 h-6 rounded-full flex items-center justify-center shrink-0 transition-colors ${
+                                    isChecked ? 'bg-green-500 text-white' : 'bg-gray-100 text-gray-300'
+                                }`}>
+                                    <CheckCircle size={14} className={isChecked ? 'opacity-100' : 'opacity-0'} />
+                                </div>
+                                <span className={`font-medium transition-colors ${isChecked ? 'text-green-800 line-through opacity-70' : 'text-gray-700'}`}>
+                                    {t(item.key)}
+                                </span>
+                            </li>
+                        );
+                    })}
                 </ul>
+                
+                {gearProgress === 100 && (
+                    <div className="mt-4 p-3 bg-green-100/50 text-green-700 text-sm font-bold text-center rounded-xl animate-bounce-subtle">
+                        {t('race.detail.gear.allPacked')}
+                    </div>
+                )}
             </div>
             
             {/* Similar Races */}
@@ -375,7 +489,14 @@ const RaceDetail = ({ race, similarRaces = [], onClose }) => {
                         <Calculator size={24} />
                     </div>
                     <div>
-                        <h4 className="font-bold mb-1">{t('race.strategy.recommends')}</h4>
+                        <h4 className="font-bold mb-1 flex items-center gap-2">
+                            {t('race.strategy.recommends')}
+                            {strategy?.isPersonalized && (
+                                <span className="text-[10px] bg-green-100 text-green-700 px-2 py-0.5 rounded-full font-bold uppercase tracking-wider">
+                                    {t('race.strategy.personalized')}
+                                </span>
+                            )}
+                        </h4>
                         <p className="text-sm opacity-80">{t('race.strategy.explanation')}</p>
                     </div>
                 </div>
@@ -415,12 +536,16 @@ const RaceDetail = ({ race, similarRaces = [], onClose }) => {
 
 
       {/* Sticky Bottom Action */}
-      <div className="fixed bottom-0 left-0 right-0 p-4 bg-white/80 backdrop-blur-xl border-t border-gray-200 z-[110] flex justify-between items-center md:pl-72">
-        <div className="hidden md:block">
+      <div className="fixed bottom-0 left-0 right-0 p-4 bg-white/80 backdrop-blur-xl border-t border-gray-200 z-[110] flex gap-3 items-center md:pl-72">
+        <div className="hidden md:block flex-1">
             <p className="text-sm text-gray-500">{t('race.detail.closesIn')} 12 days</p>
             <p className="font-bold text-lg text-primary">€120.00</p>
         </div>
-        <Button className="w-full md:w-auto md:px-12 shadow-xl shadow-primary/20">
+        <Button variant="outline" className="flex-1 md:flex-none border-gray-300" onClick={downloadIcsFile}>
+            <Calendar size={18} className="mr-2" />
+            {t('race.detail.addToCalendar')}
+        </Button>
+        <Button className="flex-[2] md:flex-none md:w-48 shadow-xl shadow-primary/20">
             {t('race.detail.registration')}
         </Button>
       </div>

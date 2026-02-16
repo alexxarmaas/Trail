@@ -4,6 +4,7 @@ import GlassCard from '../components/GlassCard';
 import Badge from '../components/Badge';
 import Button from '../components/Button';
 import { useLanguage } from '../context/LanguageContext';
+import { useUser } from '../context/UserContext';
 
 const UPCOMING_RACES = [
   { name: 'Ultra Pirineu', date: 'Oct 2, 2026', distance: '100km' },
@@ -24,6 +25,7 @@ const INITIAL_GEAR = [
 
 const UserProfile = () => {
     const { t, language, toggleLanguage } = useLanguage();
+    const { userProfile, updateProfile } = useUser();
     const [activeTab, setActiveTab] = useState('upcoming');
     const [gear, setGear] = useState(INITIAL_GEAR);
     const [badges, setBadges] = useState([
@@ -174,8 +176,40 @@ const UserProfile = () => {
         </div>
         
         <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8">
-            {/* Connected Apps */}
-            <div className="space-y-4">
+            <div className="space-y-6">
+                {/* Physical Metrics */}
+                <div className="space-y-4">
+                    <h3 className="font-bold text-gray-900 flex items-center gap-2">
+                        <Activity size={20} /> {t('profile.metrics')}
+                    </h3>
+                    <GlassCard className="p-4 bg-white border-gray-100 grid grid-cols-2 gap-4">
+                        <div>
+                            <label className="text-[10px] text-gray-500 font-medium uppercase tracking-wider">{t('profile.weight')} (kg)</label>
+                            <div className="flex items-baseline gap-1">
+                                <input 
+                                    type="number" 
+                                    value={userProfile.weight} 
+                                    onChange={(e) => updateProfile({ weight: parseInt(e.target.value) || 0 })}
+                                    className="w-full text-2xl font-bold bg-transparent border-b border-transparent hover:border-gray-200 focus:border-primary outline-none transition-colors"
+                                />
+                            </div>
+                        </div>
+                        <div>
+                             <label className="text-[10px] text-gray-500 font-medium uppercase tracking-wider">{t('profile.height')} (cm)</label>
+                             <div className="flex items-baseline gap-1">
+                                <input 
+                                    type="number" 
+                                    value={userProfile.height} 
+                                    onChange={(e) => updateProfile({ height: parseInt(e.target.value) || 0 })}
+                                    className="w-full text-2xl font-bold bg-transparent border-b border-transparent hover:border-gray-200 focus:border-primary outline-none transition-colors"
+                                />
+                            </div>
+                        </div>
+                    </GlassCard>
+                </div>
+
+                {/* Connected Apps */}
+                <div className="space-y-4">
                 <h3 className="font-bold text-gray-900 flex items-center gap-2">
                     <LinkIcon size={20} /> {t('profile.connectedApps')}
                 </h3>
@@ -202,6 +236,7 @@ const UserProfile = () => {
                     )}
                 </GlassCard>
             </div>
+        </div>
 
             {/* Trophy Case */}
             <div className="md:col-span-2 space-y-4">

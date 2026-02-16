@@ -35,6 +35,7 @@ export const TRANSLATIONS = {
             carbs: 'Carbohidratos',
             time: 'Tiempo Est.',
             explanation: 'Basado en la dificultad del recorrido (Distancia + Desnivel).',
+            personalized: 'Personalizado',
         },
         detail: {
             elevation: 'Desnivel',
@@ -64,6 +65,32 @@ export const TRANSLATIONS = {
                 mins: 'Mins',
             },
             similar: 'También te podría gustar',
+            toggle: {
+                profile: 'Perfil',
+                map: 'Mapa',
+            },
+            mapPlaceholder: {
+                subtitle: 'Próximamente',
+            },
+            gear: {
+                allPacked: '¡Todo listo! ¡A correr!',
+                items: {
+                    water: 'Recipiente de agua (1L min)',
+                    blanket: 'Manta térmica',
+                    whistle: 'Silbato',
+                    jacket: 'Chaqueta impermeable con capucha',
+                    lamp: 'Frontal + Pilas de repuesto',
+                }
+            },
+            addToCalendar: 'Añadir al Calendario',
+            weather: {
+                historical: 'Media Histórica',
+                title: 'El Tiempo en Carrera',
+                temp: 'Temp',
+                wind: 'Viento',
+                conditions: 'Condiciones',
+                humidity: 'Humedad',
+            },
         }
     },
 
@@ -117,6 +144,9 @@ export const TRANSLATIONS = {
     'profile.connect': 'Conectar',
     'profile.connected': 'Conectado',
     'profile.syncing': 'Sincronizando...',
+    'profile.metrics': 'Métricas Físicas',
+    'profile.weight': 'Peso',
+    'profile.height': 'Altura',
     
     // Badges
     'badge.earlyRiser': 'Madrugador',
@@ -170,6 +200,7 @@ export const TRANSLATIONS = {
             carbs: 'Est. Carbs',
             time: 'Est. Time',
             explanation: 'Based on course difficulty (Distance + Elevation Gain).',
+            personalized: 'Personalized',
         },
         detail: {
             elevation: 'Elevation',
@@ -199,6 +230,32 @@ export const TRANSLATIONS = {
                 mins: 'Mins',
             },
             similar: 'You might also like',
+            toggle: {
+                profile: 'Profile',
+                map: 'Map',
+            },
+            mapPlaceholder: {
+                subtitle: 'Coming soon',
+            },
+            gear: {
+                allPacked: '🎉 All Packed! Ready to Race!',
+                items: {
+                    water: 'Water Container (1L min)',
+                    blanket: 'Survival Blanket',
+                    whistle: 'Whistle',
+                    jacket: 'Waterproof Jacket with hood',
+                    lamp: 'Headlamp + Spare batteries',
+                }
+            },
+            addToCalendar: 'Add to Calendar',
+            weather: {
+                historical: 'Historical Avg.',
+                title: 'Race Day Weather',
+                temp: 'Temp',
+                wind: 'Wind',
+                conditions: 'Conditions',
+                humidity: 'Humidity',
+            },
         }
     },
     
@@ -252,6 +309,9 @@ export const TRANSLATIONS = {
     'profile.connect': 'Connect',
     'profile.connected': 'Connected',
     'profile.syncing': 'Syncing...',
+    'profile.metrics': 'Physical Metrics',
+    'profile.weight': 'Weight',
+    'profile.height': 'Height',
 
     // Badges
     'badge.earlyRiser': 'Early Riser',
