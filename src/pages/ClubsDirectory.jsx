@@ -87,7 +87,7 @@ const ClubsDirectory = () => {
           <input
             type="text"
             placeholder={t('clubs.directory.searchPlaceholder')}
-            className="block w-full pl-10 pr-3 py-3 border border-gray-200 rounded-xl leading-5 bg-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-primary focus:border-transparent transition-all shadow-sm hover:shadow-md"
+            className="block w-full pl-10 pr-3 py-3 border border-gray-200 dark:border-gray-700 rounded-xl leading-5 bg-white dark:bg-gray-900 text-gray-900 dark:text-white placeholder-gray-400 dark:placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-primary focus:border-transparent transition-all shadow-sm hover:shadow-md"
             value={searchTerm}
             onChange={(e) => setSearchTerm(e.target.value)}
           />
@@ -99,7 +99,7 @@ const ClubsDirectory = () => {
         {filteredClubs.map((club) => (
           <GlassCard 
             key={club.id} 
-            className="group hover:scale-[1.02] transition-all duration-300 flex flex-col items-center text-center p-6 border-transparent hover:border-primary/20 bg-white/60 cursor-pointer"
+            className="group hover:scale-[1.02] transition-all duration-300 flex flex-col items-center text-center p-6 border-transparent hover:border-primary/20 bg-white/60 dark:bg-gray-900/60 cursor-pointer"
             onClick={() => setSelectedClub(club)}
           >
             <div className="relative mb-4">

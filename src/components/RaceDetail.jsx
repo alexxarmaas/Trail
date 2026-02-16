@@ -130,7 +130,7 @@ import { useUser } from '../context/UserContext';
   if (!race) return null;
 
   return (
-    <div className="fixed inset-0 z-[100] bg-white overflow-y-auto animate-in fade-in slide-in-from-bottom-10 duration-300">
+    <div className="fixed inset-0 z-[100] bg-white dark:bg-gray-950 overflow-y-auto animate-in fade-in slide-in-from-bottom-10 duration-300">
       {/* Hero Section */}
       <div className="relative h-72 md:h-96">
         <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/20 to-transparent z-10" />
@@ -181,17 +181,17 @@ import { useUser } from '../context/UserContext';
       </div>
 
       {/* Tabs */}
-      <div className="flex border-b border-gray-200 px-6 pt-4 gap-6 sticky top-0 bg-white z-40">
+      <div className="flex border-b border-gray-200 dark:border-gray-800 px-6 pt-4 gap-6 sticky top-0 bg-white dark:bg-gray-950 z-40 transition-colors duration-300">
         <button 
             onClick={() => setActiveTab('info')}
-            className={`pb-3 font-medium text-sm transition-colors relative ${activeTab === 'info' ? 'text-primary' : 'text-gray-500'}`}
+            className={`pb-3 font-medium text-sm transition-colors relative ${activeTab === 'info' ? 'text-primary' : 'text-gray-500 dark:text-gray-400'}`}
         >
             {t('race.detail.infoTab')}
             {activeTab === 'info' && <div className="absolute bottom-0 left-0 w-full h-0.5 bg-primary" />}
         </button>
         <button 
             onClick={() => setActiveTab('strategy')}
-            className={`pb-3 font-medium text-sm transition-colors relative ${activeTab === 'strategy' ? 'text-primary' : 'text-gray-500'}`}
+            className={`pb-3 font-medium text-sm transition-colors relative ${activeTab === 'strategy' ? 'text-primary' : 'text-gray-500 dark:text-gray-400'}`}
         >
             {t('race.strategy.title')}
             {activeTab === 'strategy' && <div className="absolute bottom-0 left-0 w-full h-0.5 bg-primary" />}
@@ -205,49 +205,49 @@ import { useUser } from '../context/UserContext';
            <>
             {/* Key Stats Grid */}
             <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
-                 <div className="p-4 bg-green-50 rounded-2xl border border-green-100 flex flex-col items-center text-center">
-                    <Mountain className="text-green-600 mb-2" size={24} />
-                    <span className="text-2xl font-bold text-gray-900">{displayRace.elevation}</span>
-                    <span className="text-xs text-green-700 font-medium uppercase">{t('race.detail.elevation')}</span>
+                 <div className="p-4 bg-green-50 dark:bg-green-900/20 rounded-2xl border border-green-100 dark:border-green-800 flex flex-col items-center text-center">
+                    <Mountain className="text-green-600 dark:text-green-400 mb-2" size={24} />
+                    <span className="text-2xl font-bold text-gray-900 dark:text-white">{displayRace.elevation}</span>
+                    <span className="text-xs text-green-700 dark:text-green-400 font-medium uppercase">{t('race.detail.elevation')}</span>
                  </div>
-                 <div className="p-4 bg-orange-50 rounded-2xl border border-orange-100 flex flex-col items-center text-center">
-                    <MapPin className="text-orange-600 mb-2" size={24} />
-                    <span className="text-2xl font-bold text-gray-900">{displayRace.distance}</span>
-                    <span className="text-xs text-orange-700 font-medium uppercase">{t('race.detail.distance')}</span>
+                 <div className="p-4 bg-orange-50 dark:bg-orange-900/20 rounded-2xl border border-orange-100 dark:border-orange-800 flex flex-col items-center text-center">
+                    <MapPin className="text-orange-600 dark:text-orange-400 mb-2" size={24} />
+                    <span className="text-2xl font-bold text-gray-900 dark:text-white">{displayRace.distance}</span>
+                    <span className="text-xs text-orange-700 dark:text-orange-400 font-medium uppercase">{t('race.detail.distance')}</span>
                  </div>
-                  <div className="p-4 bg-blue-50 rounded-2xl border border-blue-100 flex flex-col items-center text-center">
-                    <Clock className="text-blue-600 mb-2" size={24} />
-                    <span className="text-2xl font-bold text-gray-900">06:00</span>
-                    <span className="text-xs text-blue-700 font-medium uppercase">{t('race.detail.startTime')}</span>
+                  <div className="p-4 bg-blue-50 dark:bg-blue-900/20 rounded-2xl border border-blue-100 dark:border-blue-800 flex flex-col items-center text-center">
+                    <Clock className="text-blue-600 dark:text-blue-400 mb-2" size={24} />
+                    <span className="text-2xl font-bold text-gray-900 dark:text-white">06:00</span>
+                    <span className="text-xs text-blue-700 dark:text-blue-400 font-medium uppercase">{t('race.detail.startTime')}</span>
                  </div>
-                  <div className="p-4 bg-purple-50 rounded-2xl border border-purple-100 flex flex-col items-center text-center">
-                    <CheckCircle className="text-purple-600 mb-2" size={24} />
-                    <span className="text-2xl font-bold text-gray-900">8</span>
-                    <span className="text-xs text-purple-700 font-medium uppercase">{t('race.detail.checkpoints')}</span>
+                  <div className="p-4 bg-purple-50 dark:bg-purple-900/20 rounded-2xl border border-purple-100 dark:border-purple-800 flex flex-col items-center text-center">
+                    <CheckCircle className="text-purple-600 dark:text-purple-400 mb-2" size={24} />
+                    <span className="text-2xl font-bold text-gray-900 dark:text-white">8</span>
+                    <span className="text-xs text-purple-700 dark:text-purple-400 font-medium uppercase">{t('race.detail.checkpoints')}</span>
                  </div>
             </div>
 
             {/* Weather & Countdown Row */}
             <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                 {/* Weather Widget */}
-                <div className="bg-sky-50 rounded-2xl p-5 border border-sky-100 flex flex-col justify-between relative overflow-hidden">
+                <div className="bg-sky-50 dark:bg-sky-900/10 rounded-2xl p-5 border border-sky-100 dark:border-sky-800 flex flex-col justify-between relative overflow-hidden">
                     <div className="absolute top-0 right-0 p-4 opacity-10">
-                        <CloudSun size={100} />
+                        <CloudSun size={100} className="text-sky-900 dark:text-sky-100" />
                     </div>
                     
                     <div className="flex justify-between items-start mb-4 z-10">
                         <div>
-                            <h3 className="font-bold text-gray-900">{t('race.detail.weather.title')}</h3>
-                            <p className="text-xs text-gray-500">{t('race.detail.weather.historical')}</p>
+                            <h3 className="font-bold text-gray-900 dark:text-white">{t('race.detail.weather.title')}</h3>
+                            <p className="text-xs text-gray-500 dark:text-gray-400">{t('race.detail.weather.historical')}</p>
                         </div>
                     </div>
 
                     <div className="flex items-end gap-4 z-10">
                         <div>
-                            <span className="text-4xl font-bold text-gray-900">12°</span>
-                            <span className="text-sm text-gray-500 ml-1">C</span>
+                            <span className="text-4xl font-bold text-gray-900 dark:text-white">12°</span>
+                            <span className="text-sm text-gray-500 dark:text-gray-400 ml-1">C</span>
                         </div>
-                        <div className="space-y-1 text-xs font-medium text-gray-600 mb-1">
+                        <div className="space-y-1 text-xs font-medium text-gray-600 dark:text-gray-300 mb-1">
                             <div className="flex items-center gap-1">
                                 <Wind size={12} />
                                 15 km/h NW
@@ -288,28 +288,28 @@ import { useUser } from '../context/UserContext';
             {/* Elevation Profile & Map Toggle */}
             <div>
                 <div className="flex items-center justify-between mb-4">
-                    <h3 className="text-xl font-bold text-gray-900 flex items-center gap-2">
+                    <h3 className="text-xl font-bold text-gray-900 dark:text-white flex items-center gap-2">
                         {activeView === 'profile' ? <Mountain size={20} /> : <MapPin size={20} />}
                         {activeView === 'profile' ? t('race.detail.profile') : t('race.detail.map')}
                     </h3>
                     
-                    <div className="flex bg-gray-100 p-1 rounded-lg">
+                    <div className="flex bg-gray-100 dark:bg-gray-800 p-1 rounded-lg transition-colors">
                         <button
                             onClick={() => setActiveView('profile')}
-                            className={`px-3 py-1 rounded-md text-xs font-medium transition-all ${activeView === 'profile' ? 'bg-white shadow-sm text-gray-900' : 'text-gray-500 hover:text-gray-700'}`}
+                            className={`px-3 py-1 rounded-md text-xs font-medium transition-all ${activeView === 'profile' ? 'bg-white dark:bg-gray-700 shadow-sm text-gray-900 dark:text-white' : 'text-gray-500 dark:text-gray-400 hover:text-gray-700 dark:hover:text-gray-200'}`}
                         >
                             {t('race.detail.toggle.profile')}
                         </button>
                          <button
                             onClick={() => setActiveView('map')}
-                            className={`px-3 py-1 rounded-md text-xs font-medium transition-all ${activeView === 'map' ? 'bg-white shadow-sm text-gray-900' : 'text-gray-500 hover:text-gray-700'}`}
+                            className={`px-3 py-1 rounded-md text-xs font-medium transition-all ${activeView === 'map' ? 'bg-white dark:bg-gray-700 shadow-sm text-gray-900 dark:text-white' : 'text-gray-500 dark:text-gray-400 hover:text-gray-700 dark:hover:text-gray-200'}`}
                         >
                             {t('race.detail.toggle.map')}
                         </button>
                     </div>
                 </div>
 
-                {/* Course Selector (If multiple courses) - Only show if in Profile view for now, or both? Keep it global for this section */
+                 {/* Course Selector (If multiple courses) - Only show if in Profile view for now, or both? Keep it global for this section */
                  race.courses && race.courses.length > 0 && (
                         <div className="flex gap-2 mb-4">
                             {race.courses.map((course) => (
@@ -319,7 +319,7 @@ import { useUser } from '../context/UserContext';
                                     className={`px-3 py-1 rounded-full text-xs font-medium transition-all ${
                                         selectedCourse?.name === course.name
                                             ? 'bg-primary text-white shadow-md shadow-primary/20'
-                                            : 'bg-gray-100 text-gray-600 hover:bg-gray-200'
+                                            : 'bg-gray-100 dark:bg-gray-800 text-gray-600 dark:text-gray-400 hover:bg-gray-200 dark:hover:bg-gray-700'
                                     }`}
                                 >
                                     {course.name}
@@ -330,29 +330,29 @@ import { useUser } from '../context/UserContext';
                 
                 {activeView === 'profile' ? (
                     <>
-                        <div className="h-64 w-full bg-gray-50 rounded-2xl p-6 border border-gray-100 relative overflow-hidden flex items-end gap-1 group/graph">
+                        <div className="h-64 w-full bg-gray-50 dark:bg-gray-900/50 rounded-2xl p-6 border border-gray-100 dark:border-gray-800 relative overflow-hidden flex items-end gap-1 group/graph">
                             {/* Checkpoints Layer */}
                             <div className="absolute inset-0 pointer-events-none z-10">
                                 {/* Simulated Checkpoints based on distance */}
                                 {[
-                                    { km: displayRace.distVal * 0.2, type: 'water', icon: Droplets, color: 'text-blue-500 bg-blue-50', label: 'Aid 1' },
-                                    { km: displayRace.distVal * 0.5, type: 'food', icon: Zap, color: 'text-orange-500 bg-orange-50', label: 'Aid 2 (Food)' },
-                                    { km: displayRace.distVal * 0.8, type: 'water', icon: Droplets, color: 'text-blue-500 bg-blue-50', label: 'Aid 3' }
+                                    { km: displayRace.distVal * 0.2, type: 'water', icon: Droplets, color: 'text-blue-500 bg-blue-50 dark:bg-blue-900/50', label: 'Aid 1' },
+                                    { km: displayRace.distVal * 0.5, type: 'food', icon: Zap, color: 'text-orange-500 bg-orange-50 dark:bg-orange-900/50', label: 'Aid 2 (Food)' },
+                                    { km: displayRace.distVal * 0.8, type: 'water', icon: Droplets, color: 'text-blue-500 bg-blue-50 dark:bg-blue-900/50', label: 'Aid 3' }
                                 ].map((cp, i) => (
                                     <div 
                                         key={i}
                                         className="absolute bottom-12 -translate-x-1/2 flex flex-col items-center group/point pointer-events-auto cursor-help"
                                         style={{ left: `${(cp.km / displayRace.distVal) * 100}%` }}
                                     >
-                                        <div className={`w-6 h-6 rounded-full shadow-sm border border-white flex items-center justify-center transform transition-transform group-hover/point:scale-125 ${cp.color}`}>
+                                        <div className={`w-6 h-6 rounded-full shadow-sm border border-white dark:border-gray-700 flex items-center justify-center transform transition-transform group-hover/point:scale-125 ${cp.color}`}>
                                             <cp.icon size={12} />
                                         </div>
-                                        <div className="absolute bottom-full mb-2 bg-gray-900 text-white text-[10px] py-1 px-2 rounded opacity-0 group-hover/point:opacity-100 transition-opacity whitespace-nowrap z-20 pointer-events-none">
+                                        <div className="absolute bottom-full mb-2 bg-gray-900 dark:bg-black text-white text-[10px] py-1 px-2 rounded opacity-0 group-hover/point:opacity-100 transition-opacity whitespace-nowrap z-20 pointer-events-none">
                                             <span className="font-bold block">{cp.label}</span>
                                             {Math.round(cp.km)}km
                                         </div>
                                         {/* Dotted Line */}
-                                        <div className="w-px h-12 border-l border-dashed border-gray-300/50 mt-1"></div>
+                                        <div className="w-px h-12 border-l border-dashed border-gray-300/50 dark:border-gray-600/50 mt-1"></div>
                                     </div>
                                 ))}
                             </div>
@@ -361,10 +361,10 @@ import { useUser } from '../context/UserContext';
                             {[20, 35, 45, 30, 60, 80, 55, 40, 65, 90, 70, 45, 55, 30, 20].map((h, i) => (
                                 <div 
                                     key={i} 
-                                    className="flex-1 bg-primary/20 hover:bg-primary/40 transition-colors rounded-t-sm relative group"
+                                    className="flex-1 bg-primary/20 dark:bg-primary/30 hover:bg-primary/40 dark:hover:bg-primary/50 transition-colors rounded-t-sm relative group"
                                     style={{ height: `${h}%` }}
                                 >
-                                     <div className="absolute bottom-full left-1/2 -translate-x-1/2 mb-1 bg-gray-900 text-white text-[10px] px-1 rounded opacity-0 group-hover:opacity-100 transition-opacity whitespace-nowrap">
+                                     <div className="absolute bottom-full left-1/2 -translate-x-1/2 mb-1 bg-gray-900 dark:bg-black text-white text-[10px] px-1 rounded opacity-0 group-hover:opacity-100 transition-opacity whitespace-nowrap">
                                         {Math.round((i * (displayRace.distVal / 15)))}km
                                     </div>
                                 </div>
@@ -373,19 +373,19 @@ import { useUser } from '../context/UserContext';
                              <div className="absolute bottom-0 left-0 right-0 h-1 bg-primary/10"></div>
                         </div>
                         {/* Legend */}
-                        <div className="flex justify-between items-center mt-2 text-xs text-gray-400 px-1">
+                        <div className="flex justify-between items-center mt-2 text-xs text-gray-400 dark:text-gray-500 px-1">
                             <span>0km</span>
-                            <span className="font-medium text-gray-500">{t('race.detail.profileLegend')}</span>
+                            <span className="font-medium text-gray-500 dark:text-gray-400">{t('race.detail.profileLegend')}</span>
                             <span>{displayRace.distance}</span>
                         </div>
                     </>
                 ) : (
-                    <div className="h-64 w-full bg-gray-100 rounded-2xl border border-gray-200 relative overflow-hidden flex items-center justify-center">
-                        <div className="absolute inset-0 opacity-50 bg-[url('https://upload.wikimedia.org/wikipedia/commons/e/ec/World_map_blank_without_borders.svg')] bg-cover bg-center" />
-                        <div className="z-10 bg-white/80 backdrop-blur-md p-4 rounded-xl shadow-sm text-center">
+                    <div className="h-64 w-full bg-gray-100 dark:bg-gray-800 rounded-2xl border border-gray-200 dark:border-gray-700 relative overflow-hidden flex items-center justify-center">
+                        <div className="absolute inset-0 opacity-50 bg-[url('https://upload.wikimedia.org/wikipedia/commons/e/ec/World_map_blank_without_borders.svg')] bg-cover bg-center invert dark:invert-0" />
+                        <div className="z-10 bg-white/80 dark:bg-gray-900/80 backdrop-blur-md p-4 rounded-xl shadow-sm text-center">
                             <MapPin size={32} className="mx-auto text-primary mb-2" />
-                            <p className="font-bold text-gray-900">{t('race.detail.map')}</p>
-                            <p className="text-xs text-gray-500">{t('race.detail.mapPlaceholder.subtitle')}</p>
+                            <p className="font-bold text-gray-900 dark:text-white">{t('race.detail.map')}</p>
+                            <p className="text-xs text-gray-500 dark:text-gray-400">{t('race.detail.mapPlaceholder.subtitle')}</p>
                         </div>
                     </div>
                 )}
@@ -395,17 +395,17 @@ import { useUser } from '../context/UserContext';
             {/* Mandatory Gear (Interactive Checklist) */}
             <div>
                 <div className="flex items-center justify-between mb-4">
-                    <h3 className="text-xl font-bold text-gray-900 flex items-center gap-2">
+                    <h3 className="text-xl font-bold text-gray-900 dark:text-white flex items-center gap-2">
                         <Shield size={20} />
                         {t('race.detail.mandatoryGear')}
                     </h3>
-                    <span className="text-xs font-bold bg-gray-100 text-gray-600 px-2 py-1 rounded-full">
+                    <span className="text-xs font-bold bg-gray-100 dark:bg-gray-800 text-gray-600 dark:text-gray-300 px-2 py-1 rounded-full">
                         {completedGearCount}/{MANDATORY_GEAR.length}
                     </span>
                 </div>
                 
                 {/* Progress Bar */}
-                <div className="h-2 w-full bg-gray-100 rounded-full mb-4 overflow-hidden">
+                <div className="h-2 w-full bg-gray-100 dark:bg-gray-800 rounded-full mb-4 overflow-hidden">
                     <div 
                         className={`h-full transition-all duration-500 rounded-full ${gearProgress === 100 ? 'bg-green-500' : 'bg-primary'}`} 
                         style={{ width: `${gearProgress}%` }} 
@@ -421,16 +421,16 @@ import { useUser } from '../context/UserContext';
                                 onClick={() => toggleGearItem(item.id)}
                                 className={`flex items-center gap-3 p-3 border rounded-xl shadow-sm cursor-pointer transition-all active:scale-[0.99] select-none ${
                                     isChecked 
-                                        ? 'bg-green-50 border-green-200' 
-                                        : 'bg-white border-gray-100 hover:border-primary/30'
+                                        ? 'bg-green-50 dark:bg-green-900/20 border-green-200 dark:border-green-800' 
+                                        : 'bg-white dark:bg-gray-900 border-gray-100 dark:border-gray-800 hover:border-primary/30 dark:hover:border-primary/30'
                                 }`}
                             >
                                 <div className={`w-6 h-6 rounded-full flex items-center justify-center shrink-0 transition-colors ${
-                                    isChecked ? 'bg-green-500 text-white' : 'bg-gray-100 text-gray-300'
+                                    isChecked ? 'bg-green-500 text-white' : 'bg-gray-100 dark:bg-gray-800 text-gray-300 dark:text-gray-600'
                                 }`}>
                                     <CheckCircle size={14} className={isChecked ? 'opacity-100' : 'opacity-0'} />
                                 </div>
-                                <span className={`font-medium transition-colors ${isChecked ? 'text-green-800 line-through opacity-70' : 'text-gray-700'}`}>
+                                <span className={`font-medium transition-colors ${isChecked ? 'text-green-800 dark:text-green-400 line-through opacity-70' : 'text-gray-700 dark:text-gray-300'}`}>
                                     {t(item.key)}
                                 </span>
                             </li>
@@ -439,7 +439,7 @@ import { useUser } from '../context/UserContext';
                 </ul>
                 
                 {gearProgress === 100 && (
-                    <div className="mt-4 p-3 bg-green-100/50 text-green-700 text-sm font-bold text-center rounded-xl animate-bounce-subtle">
+                    <div className="mt-4 p-3 bg-green-100/50 dark:bg-green-900/30 text-green-700 dark:text-green-400 text-sm font-bold text-center rounded-xl animate-bounce-subtle">
                         {t('race.detail.gear.allPacked')}
                     </div>
                 )}
@@ -447,18 +447,18 @@ import { useUser } from '../context/UserContext';
             
             {/* Similar Races */}
             <div>
-                 <h3 className="text-xl font-bold text-gray-900 mb-4">{t('race.detail.similar')}</h3>
+                 <h3 className="text-xl font-bold text-gray-900 dark:text-white mb-4">{t('race.detail.similar')}</h3>
                  <div className="flex gap-4 overflow-x-auto pb-4 snap-x ml-[-1.5rem] px-6 w-[calc(100%+3rem)] md:w-full md:ml-0 md:px-0">
                     {similarRaces.slice(0, 3).map(r => (
                         <div key={r.id} className="min-w-[280px] snap-center">
-                             <GlassCard className="p-0 overflow-hidden bg-white border-gray-100 hover:border-primary/30 transition-colors">
+                             <GlassCard className="p-0 overflow-hidden bg-white dark:bg-gray-900 border-gray-100 dark:border-gray-800 hover:border-primary/30 dark:hover:border-primary/30 transition-colors">
                                 <div className="h-32 relative">
                                     <img src={r.image} className="w-full h-full object-cover" alt={r.name} />
                                     <div className="absolute inset-0 bg-black/20" />
                                     <div className="absolute bottom-3 left-3 text-white font-bold">{r.name}</div>
                                 </div>
                                 <div className="p-3 flex justify-between items-center">
-                                    <div className="text-xs text-gray-500">
+                                    <div className="text-xs text-gray-500 dark:text-gray-400">
                                         <div className="flex items-center gap-1"><Calendar size={12}/> {r.date}</div>
                                         <div className="flex items-center gap-1 mt-1"><Mountain size={12}/> {r.elevation}</div>
                                     </div>
@@ -474,8 +474,8 @@ import { useUser } from '../context/UserContext';
             
             {/* Description Placeholder */}
             <div>
-                 <h3 className="text-xl font-bold text-gray-900 mb-2">{t('race.detail.about')}</h3>
-                 <p className="text-gray-600 leading-relaxed">
+                 <h3 className="text-xl font-bold text-gray-900 dark:text-white mb-2">{t('race.detail.about')}</h3>
+                 <p className="text-gray-600 dark:text-gray-300 leading-relaxed">
                     This legendary course takes you through the most spectacular peaks of the region. 
                     Prepare for technical descents, steep climbs, and breathtaking views. 
                     The terrain varies from soft forest trails to rocky alpine ridges.
@@ -484,15 +484,15 @@ import { useUser } from '../context/UserContext';
            </>
         ) : (
             <div className="space-y-6">
-                <div className="bg-blue-50 border border-blue-100 p-4 rounded-xl flex gap-3 text-blue-900">
-                    <div className="bg-blue-100 p-2 rounded-lg h-fit">
-                        <Calculator size={24} />
+                <div className="bg-blue-50 dark:bg-blue-900/10 border border-blue-100 dark:border-blue-900/30 p-4 rounded-xl flex gap-3 text-blue-900 dark:text-blue-100">
+                    <div className="bg-blue-100 dark:bg-blue-900/30 p-2 rounded-lg h-fit">
+                        <Calculator size={24} className="text-blue-600 dark:text-blue-400" />
                     </div>
                     <div>
                         <h4 className="font-bold mb-1 flex items-center gap-2">
                             {t('race.strategy.recommends')}
                             {strategy?.isPersonalized && (
-                                <span className="text-[10px] bg-green-100 text-green-700 px-2 py-0.5 rounded-full font-bold uppercase tracking-wider">
+                                <span className="text-[10px] bg-green-100 dark:bg-green-900/30 text-green-700 dark:text-green-400 px-2 py-0.5 rounded-full font-bold uppercase tracking-wider">
                                     {t('race.strategy.personalized')}
                                 </span>
                             )}
@@ -503,30 +503,30 @@ import { useUser } from '../context/UserContext';
 
                 <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
                     {/* Water */}
-                    <GlassCard className="bg-white border-blue-100 flex flex-col items-center justify-center text-center p-6">
-                        <div className="w-12 h-12 bg-blue-100 rounded-full flex items-center justify-center text-blue-600 mb-3">
+                    <GlassCard className="bg-white dark:bg-gray-900 border-blue-100 dark:border-blue-900/30 flex flex-col items-center justify-center text-center p-6">
+                        <div className="w-12 h-12 bg-blue-100 dark:bg-blue-900/30 rounded-full flex items-center justify-center text-blue-600 dark:text-blue-400 mb-3">
                             <Droplets size={24} />
                         </div>
-                        <span className="text-3xl font-bold text-gray-900">{strategy?.water}L</span>
-                        <span className="text-sm font-bold text-gray-500 uppercase mt-1">{t('race.strategy.water')}</span>
+                        <span className="text-3xl font-bold text-gray-900 dark:text-white">{strategy?.water}L</span>
+                        <span className="text-sm font-bold text-gray-500 dark:text-gray-400 uppercase mt-1">{t('race.strategy.water')}</span>
                     </GlassCard>
 
                     {/* Carbs */}
-                    <GlassCard className="bg-white border-yellow-100 flex flex-col items-center justify-center text-center p-6">
-                        <div className="w-12 h-12 bg-yellow-100 rounded-full flex items-center justify-center text-yellow-600 mb-3">
+                    <GlassCard className="bg-white dark:bg-gray-900 border-yellow-100 dark:border-yellow-900/30 flex flex-col items-center justify-center text-center p-6">
+                        <div className="w-12 h-12 bg-yellow-100 dark:bg-yellow-900/30 rounded-full flex items-center justify-center text-yellow-600 dark:text-yellow-400 mb-3">
                             <Zap size={24} />
                         </div>
-                        <span className="text-3xl font-bold text-gray-900">{strategy?.carbs}g</span>
-                        <span className="text-sm font-bold text-gray-500 uppercase mt-1">{t('race.strategy.carbs')}</span>
+                        <span className="text-3xl font-bold text-gray-900 dark:text-white">{strategy?.carbs}g</span>
+                        <span className="text-sm font-bold text-gray-500 dark:text-gray-400 uppercase mt-1">{t('race.strategy.carbs')}</span>
                     </GlassCard>
 
                     {/* Time */}
-                    <GlassCard className="bg-white border-green-100 flex flex-col items-center justify-center text-center p-6">
-                        <div className="w-12 h-12 bg-green-100 rounded-full flex items-center justify-center text-green-600 mb-3">
+                    <GlassCard className="bg-white dark:bg-gray-900 border-green-100 dark:border-green-900/30 flex flex-col items-center justify-center text-center p-6">
+                        <div className="w-12 h-12 bg-green-100 dark:bg-green-900/30 rounded-full flex items-center justify-center text-green-600 dark:text-green-400 mb-3">
                             <Clock size={24} />
                         </div>
-                        <span className="text-3xl font-bold text-gray-900">{strategy?.time}</span>
-                        <span className="text-sm font-bold text-gray-500 uppercase mt-1">{t('race.strategy.time')}</span>
+                        <span className="text-3xl font-bold text-gray-900 dark:text-white">{strategy?.time}</span>
+                        <span className="text-sm font-bold text-gray-500 dark:text-gray-400 uppercase mt-1">{t('race.strategy.time')}</span>
                     </GlassCard>
                 </div>
             </div>
@@ -536,12 +536,12 @@ import { useUser } from '../context/UserContext';
 
 
       {/* Sticky Bottom Action */}
-      <div className="fixed bottom-0 left-0 right-0 p-4 bg-white/80 backdrop-blur-xl border-t border-gray-200 z-[110] flex gap-3 items-center md:pl-72">
+      <div className="fixed bottom-0 left-0 right-0 p-4 bg-white/80 dark:bg-gray-950/80 backdrop-blur-xl border-t border-gray-200 dark:border-gray-800 z-[110] flex gap-3 items-center md:pl-72 transition-colors duration-300">
         <div className="hidden md:block flex-1">
-            <p className="text-sm text-gray-500">{t('race.detail.closesIn')} 12 days</p>
+            <p className="text-sm text-gray-500 dark:text-gray-400">{t('race.detail.closesIn')} 12 days</p>
             <p className="font-bold text-lg text-primary">€120.00</p>
         </div>
-        <Button variant="outline" className="flex-1 md:flex-none border-gray-300" onClick={downloadIcsFile}>
+        <Button variant="outline" className="flex-1 md:flex-none border-gray-300 dark:border-gray-700 dark:text-white dark:hover:bg-gray-800" onClick={downloadIcsFile}>
             <Calendar size={18} className="mr-2" />
             {t('race.detail.addToCalendar')}
         </Button>

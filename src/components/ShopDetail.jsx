@@ -17,7 +17,7 @@ const ShopDetail = ({ shop, onClose }) => {
     
     {/* Sheet/Drawer */}
     <div className={`
-        fixed z-[100] bg-white flex flex-col
+        fixed z-[100] bg-white dark:bg-gray-950 flex flex-col transition-colors
         
         // Mobile: Bottom Sheet
         bottom-0 left-0 right-0 rounded-t-3xl shadow-[0_-10px_40px_rgba(0,0,0,0.1)]

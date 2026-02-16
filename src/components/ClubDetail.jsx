@@ -11,7 +11,7 @@ const ClubDetail = ({ club, onClose }) => {
   if (!club) return null;
 
   return (
-    <div className="fixed inset-0 z-50 bg-white overflow-y-auto animate-in fade-in slide-in-from-bottom-10 duration-300">
+    <div className="fixed inset-0 z-50 bg-white dark:bg-gray-950 overflow-y-auto animate-in fade-in slide-in-from-bottom-10 duration-300 transition-colors">
       {/* Hero Header */}
       <div className="relative h-64 md:h-80 w-full">
         <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/20 to-transparent z-10" />
@@ -95,7 +95,7 @@ const ClubDetail = ({ club, onClose }) => {
             
             <div className="space-y-4">
                 {[1, 2].map((i) => (
-                    <GlassCard key={i} className="flex items-center p-4 bg-white border-gray-100 active:scale-[0.99] transition-transform">
+                    <GlassCard key={i} className="flex items-center p-4 bg-white dark:bg-gray-900 border-gray-100 dark:border-gray-800 active:scale-[0.99] transition-transform">
                         <div className="w-16 h-16 bg-primary/10 rounded-2xl flex flex-col items-center justify-center text-primary font-bold shrink-0 mr-4">
                             <span className="text-xs uppercase">OCT</span>
                             <span className="text-xl">1{i+4}</span>
@@ -136,7 +136,7 @@ const ClubDetail = ({ club, onClose }) => {
       </div>
 
       {/* Sticky Bottom Action */}
-      <div className="fixed bottom-0 left-0 right-0 p-4 bg-white/80 backdrop-blur-xl border-t border-gray-200 z-50 md:pl-72">
+      <div className="fixed bottom-0 left-0 right-0 p-4 bg-white/80 dark:bg-gray-950/80 backdrop-blur-xl border-t border-gray-200 dark:border-gray-800 z-50 md:pl-72 transition-colors">
         <Button className="w-full shadow-xl shadow-primary/20 h-12 text-lg">
             {t('clubs.detail.join')}
         </Button>

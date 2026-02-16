@@ -85,7 +85,7 @@ const Shops = () => {
                             : 'border-gray-100 hover:border-gray-300'
                     }`}
                 >
-                <GlassCard className="bg-white p-4 flex gap-4 shadow-sm hover:shadow-md h-full">
+                <GlassCard className="bg-white dark:bg-gray-900 p-4 flex gap-4 shadow-sm hover:shadow-md h-full border-gray-100 dark:border-gray-800">
                     <div className="w-24 h-24 md:w-32 md:h-32 shrink-0 rounded-xl overflow-hidden">
                         <img src={shop.image} alt={shop.name} className="w-full h-full object-cover" />
                     </div>

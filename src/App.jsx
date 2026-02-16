@@ -2,6 +2,7 @@ import React, { useState } from 'react';
 import Layout from './layout/Layout';
 import { LanguageProvider } from './context/LanguageContext';
 import { UserProvider } from './context/UserContext';
+import { ThemeProvider } from './context/ThemeContext';
 import Onboarding from './pages/Onboarding';
 
 function App() {
@@ -10,11 +11,13 @@ function App() {
   return (
     <UserProvider>
       <LanguageProvider>
-        {showOnboarding ? (
-          <Onboarding onStart={() => setShowOnboarding(false)} />
-        ) : (
-          <Layout />
-        )}
+        <ThemeProvider>
+            {showOnboarding ? (
+            <Onboarding onStart={() => setShowOnboarding(false)} />
+            ) : (
+            <Layout />
+            )}
+        </ThemeProvider>
       </LanguageProvider>
     </UserProvider>
   );

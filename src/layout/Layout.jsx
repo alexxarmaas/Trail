@@ -25,7 +25,7 @@ const Layout = () => {
   };
 
   return (
-    <div className="min-h-screen bg-gray-50 flex font-sans text-gray-900">
+    <div className="min-h-screen bg-gray-50 dark:bg-gray-950 dark:text-gray-100 flex font-sans transition-colors duration-300">
       {/* Sidebar - Desktop Only */}
       <Sidebar activeTab={activeTab} setActiveTab={setActiveTab} />
 

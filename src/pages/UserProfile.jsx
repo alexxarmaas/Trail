@@ -1,10 +1,11 @@
 import React, { useState } from 'react';
-import { Settings, Share2, Award, Activity, Calendar, Mountain, Clock, Link as LinkIcon, Smartphone, Zap, Trash2, Globe, AlertTriangle, Crown } from 'lucide-react';
+import { Settings, Share2, Award, Activity, Calendar, Mountain, Clock, Link as LinkIcon, Smartphone, Zap, Trash2, Globe, AlertTriangle, Crown, Sun, Moon } from 'lucide-react';
 import GlassCard from '../components/GlassCard';
 import Badge from '../components/Badge';
 import Button from '../components/Button';
 import { useLanguage } from '../context/LanguageContext';
 import { useUser } from '../context/UserContext';
+import { useTheme } from '../context/ThemeContext';
 
 const UPCOMING_RACES = [
   { name: 'Ultra Pirineu', date: 'Oct 2, 2026', distance: '100km' },
@@ -26,6 +27,7 @@ const INITIAL_GEAR = [
 const UserProfile = () => {
     const { t, language, toggleLanguage } = useLanguage();
     const { userProfile, updateProfile } = useUser();
+    const { theme, toggleTheme } = useTheme();
     const [activeTab, setActiveTab] = useState('upcoming');
     const [gear, setGear] = useState(INITIAL_GEAR);
     const [badges, setBadges] = useState([
@@ -101,11 +103,18 @@ const UserProfile = () => {
       <div className="relative h-64 md:h-80 w-full overflow-hidden">
         <div className="absolute inset-0 bg-gradient-to-t from-gray-900/80 to-transparent z-10" />
         <img 
-            src="https://images.unsplash.com/photo-1552674605-5d28c4e1902c?auto=format&fit=crop&q=80&w=1200" 
+            src="https://images.pexels.com/photos/618833/pexels-photo-618833.jpeg?cs=srgb&dl=cold-snow-dawn-618833.jpg&fm=jpg" 
             alt="Cover" 
             className="w-full h-full object-cover object-center"
         />
         <div className="absolute top-4 right-4 z-20 flex gap-2">
+            <button 
+                onClick={toggleTheme}
+                className="p-2 bg-white/20 backdrop-blur-md rounded-full text-white hover:bg-white/30 transition-colors flex items-center gap-1 font-bold"
+                aria-label="Toggle Theme"
+            >
+                {theme === 'dark' ? <Sun size={20} /> : <Moon size={20} />}
+            </button>
             <button 
                 onClick={toggleLanguage}
                 className="p-2 bg-white/20 backdrop-blur-md rounded-full text-white hover:bg-white/30 transition-colors flex items-center gap-1 font-bold"
@@ -136,7 +145,7 @@ const UserProfile = () => {
             <div className="flex-1 text-black md:text-gray-900 md:mb-2 md:pt-20">
                 <div className="md:text-white mb-2 md:mb-0">
                      <div className="flex items-center gap-3 mb-1">
-                        <h1 className="text-3xl font-bold text-black">Alex Mountain</h1>
+                        <h1 className="text-3xl font-bold text-black dark:text-white sm:text-gray-900 border-text-stroke">Alex Mountain</h1>
                         <span className="bg-gradient-to-r from-yellow-400 to-orange-500 text-white text-[10px] font-black uppercase px-2 py-0.5 rounded shadow-lg flex items-center gap-1">
                             <Crown size={10} fill="currentColor" />
                             {t('pro.badge')}
@@ -153,7 +162,7 @@ const UserProfile = () => {
                 <button className="flex-1 md:flex-none px-6 py-2 bg-primary text-white rounded-xl font-medium shadow-lg shadow-primary/30 hover:bg-green-800 transition-colors">
                     {t('profile.follow')}
                 </button>
-                <button className="flex-1 md:flex-none px-6 py-2 bg-white text-gray-900 border border-gray-200 rounded-xl font-medium hover:bg-gray-50 transition-colors">
+                <button className="flex-1 md:flex-none px-6 py-2 bg-white dark:bg-gray-800 text-gray-900 dark:text-white border border-gray-200 dark:border-gray-700 rounded-xl font-medium hover:bg-gray-50 dark:hover:bg-gray-700 transition-colors">
                     {t('profile.message')}
                 </button>
             </div>
@@ -164,12 +173,12 @@ const UserProfile = () => {
             {STATS.map((stat, idx) => {
                 const Icon = stat.icon;
                 return (
-                    <GlassCard key={idx} className="p-4 flex flex-col items-center justify-center text-center bg-white/80 border-gray-100">
-                        <div className={`p-2 rounded-full mb-2 ${stat.bg} ${stat.color}`}>
+                    <GlassCard key={idx} className="p-4 flex flex-col items-center justify-center text-center bg-white/80 dark:bg-gray-900/80 border-gray-100 dark:border-gray-800">
+                        <div className={`p-2 rounded-full mb-2 ${stat.bg} ${stat.color} dark:bg-opacity-20`}>
                             <Icon size={20} />
                         </div>
-                        <span className="text-2xl font-bold text-gray-900">{stat.value}</span>
-                        <span className="text-xs font-medium text-gray-500 uppercase tracking-wide">{stat.label}</span>
+                        <span className="text-2xl font-bold text-gray-900 dark:text-white">{stat.value}</span>
+                        <span className="text-xs font-medium text-gray-500 dark:text-gray-400 uppercase tracking-wide">{stat.label}</span>
                     </GlassCard>
                 );
             })}
@@ -177,31 +186,30 @@ const UserProfile = () => {
         
         <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8">
             <div className="space-y-6">
-                {/* Physical Metrics */}
                 <div className="space-y-4">
-                    <h3 className="font-bold text-gray-900 flex items-center gap-2">
+                    <h3 className="font-bold text-gray-900 dark:text-white flex items-center gap-2">
                         <Activity size={20} /> {t('profile.metrics')}
                     </h3>
-                    <GlassCard className="p-4 bg-white border-gray-100 grid grid-cols-2 gap-4">
+                    <GlassCard className="p-4 bg-white dark:bg-gray-900 border-gray-100 dark:border-gray-800 grid grid-cols-2 gap-4">
                         <div>
-                            <label className="text-[10px] text-gray-500 font-medium uppercase tracking-wider">{t('profile.weight')} (kg)</label>
+                            <label className="text-[10px] text-gray-500 dark:text-gray-400 font-medium uppercase tracking-wider">{t('profile.weight')} (kg)</label>
                             <div className="flex items-baseline gap-1">
                                 <input 
                                     type="number" 
                                     value={userProfile.weight} 
                                     onChange={(e) => updateProfile({ weight: parseInt(e.target.value) || 0 })}
-                                    className="w-full text-2xl font-bold bg-transparent border-b border-transparent hover:border-gray-200 focus:border-primary outline-none transition-colors"
+                                    className="w-full text-2xl font-bold bg-transparent border-b border-transparent hover:border-gray-200 focus:border-primary outline-none transition-colors text-gray-900 dark:text-white"
                                 />
                             </div>
                         </div>
                         <div>
-                             <label className="text-[10px] text-gray-500 font-medium uppercase tracking-wider">{t('profile.height')} (cm)</label>
+                             <label className="text-[10px] text-gray-500 dark:text-gray-400 font-medium uppercase tracking-wider">{t('profile.height')} (cm)</label>
                              <div className="flex items-baseline gap-1">
                                 <input 
                                     type="number" 
                                     value={userProfile.height} 
                                     onChange={(e) => updateProfile({ height: parseInt(e.target.value) || 0 })}
-                                    className="w-full text-2xl font-bold bg-transparent border-b border-transparent hover:border-gray-200 focus:border-primary outline-none transition-colors"
+                                    className="w-full text-2xl font-bold bg-transparent border-b border-transparent hover:border-gray-200 focus:border-primary outline-none transition-colors text-gray-900 dark:text-white"
                                 />
                             </div>
                         </div>
@@ -210,17 +218,17 @@ const UserProfile = () => {
 
                 {/* Connected Apps */}
                 <div className="space-y-4">
-                <h3 className="font-bold text-gray-900 flex items-center gap-2">
+                <h3 className="font-bold text-gray-900 dark:text-white flex items-center gap-2">
                     <LinkIcon size={20} /> {t('profile.connectedApps')}
                 </h3>
-                <GlassCard className="p-4 bg-white border-gray-100 flex items-center justify-between">
+                <GlassCard className="p-4 bg-white dark:bg-gray-900 border-gray-100 dark:border-gray-800 flex items-center justify-between">
                     <div className="flex items-center gap-3">
                          <div className="bg-[#FC4C02] p-2 rounded-lg text-white">
                             <Smartphone size={20} />
                          </div>
                          <div>
-                             <p className="font-bold text-gray-900">Strava</p>
-                             <p className="text-xs text-gray-500">{isConnected ? t('profile.connected') : t('profile.connect')}</p>
+                             <p className="font-bold text-gray-900 dark:text-white">Strava</p>
+                             <p className="text-xs text-gray-500 dark:text-gray-400">{isConnected ? t('profile.connected') : t('profile.connect')}</p>
                          </div>
                     </div>
                     {isConnected ? (
@@ -240,18 +248,18 @@ const UserProfile = () => {
 
             {/* Trophy Case */}
             <div className="md:col-span-2 space-y-4">
-                <h3 className="font-bold text-gray-900 flex items-center gap-2">
+                <h3 className="font-bold text-gray-900 dark:text-white flex items-center gap-2">
                     <Award size={20} /> {t('profile.trophyCase')}
                 </h3>
                 <div className="flex gap-4 overflow-x-auto pb-2 scrollbar-hide">
                     {badges.map((badge) => {
                         const Icon = badge.icon;
                         return (
-                            <GlassCard key={badge.id} className={`min-w-[100px] p-4 flex flex-col items-center justify-center gap-2 transition-all ${badge.unlocked ? 'bg-white border-gray-100' : 'bg-gray-100/50 border-transparent opacity-60 grayscale'}`}>
-                                <div className={`p-2 rounded-full ${badge.unlocked ? 'bg-gray-50' : 'bg-gray-200'}`}>
+                            <GlassCard key={badge.id} className={`min-w-[100px] p-4 flex flex-col items-center justify-center gap-2 transition-all ${badge.unlocked ? 'bg-white dark:bg-gray-900 border-gray-100 dark:border-gray-800' : 'bg-gray-100/50 dark:bg-gray-800/50 border-transparent opacity-60 grayscale'}`}>
+                                <div className={`p-2 rounded-full ${badge.unlocked ? 'bg-gray-50 dark:bg-gray-800' : 'bg-gray-200 dark:bg-gray-700'}`}>
                                     <Icon size={24} className={badge.unlocked ? badge.color : 'text-gray-400'} />
                                 </div>
-                                <span className="text-xs font-medium text-center leading-tight">{t(badge.key)}</span>
+                                <span className="text-xs font-medium text-center leading-tight text-gray-600 dark:text-gray-300">{t(badge.key)}</span>
                             </GlassCard>
                         )
                     })}
@@ -261,7 +269,7 @@ const UserProfile = () => {
 
         {/* Gear Locker */}
         <div className="mb-8">
-            <h3 className="font-bold text-gray-900 flex items-center gap-2 mb-4">
+            <h3 className="font-bold text-gray-900 dark:text-white flex items-center gap-2 mb-4">
                 <Settings size={20} /> {t('profile.gear')}
             </h3>
             <div className="flex gap-4 overflow-x-auto snap-x pb-4 scrollbar-hide -mx-6 px-6 md:mx-0 md:px-0">
@@ -270,7 +278,7 @@ const UserProfile = () => {
                     const isRetired = percentage >= 100;
                     
                     return (
-                        <GlassCard key={item.id} className="min-w-[280px] snap-center p-0 overflow-hidden bg-white border-gray-100 group">
+                        <GlassCard key={item.id} className="min-w-[280px] snap-center p-0 overflow-hidden bg-white dark:bg-gray-900 border-gray-100 dark:border-gray-800 group">
                             <div className="h-32 relative">
                                 <img src={item.image} alt={item.model} className="w-full h-full object-cover" />
                                 {isRetired && (
@@ -285,12 +293,12 @@ const UserProfile = () => {
                                 )}
                             </div>
                             <div className="p-4">
-                                <h4 className="font-bold text-gray-900 mb-1">{item.model}</h4>
-                                <div className="flex justify-between text-xs text-gray-500 mb-2">
+                                <h4 className="font-bold text-gray-900 dark:text-white mb-1">{item.model}</h4>
+                                <div className="flex justify-between text-xs text-gray-500 dark:text-gray-400 mb-2">
                                     <span>{item.current} km</span>
                                     <span>{item.max} km</span>
                                 </div>
-                                <div className="h-2 w-full bg-gray-100 rounded-full overflow-hidden">
+                                <div className="h-2 w-full bg-gray-100 dark:bg-gray-800 rounded-full overflow-hidden">
                                     <div 
                                         className={`h-full rounded-full transition-all duration-500 ${getBarColor(item.current, item.max)}`} 
                                         style={{ width: `${percentage}%` }}
@@ -313,7 +321,7 @@ const UserProfile = () => {
                         className={`pb-4 text-sm font-medium capitalize transition-colors relative ${
                             activeTab === tab 
                                 ? 'text-primary' 
-                                : 'text-gray-500 hover:text-gray-800'
+                                : 'text-gray-500 dark:text-gray-400 hover:text-gray-800 dark:hover:text-gray-200'
                         }`}
                     >
                         {t(`profile.tab.${tab}`)}
@@ -330,14 +338,14 @@ const UserProfile = () => {
             {activeTab === 'upcoming' && (
                 <div className="space-y-4">
                      {UPCOMING_RACES.map((race, idx) => (
-                        <GlassCard key={idx} className="flex items-center justify-between p-4 bg-white border-gray-100">
+                        <GlassCard key={idx} className="flex items-center justify-between p-4 bg-white dark:bg-gray-900 border-gray-100 dark:border-gray-800">
                             <div className="flex items-center gap-4">
-                                <div className="w-12 h-12 bg-gray-100 rounded-lg flex items-center justify-center text-gray-400">
+                                <div className="w-12 h-12 bg-gray-100 dark:bg-gray-800 rounded-lg flex items-center justify-center text-gray-400 dark:text-gray-500">
                                     <Calendar size={24} />
                                 </div>
                                 <div>
-                                    <h3 className="font-bold text-gray-900">{race.name}</h3>
-                                    <p className="text-sm text-gray-500">{race.date}</p>
+                                    <h3 className="font-bold text-gray-900 dark:text-white">{race.name}</h3>
+                                    <p className="text-sm text-gray-500 dark:text-gray-400">{race.date}</p>
                                 </div>
                             </div>
                             <Badge variant="neutral">{race.distance}</Badge>
@@ -349,22 +357,22 @@ const UserProfile = () => {
             {activeTab === 'results' && (
                  <div className="space-y-4">
                     {PAST_RESULTS.map((res, idx) => (
-                        <GlassCard key={idx} className="flex items-center justify-between p-4 bg-white border-gray-100">
+                        <GlassCard key={idx} className="flex items-center justify-between p-4 bg-white dark:bg-gray-900 border-gray-100 dark:border-gray-800">
                             <div className="flex items-center gap-4">
-                                <div className="w-12 h-12 bg-yellow-50 rounded-lg flex items-center justify-center text-yellow-600">
+                                <div className="w-12 h-12 bg-yellow-50 dark:bg-yellow-900/20 rounded-lg flex items-center justify-center text-yellow-600 dark:text-yellow-400">
                                     <Award size={24} />
                                 </div>
                                 <div>
-                                    <h3 className="font-bold text-gray-900">{res.name} <span className="text-gray-400 font-normal">'{res.year.slice(2)}</span></h3>
-                                    <div className="flex gap-2 text-xs text-gray-500 mt-1">
+                                    <h3 className="font-bold text-gray-900 dark:text-white">{res.name} <span className="text-gray-400 font-normal">'{res.year.slice(2)}</span></h3>
+                                    <div className="flex gap-2 text-xs text-gray-500 dark:text-gray-400 mt-1">
                                         <span className="flex items-center gap-1"><Mountain size={10} /> {res.elevation}</span>
                                         <span className="flex items-center gap-1"><Activity size={10} /> {res.distance}</span>
                                     </div>
                                 </div>
                             </div>
                             <div className="text-right">
-                                <span className="font-mono text-sm font-bold text-gray-900 block">{res.time}</span>
-                                <span className="text-xs text-gray-500">Pos: {res.pos}</span>
+                                <span className="font-mono text-sm font-bold text-gray-900 dark:text-white block">{res.time}</span>
+                                <span className="text-xs text-gray-500 dark:text-gray-400">Pos: {res.pos}</span>
                             </div>
                         </GlassCard>
                     ))}
