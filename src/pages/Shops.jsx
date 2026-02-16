@@ -64,10 +64,10 @@ const Shops = () => {
   };
 
   return (
-    <div className="flex flex-col md:flex-row h-[calc(100vh-4rem)] md:h-[calc(100vh-2rem)] overflow-hidden relative">
+    <div className="flex flex-col md:flex-row h-screen md:h-[calc(100vh-2rem)] overflow-hidden relative">
       
       {/* List Section */}
-      <div ref={listRef} className="w-full md:w-3/5 h-1/2 md:h-full overflow-y-auto p-6 md:p-8 space-y-6 bg-gray-50/50 dark:bg-gray-950/50">
+      <div ref={listRef} className="w-full md:w-3/5 h-full md:h-full overflow-y-auto p-4 md:p-8 space-y-4 md:space-y-6 bg-gray-50/50 dark:bg-gray-950/50">
         <div className="mb-6">
             <h1 className="text-3xl font-bold text-gray-900 dark:text-white tracking-tight">{t('shops.title')}</h1>
             <p className="text-gray-500 dark:text-gray-400 mt-1">{t('shops.subtitle')}</p>
@@ -124,8 +124,8 @@ const Shops = () => {
         </div>
       </div>
 
-      {/* Map Section */}
-      <div className="w-full md:w-2/5 h-1/2 md:h-full bg-gray-200 relative">
+      {/* Map Section - Hidden on mobile */}
+      <div className="hidden md:block w-full md:w-2/5 h-full bg-gray-200 relative">
         <img 
             src="https://images.unsplash.com/photo-1524661135-423995f22d0b?auto=format&fit=crop&q=80&w=1000" 
             alt="Map" 
@@ -155,7 +155,7 @@ const Shops = () => {
             <MapPin size={24} fill={selectedShop?.id === 3 ? "currentColor" : "none"} />
         </button>
 
-        <Button className="text-grey-900 absolute bottom-6 left-1/2 -translate-x-1/2 md:hidden shadow-xl z-20 ">
+        <Button className="absolute bottom-6 left-1/2 -translate-x-1/2 md:hidden shadow-xl z-20 bg-white dark:bg-gray-800 text-gray-900 dark:text-white border border-gray-200 dark:border-gray-700">
             View Expanded Map
         </Button>
       </div>

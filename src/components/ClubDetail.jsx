@@ -63,24 +63,24 @@ const ClubDetail = ({ club, onClose }) => {
         
         {/* Stats Row */}
         <div className="grid grid-cols-3 gap-4">
-            <div className="bg-gray-50 rounded-2xl p-4 text-center border border-gray-100">
-                <p className="text-2xl font-bold text-gray-900">12k</p>
-                <p className="text-xs text-gray-500 uppercase font-bold tracking-wide">{t('clubs.detail.avgDist')}</p>
+            <div className="bg-gray-50 dark:bg-gray-900 rounded-2xl p-4 text-center border border-gray-100 dark:border-gray-800">
+                <p className="text-2xl font-bold text-gray-900 dark:text-white">12k</p>
+                <p className="text-xs text-gray-500 dark:text-gray-400 uppercase font-bold tracking-wide">{t('clubs.detail.avgDist')}</p>
             </div>
-            <div className="bg-gray-50 rounded-2xl p-4 text-center border border-gray-100">
-                <p className="text-2xl font-bold text-gray-900">450m</p>
-                <p className="text-xs text-gray-500 uppercase font-bold tracking-wide">{t('clubs.detail.avgElev')}</p>
+            <div className="bg-gray-50 dark:bg-gray-900 rounded-2xl p-4 text-center border border-gray-100 dark:border-gray-800">
+                <p className="text-2xl font-bold text-gray-900 dark:text-white">450m</p>
+                <p className="text-xs text-gray-500 dark:text-gray-400 uppercase font-bold tracking-wide">{t('clubs.detail.avgElev')}</p>
             </div>
-             <div className="bg-gray-50 rounded-2xl p-4 text-center border border-gray-100">
-                <p className="text-2xl font-bold text-gray-900">Weekly</p>
-                <p className="text-xs text-gray-500 uppercase font-bold tracking-wide">{t('clubs.detail.meetups')}</p>
+             <div className="bg-gray-50 dark:bg-gray-900 rounded-2xl p-4 text-center border border-gray-100 dark:border-gray-800">
+                <p className="text-2xl font-bold text-gray-900 dark:text-white">Weekly</p>
+                <p className="text-xs text-gray-500 dark:text-gray-400 uppercase font-bold tracking-wide">{t('clubs.detail.meetups')}</p>
             </div>
         </div>
 
         {/* About Section */}
         <div>
-            <h3 className="text-xl font-bold text-gray-900 mb-3">{t('clubs.detail.about')}</h3>
-            <p className="text-gray-600 leading-relaxed text-lg">
+            <h3 className="text-xl font-bold text-gray-900 dark:text-white mb-3">{t('clubs.detail.about')}</h3>
+            <p className="text-gray-600 dark:text-gray-400 leading-relaxed text-lg">
                 {club.description} We are a community of passionate trail runners dedicated to exploring the local mountains. 
                 Whether you're training for an ultra or just want to enjoy nature, everyone is welcome.
             </p>
@@ -89,7 +89,7 @@ const ClubDetail = ({ club, onClose }) => {
         {/* Upcoming Events */}
         <div>
             <div className="flex items-center justify-between mb-4">
-                <h3 className="text-xl font-bold text-gray-900">{t('clubs.detail.upcomingRuns')}</h3>
+                <h3 className="text-xl font-bold text-gray-900 dark:text-white">{t('clubs.detail.upcomingRuns')}</h3>
                 <button className="text-primary font-medium text-sm">{t('clubs.detail.viewAll')}</button>
             </div>
             
@@ -101,8 +101,8 @@ const ClubDetail = ({ club, onClose }) => {
                             <span className="text-xl">1{i+4}</span>
                         </div>
                         <div className="flex-1">
-                            <h4 className="font-bold text-gray-900 text-lg">Sunday Long Run</h4>
-                            <p className="text-gray-500 text-sm flex items-center gap-2">
+                            <h4 className="font-bold text-gray-900 dark:text-white text-lg">Sunday Long Run</h4>
+                            <p className="text-gray-500 dark:text-gray-400 text-sm flex items-center gap-2">
                                 <Mountain size={14} /> 15km • 800m+
                             </p>
                         </div>
@@ -115,8 +115,8 @@ const ClubDetail = ({ club, onClose }) => {
         {/* Members Grid Preview */}
         <div>
              <div className="flex items-center justify-between mb-4">
-                <h3 className="text-xl font-bold text-gray-900">{t('clubs.detail.members')}</h3>
-                <span className="text-gray-500 text-sm">{club.members} {t('clubs.detail.runners')}</span>
+                <h3 className="text-xl font-bold text-gray-900 dark:text-white">{t('clubs.detail.members')}</h3>
+                <span className="text-gray-500 dark:text-gray-400 text-sm">{club.members} {t('clubs.detail.runners')}</span>
             </div>
             <div className="flex -space-x-3 overflow-hidden py-2">
                 {[1,2,3,4,5,6].map(i => (

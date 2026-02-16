@@ -76,7 +76,7 @@ const ClubsDirectory = () => {
       {/* Header & Search */}
       <div className="flex flex-col md:flex-row md:items-center justify-between gap-6">
         <div>
-          <h1 className="text-3xl font-bold text-gray-900 tracking-tight">{t('clubs.directory.title')}</h1>
+          <h1 className="text-3xl font-bold text-gray-900 dark:text-white tracking-tight">{t('clubs.directory.title')}</h1>
           <p className="text-gray-500 mt-1">{t('clubs.directory.subtitle')}</p>
         </div>
         
@@ -115,7 +115,7 @@ const ClubsDirectory = () => {
                 </div>
             </div>
             
-            <h3 className="text-lg font-bold text-gray-900 mb-1">{club.name}</h3>
+            <h3 className="text-lg font-bold text-gray-900 dark:text-white mb-1">{club.name}</h3>
             
             <div className="flex items-center gap-1 text-sm text-gray-500 mb-3">
                 <MapPin size={14} />
@@ -127,7 +127,7 @@ const ClubsDirectory = () => {
             <div className="mt-auto w-full space-y-3">
                  <div className="flex items-center justify-center gap-2 text-sm text-gray-500 bg-gray-50 py-2 rounded-lg">
                     <Users size={16} />
-                    <span className="font-semibold text-gray-900">{club.members}</span>
+                    <span className="font-semibold text-gray-900 dark:text-white">{club.members}</span>
                     <span>{t('clubs.card.members')}</span>
                 </div>
                 <Button variant="outline" className="w-full py-2 text-sm hover:bg-primary hover:text-white transition-colors">
