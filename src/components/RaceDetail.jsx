@@ -5,6 +5,7 @@ import Badge from './Badge';
 import GlassCard from './GlassCard';
 import { useLanguage } from '../context/LanguageContext';
 import { useUser } from '../context/UserContext';
+import { useFavorites } from '../context/FavoritesContext';
 
   // Define Mandatory Gear items with IDs
   const MANDATORY_GEAR = [
@@ -18,7 +19,7 @@ import { useUser } from '../context/UserContext';
   const RaceDetail = ({ race, similarRaces = [], onClose }) => {
   const { t } = useLanguage();
   const { userProfile } = useUser();
-  const [isFavorite, setIsFavorite] = useState(false);
+  const { toggleFavorite, isFavorite } = useFavorites();
   const [activeTab, setActiveTab] = useState('info'); // info, strategy
   const [activeView, setActiveView] = useState('profile'); // profile, map
 
@@ -150,12 +151,19 @@ import { useUser } from '../context/UserContext';
           </button>
           <div className="flex gap-3">
              <button 
-                onClick={() => setIsFavorite(!isFavorite)}
-                className={`p-2 backdrop-blur-md rounded-full transition-colors ${isFavorite ? 'bg-red-500/80 text-white' : 'bg-white/20 text-white hover:bg-white/30'}`}
+                onClick={() => toggleFavorite(race.id)}
+                className={`p-2 backdrop-blur-md rounded-full transition-colors ${isFavorite(race.id) ? 'bg-red-500/80 text-white' : 'bg-white/20 text-white hover:bg-white/30'}`}
               >
-                <Heart size={24} fill={isFavorite ? "currentColor" : "none"} />
+                <Heart size={24} fill={isFavorite(race.id) ? "currentColor" : "none"} />
             </button>
-            <button className="p-2 bg-white/20 backdrop-blur-md rounded-full text-white hover:bg-white/30 transition-colors">
+            <button 
+              onClick={() => {
+                const shareText = `Check out ${displayRace.name} - ${displayRace.distance} on ${displayRace.date}! 🏔️`;
+                navigator.clipboard.writeText(shareText);
+                alert(t('race.detail.shareCopied') || 'Link copied to clipboard!');
+              }}
+              className="p-2 bg-white/20 backdrop-blur-md rounded-full text-white hover:bg-white/30 transition-colors"
+            >
               <Share2 size={24} />
             </button>
           </div>

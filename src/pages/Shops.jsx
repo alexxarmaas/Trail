@@ -67,10 +67,10 @@ const Shops = () => {
     <div className="flex flex-col md:flex-row h-[calc(100vh-4rem)] md:h-[calc(100vh-2rem)] overflow-hidden relative">
       
       {/* List Section */}
-      <div ref={listRef} className="w-full md:w-3/5 h-1/2 md:h-full overflow-y-auto p-6 md:p-8 space-y-6 bg-gray-50/50">
+      <div ref={listRef} className="w-full md:w-3/5 h-1/2 md:h-full overflow-y-auto p-6 md:p-8 space-y-6 bg-gray-50/50 dark:bg-gray-950/50">
         <div className="mb-6">
-            <h1 className="text-3xl font-bold text-gray-900 tracking-tight">{t('shops.title')}</h1>
-            <p className="text-gray-500 mt-1">{t('shops.subtitle')}</p>
+            <h1 className="text-3xl font-bold text-gray-900 dark:text-white tracking-tight">{t('shops.title')}</h1>
+            <p className="text-gray-500 dark:text-gray-400 mt-1">{t('shops.subtitle')}</p>
         </div>
 
         <div className="space-y-4">
@@ -82,7 +82,7 @@ const Shops = () => {
                     className={`transition-all duration-300 cursor-pointer rounded-2xl border ${
                         selectedShop?.id === shop.id 
                             ? 'ring-2 ring-primary border-transparent transform scale-[1.02]' 
-                            : 'border-gray-100 hover:border-gray-300'
+                            : 'border-gray-100 dark:border-gray-800 hover:border-gray-300 dark:hover:border-gray-600'
                     }`}
                 >
                 <GlassCard className="bg-white dark:bg-gray-900 p-4 flex gap-4 shadow-sm hover:shadow-md h-full border-gray-100 dark:border-gray-800">
@@ -92,29 +92,29 @@ const Shops = () => {
                     <div className="flex-1 flex flex-col justify-between">
                         <div>
                             <div className="flex justify-between items-start">
-                                <h3 className="font-bold text-lg text-gray-900">{shop.name}</h3>
+                                <h3 className="font-bold text-lg text-gray-900 dark:text-white">{shop.name}</h3>
                                 <span className="text-primary font-bold text-sm bg-primary/10 px-2 py-0.5 rounded-full">{shop.distance}</span>
                             </div>
-                            <div className="flex items-center gap-1 mt-1 text-sm text-gray-500">
+                            <div className="flex items-center gap-1 mt-1 text-sm text-gray-500 dark:text-gray-400">
                                 <Star size={14} className="text-yellow-400 fill-yellow-400" />
-                                <span className="font-medium text-gray-900">{shop.rating}</span>
+                                <span className="font-medium text-gray-900 dark:text-white">{shop.rating}</span>
                                 <span>({shop.reviews})</span>
                             </div>
-                            <p className="text-sm text-gray-500 mt-1">{shop.address}</p>
+                            <p className="text-sm text-gray-500 dark:text-gray-400 mt-1">{shop.address}</p>
                             <div className="flex gap-2 mt-2 flex-wrap">
                                 {shop.tags.map(tag => (
-                                    <span key={tag} className="text-[10px] bg-gray-100 text-gray-600 px-2 py-1 rounded-md border border-gray-200 uppercase font-semibold tracking-wider">
+                                    <span key={tag} className="text-[10px] bg-gray-100 dark:bg-gray-800 text-gray-600 dark:text-gray-300 px-2 py-1 rounded-md border border-gray-200 dark:border-gray-700 uppercase font-semibold tracking-wider">
                                         {tag}
                                     </span>
                                 ))}
                             </div>
                         </div>
                     </div>
-                    <div className="flex flex-col gap-2 justify-center ml-2 border-l border-gray-100 pl-4">
+                    <div className="flex flex-col gap-2 justify-center ml-2 border-l border-gray-100 dark:border-gray-800 pl-4">
                         <button className="p-2 rounded-full bg-primary/10 text-primary hover:bg-primary hover:text-white transition-colors">
                             <Navigation size={20} />
                         </button>
-                        <button className="p-2 rounded-full bg-gray-100 text-gray-600 hover:bg-gray-200 transition-colors">
+                        <button className="p-2 rounded-full bg-gray-100 dark:bg-gray-800 text-gray-600 dark:text-gray-300 hover:bg-gray-200 dark:hover:bg-gray-700 transition-colors">
                             <Phone size={20} />
                         </button>
                     </div>

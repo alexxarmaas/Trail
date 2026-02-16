@@ -5,16 +5,55 @@ export const TRANSLATIONS = {
       title: 'Domina la Montaña',
       subtitle: 'Tu compañero definitivo para trail running.',
       start: 'Empezar Aventura',
+      skip: 'Omitir',
+      back: 'Atrás',
+      next: 'Siguiente',
+      complete: 'Completar',
+      fitness: {
+        title: '¿Cuál es tu nivel?',
+        subtitle: 'Esto nos ayuda a personalizar tu experiencia',
+        beginner: 'Principiante',
+        beginnerDesc: 'Nuevo en trail running',
+        intermediate: 'Intermedio',
+        intermediateDesc: 'Experiencia regular',
+        advanced: 'Avanzado',
+        advancedDesc: 'Corredor experimentado',
+      },
+      raceTypes: {
+        title: '¿Qué distancias prefieres?',
+        subtitle: 'Selecciona todas las que te interesen',
+        short: 'Cortas',
+        marathon: 'Maratón',
+        ultra: 'Ultra',
+      },
     },
     
     // Navigation (Flat)
+    'nav.home': 'Inicio',
     'nav.calendar': 'Calendario',
     'nav.races': 'Carreras',
     'nav.clubs': 'Clubes',
     'nav.shops': 'Tiendas',
-    'nav.shopsAndMaps': 'Tiendas y Mapas',
+    'nav.shopsAndMaps': 'Tiendas',
     'nav.profile': 'Perfil',
     'nav.nextRace': 'Próxima Carrera',
+      
+    // Dashboard
+    dashboard: {
+      welcome: 'Bienvenido',
+      subtitle: 'Tu resumen personalizado de trail running',
+      favorites: 'Favoritas',
+      upcoming: 'Próximas',
+      available: 'Disponibles',
+      level: 'Nivel',
+      upcomingRaces: 'Tus Próximas Carreras',
+      recommended: 'Recomendadas Para Ti',
+      recommendedSubtitle: 'Basado en tus preferencias',
+      viewAll: 'Ver Todas',
+      noFavorites: 'No tienes favoritas aún',
+      noFavoritesSubtitle: 'Empieza a guardar carreras que te interesen',
+      browseRaces: 'Explorar Carreras',
+    },
       
     // Race (Nested)
     race: {
@@ -84,6 +123,7 @@ export const TRANSLATIONS = {
                 }
             },
             addToCalendar: 'Añadir al Calendario',
+            shareCopied: '¡Enlace copiado al portapapeles!',
             weather: {
                 historical: 'Media Histórica',
                 title: 'El Tiempo en Carrera',
@@ -168,9 +208,30 @@ export const TRANSLATIONS = {
   en: {
     // Onboarding
     onboard: {
-      title: 'Master the Mountain',
-      subtitle: 'Your ultimate companion for trail running.',
+      title: 'Conquer the Mountains',
+      subtitle: 'Your ultimate trail running companion.',
       start: 'Start Adventure',
+      skip: 'Skip',
+      back: 'Back',
+      next: 'Next',
+      complete: 'Complete',
+      fitness: {
+        title: 'What\'s your level?',
+        subtitle: 'This helps us personalize your experience',
+        beginner: 'Beginner',
+        beginnerDesc: 'New to trail running',
+        intermediate: 'Intermediate',
+        intermediateDesc: 'Regular experience',
+        advanced: 'Advanced',
+        advancedDesc: 'Experienced runner',
+      },
+      raceTypes: {
+        title: 'What distances do you prefer?',
+        subtitle: 'Select all that interest you',
+        short: 'Short',
+        marathon: 'Marathon',
+        ultra: 'Ultra',
+      },
     },
     
     // Navigation
@@ -178,9 +239,26 @@ export const TRANSLATIONS = {
     'nav.races': 'Races',
     'nav.clubs': 'Clubs',
     'nav.shops': 'Shops',
-    'nav.shopsAndMaps': 'Shops & Maps',
+    'nav.shopsAndMaps': 'Shops',
     'nav.profile': 'Profile',
     'nav.nextRace': 'Next Race',
+
+    // Dashboard
+    dashboard: {
+      welcome: 'Welcome',
+      subtitle: 'Your personalized trail running overview',
+      favorites: 'Favorites',
+      upcoming: 'Upcoming',
+      available: 'Available',
+      level: 'Level',
+      upcomingRaces: 'Your Upcoming Races',
+      recommended: 'Recommended For You',
+      recommendedSubtitle: 'Based on your preferences',
+      viewAll: 'View All',
+      noFavorites: 'No favorites yet',
+      noFavoritesSubtitle: 'Start saving races you\'re interested in',
+      browseRaces: 'Browse Races',
+    },
 
     // Race (Nested)
     race: {
@@ -250,6 +328,7 @@ export const TRANSLATIONS = {
                 }
             },
             addToCalendar: 'Add to Calendar',
+            shareCopied: 'Link copied to clipboard!',
             weather: {
                 historical: 'Historical Avg.',
                 title: 'Race Day Weather',

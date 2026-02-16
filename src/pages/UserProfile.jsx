@@ -142,16 +142,16 @@ const UserProfile = () => {
                     className="w-full h-full object-cover"
                 />
             </div>
-            <div className="flex-1 text-black md:text-gray-900 md:mb-2 md:pt-20">
-                <div className="md:text-white mb-2 md:mb-0">
+            <div className="flex-1 text-gray-900 dark:text-white md:mb-2 md:pt-20">
+                <div className="mb-2 md:mb-0">
                      <div className="flex items-center gap-3 mb-1">
-                        <h1 className="text-3xl font-bold text-black dark:text-white sm:text-gray-900 border-text-stroke">Alex Mountain</h1>
+                        <h1 className="text-3xl font-bold text-gray-900 dark:text-white">Alex Mountain</h1>
                         <span className="bg-gradient-to-r from-yellow-400 to-orange-500 text-white text-[10px] font-black uppercase px-2 py-0.5 rounded shadow-lg flex items-center gap-1">
                             <Crown size={10} fill="currentColor" />
                             {t('pro.badge')}
                         </span>
                      </div>
-                     <p className="opacity-90 flex items-center gap-2">
+                     <p className="text-gray-700 dark:text-gray-300 flex items-center gap-2">
                         <span>Elite Trail Runner</span>
                         <span className="w-1.5 h-1.5 rounded-full bg-green-400" />
                         <span>Chamonix, France</span>
