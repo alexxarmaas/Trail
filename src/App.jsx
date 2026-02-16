@@ -1,25 +1,21 @@
-import React, { useState } from 'react';
+import React from 'react';
 import Layout from './layout/Layout';
 import { LanguageProvider } from './context/LanguageContext';
 import { UserProvider } from './context/UserContext';
 import { ThemeProvider } from './context/ThemeContext';
-import Onboarding from './pages/Onboarding';
+import { FavoritesProvider } from './context/FavoritesContext';
 
 function App() {
-  const [showOnboarding, setShowOnboarding] = useState(true);
-
   return (
-    <UserProvider>
-      <LanguageProvider>
+    <LanguageProvider>
+      <UserProvider>
         <ThemeProvider>
-            {showOnboarding ? (
-            <Onboarding onStart={() => setShowOnboarding(false)} />
-            ) : (
+          <FavoritesProvider>
             <Layout />
-            )}
+          </FavoritesProvider>
         </ThemeProvider>
-      </LanguageProvider>
-    </UserProvider>
+      </UserProvider>
+    </LanguageProvider>
   );
 }
 

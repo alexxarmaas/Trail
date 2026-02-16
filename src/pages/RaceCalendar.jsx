@@ -1,9 +1,10 @@
 import React, { useState } from 'react';
-import { Calendar, MapPin, Mountain } from 'lucide-react';
+import { Calendar, MapPin, Mountain, Heart } from 'lucide-react';
 import GlassCard from '../components/GlassCard';
 import Button from '../components/Button';
 import RaceDetail from '../components/RaceDetail';
 import { useLanguage } from '../context/LanguageContext';
+import { useFavorites } from '../context/FavoritesContext';
 
 const RACES = [
   {
@@ -100,11 +101,14 @@ const RACES = [
 
 const RaceCalendar = () => {
   const { t } = useLanguage();
+  const { favorites, toggleFavorite, isFavorite } = useFavorites();
   const [filter, setFilter] = useState('all');
   const [selectedRace, setSelectedRace] = useState(null);
 
   const filteredRaces = filter === 'all' 
     ? RACES 
+    : filter === 'favorites'
+    ? RACES.filter(race => isFavorite(race.id))
     : RACES.filter(race => {
         if (filter === 'ultra') return race.type === 'ultra';
         if (filter === 'short') return race.type === 'short' || race.type === 'marathon';
@@ -128,17 +132,21 @@ const RaceCalendar = () => {
         
         {/* Filters */}
         <div className="flex gap-2 overflow-x-auto pb-2 md:pb-0 scrollbar-hide">
-          {['all', 'short', 'ultra'].map((f) => (
+          {['all', 'favorites', 'short', 'ultra'].map((f) => (
             <button
               key={f}
               onClick={() => setFilter(f)}
-              className={`px-4 py-2 rounded-full text-sm font-medium transition-all whitespace-nowrap ${
+              className={`px-4 py-2 rounded-full text-sm font-medium transition-all whitespace-nowrap flex items-center gap-1 ${
                 filter === f 
                   ? 'bg-primary text-white shadow-lg shadow-primary/30' 
                   : 'bg-white dark:bg-gray-800 text-gray-600 dark:text-gray-300 hover:bg-gray-50 dark:hover:bg-gray-700 border border-gray-200 dark:border-gray-700'
               }`}
             >
+              {f === 'favorites' && <Heart size={14} fill={filter === 'favorites' ? 'currentColor' : 'none'} />}
               {t(`race.filter.${f}`)}
+              {f === 'favorites' && favorites.length > 0 && (
+                <span className="ml-1 px-1.5 py-0.5 bg-white/20 rounded-full text-xs">{favorites.length}</span>
+              )}
             </button>
           ))}
         </div>
@@ -147,8 +155,8 @@ const RaceCalendar = () => {
       {/* Grid */}
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
         {filteredRaces.map((race) => (
-          <div key={race.id} onClick={() => setSelectedRace(race)} className="cursor-pointer">
-          <GlassCard className="group hover:-translate-y-1 transition-transform duration-300 p-0 overflow-hidden border-0 bg-white/40 dark:bg-gray-900/40 hover:bg-white/60 dark:hover:bg-gray-800/60">
+          <div key={race.id} className="cursor-pointer relative">
+          <GlassCard className="group hover:-translate-y-1 transition-transform duration-300 p-0 overflow-hidden border-0 bg-white/40 dark:bg-gray-900/40 hover:bg-white/60 dark:hover:bg-gray-800/60" onClick={() => setSelectedRace(race)}>
             {/* Image Header */}
             <div className="h-48 relative overflow-hidden">
                 <div className="absolute inset-0 bg-gradient-to-t from-black/60 to-transparent z-10" />
@@ -164,7 +172,17 @@ const RaceCalendar = () => {
                         <span>{race.location}</span>
                     </div>
                 </div>
-                <div className="absolute top-4 right-4 z-20">
+                <div className="absolute top-4 right-4 z-20 flex gap-2">
+                     <button
+                        onClick={(e) => {
+                          e.stopPropagation();
+                          toggleFavorite(race.id);
+                        }}
+                        className="p-2 bg-white/20 backdrop-blur-md rounded-full text-white hover:bg-white/30 transition-all hover:scale-110"
+                        aria-label="Toggle favorite"
+                      >
+                        <Heart size={18} fill={isFavorite(race.id) ? 'currentColor' : 'none'} />
+                      </button>
                      <span className="bg-white/20 backdrop-blur-md text-white border border-white/30 px-3 py-1 rounded-full text-xs font-bold">
                         {race.date.split(',')[0]}
                      </span>

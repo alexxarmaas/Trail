@@ -22,6 +22,7 @@ export const TRANSLATIONS = {
         subtitle: 'Encuentra tu próximo desafío en las montañas.',
         filter: {
             all: 'Todas',
+            favorites: 'Favoritas',
             short: 'Cortas',
             ultra: 'Ultra',
         },
@@ -187,6 +188,7 @@ export const TRANSLATIONS = {
         subtitle: 'Find your next challenge in the mountains.',
         filter: {
             all: 'All',
+            favorites: 'Favorites',
             short: 'Short',
             ultra: 'Ultra',
         },
