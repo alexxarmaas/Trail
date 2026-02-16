@@ -17,7 +17,7 @@ const ShopDetail = ({ shop, onClose }) => {
     
     {/* Sheet/Drawer */}
     <div className={`
-        fixed z-50 bg-white
+        fixed z-[100] bg-white flex flex-col
         
         // Mobile: Bottom Sheet
         bottom-0 left-0 right-0 rounded-t-3xl shadow-[0_-10px_40px_rgba(0,0,0,0.1)]
@@ -29,10 +29,10 @@ const ShopDetail = ({ shop, onClose }) => {
         animate-in slide-in-from-bottom w-full
     `}>
       {/* Handle for mobile */}
-      <div className="w-12 h-1.5 bg-gray-300 rounded-full mx-auto mt-3 mb-2 md:hidden" />
+      <div className="w-12 h-1.5 bg-gray-300 rounded-full mx-auto mt-3 mb-2 md:hidden shrink-0" />
 
       {/* Header Image */}
-      <div className="h-48 w-full relative">
+      <div className="h-48 w-full relative shrink-0">
         <img 
             src={shop.image} 
             alt={shop.name} 
@@ -47,7 +47,7 @@ const ShopDetail = ({ shop, onClose }) => {
       </div>
 
       {/* Content */}
-      <div className="p-6 space-y-6 overflow-y-auto h-[calc(85vh-12rem)] md:h-[calc(100vh-12rem)]">
+      <div className="p-6 space-y-6 overflow-y-auto flex-1 pb-12">
         {/* Title & Status */}
         <div>
             <div className="flex justify-between items-start mb-2">

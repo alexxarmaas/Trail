@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { Settings, Share2, Award, Activity, Calendar, Mountain, Clock, Link as LinkIcon, Smartphone, Zap, Trash2, Globe } from 'lucide-react';
+import { Settings, Share2, Award, Activity, Calendar, Mountain, Clock, Link as LinkIcon, Smartphone, Zap, Trash2, Globe, AlertTriangle, Crown } from 'lucide-react';
 import GlassCard from '../components/GlassCard';
 import Badge from '../components/Badge';
 import Button from '../components/Button';
@@ -11,9 +11,9 @@ const UPCOMING_RACES = [
 ];
 
 const PAST_RESULTS = [
-  { name: 'UTMB', year: '2025', time: '26:45:12', pos: '142' },
-  { name: 'Zegama', year: '2025', time: '04:12:30', pos: '89' },
-  { name: 'Lavaredo', year: '2024', time: '14:20:00', pos: '45' },
+  { name: 'UTMB', year: '2025', time: '26:45:12', pos: '142', distance: '171km', distVal: 171, elevation: '+10000m', elevVal: 10000 },
+  { name: 'Zegama', year: '2025', time: '04:12:30', pos: '89', distance: '42km', distVal: 42, elevation: '+2736m', elevVal: 2736 },
+  { name: 'Lavaredo', year: '2024', time: '14:20:00', pos: '45', distance: '120km', distVal: 120, elevation: '+5800m', elevVal: 5800 },
 ];
 
 const INITIAL_GEAR = [
@@ -34,11 +34,22 @@ const UserProfile = () => {
     ]);
     const [isConnected, setIsConnected] = useState(false);
     const [isSyncing, setIsSyncing] = useState(false);
+    
+    // Safety
+    const [isSOSCalls, setIsSOSCalls] = useState(false);
+
+    // Calculate Totals based on PAST_RESULTS (and potentially simulated extra history)
+    // Base values + existing results
+    const baseDistance = 2117; 
+    const baseElevation = 66000;
+    
+    const totalDistVal = Math.round(baseDistance + PAST_RESULTS.reduce((acc, curr) => acc + curr.distVal, 0));
+    const totalElevVal = Math.round(baseElevation + PAST_RESULTS.reduce((acc, curr) => acc + curr.elevVal, 0));
 
     const STATS = [
       { label: t('profile.stats.itra'), value: '742', icon: Award, color: 'text-yellow-500', bg: 'bg-yellow-100' },
-      { label: t('profile.stats.distance'), value: '2,450 km', icon: Activity, color: 'text-green-600', bg: 'bg-green-100' },
-      { label: t('profile.stats.elevation'), value: '+85,000m', icon: Mountain, color: 'text-orange-600', bg: 'bg-orange-100' },
+      { label: t('profile.stats.distance'), value: `${totalDistVal.toLocaleString()} km`, icon: Activity, color: 'text-green-600', bg: 'bg-green-100' },
+      { label: t('profile.stats.elevation'), value: `+${totalElevVal.toLocaleString()}m`, icon: Mountain, color: 'text-orange-600', bg: 'bg-orange-100' },
       { label: t('profile.stats.hours'), value: '320h', icon: Clock, color: 'text-blue-600', bg: 'bg-blue-100' },
     ];
 
@@ -64,9 +75,28 @@ const UserProfile = () => {
     };
 
   return (
-    <div className="min-h-screen pb-20">
+    <div className="min-h-screen pb-32 relative">
+        {/* SOS Button (Sticky) */}
+        <button
+            onClick={() => setIsSOSCalls(!isSOSCalls)}
+            className={`fixed bottom-24 right-4 z-50 md:bottom-8 md:right-8 transition-all duration-300 shadow-2xl ${
+                isSOSCalls 
+                    ? 'bg-red-600 border-4 border-red-200 w-auto px-6 animate-pulse' 
+                    : 'bg-red-500 hover:bg-red-600 w-14 hover:scale-110'
+            } h-14 rounded-full flex items-center justify-center text-white font-bold tracking-wider`}
+        >
+            {isSOSCalls ? (
+                <span className="flex items-center gap-2">
+                    <AlertTriangle size={20} className="animate-bounce" />
+                    {t('safety.sending')}
+                </span>
+            ) : (
+                <span className="text-sm">{t('safety.sos')}</span>
+            )}
+        </button>
+
       {/* Hero / Parallax Header */}
-      <div className="relative h-80 w-full overflow-hidden">
+      <div className="relative h-64 md:h-80 w-full overflow-hidden">
         <div className="absolute inset-0 bg-gradient-to-t from-gray-900/80 to-transparent z-10" />
         <img 
             src="https://images.unsplash.com/photo-1552674605-5d28c4e1902c?auto=format&fit=crop&q=80&w=1200" 
@@ -92,18 +122,24 @@ const UserProfile = () => {
       </div>
 
       {/* Profile Info Overlay */}
-      <div className="px-6 md:px-8 -mt-20 relative z-20">
+      <div className="px-6 md:px-8 -mt-20 relative z-20 mx-auto max-w-sm md:max-w-4xl">
         <div className="flex flex-col md:flex-row items-end md:items-end gap-6 mb-8">
-            <div className="w-32 h-32 rounded-full border-4 border-white shadow-2xl overflow-hidden bg-gray-200">
+            <div className="w-32 h-32 rounded-full border-4 border-white shadow-2xl overflow-hidden bg-gray-200 relative">
                 <img 
                     src="https://images.unsplash.com/photo-1535713875002-d1d0cf377fde?auto=format&fit=crop&q=80&w=200" 
                     alt="User" 
                     className="w-full h-full object-cover"
                 />
             </div>
-            <div className="flex-1 text-white md:text-gray-900 md:mb-2 md:pt-20">
+            <div className="flex-1 text-black md:text-gray-900 md:mb-2 md:pt-20">
                 <div className="md:text-white mb-2 md:mb-0">
-                     <h1 className="text-3xl font-bold">Alex Mountain</h1>
+                     <div className="flex items-center gap-3 mb-1">
+                        <h1 className="text-3xl font-bold text-black">Alex Mountain</h1>
+                        <span className="bg-gradient-to-r from-yellow-400 to-orange-500 text-white text-[10px] font-black uppercase px-2 py-0.5 rounded shadow-lg flex items-center gap-1">
+                            <Crown size={10} fill="currentColor" />
+                            {t('pro.badge')}
+                        </span>
+                     </div>
                      <p className="opacity-90 flex items-center gap-2">
                         <span>Elite Trail Runner</span>
                         <span className="w-1.5 h-1.5 rounded-full bg-green-400" />
@@ -193,13 +229,13 @@ const UserProfile = () => {
             <h3 className="font-bold text-gray-900 flex items-center gap-2 mb-4">
                 <Settings size={20} /> {t('profile.gear')}
             </h3>
-            <div className="flex gap-4 overflow-x-auto pb-4 scrollbar-hide -mx-6 px-6 md:mx-0 md:px-0">
+            <div className="flex gap-4 overflow-x-auto snap-x pb-4 scrollbar-hide -mx-6 px-6 md:mx-0 md:px-0">
                 {gear.map((item) => {
                     const percentage = Math.min((item.current / item.max) * 100, 100);
                     const isRetired = percentage >= 100;
                     
                     return (
-                        <GlassCard key={item.id} className="min-w-[280px] p-0 overflow-hidden bg-white border-gray-100 group">
+                        <GlassCard key={item.id} className="min-w-[280px] snap-center p-0 overflow-hidden bg-white border-gray-100 group">
                             <div className="h-32 relative">
                                 <img src={item.image} alt={item.model} className="w-full h-full object-cover" />
                                 {isRetired && (
@@ -285,10 +321,16 @@ const UserProfile = () => {
                                 </div>
                                 <div>
                                     <h3 className="font-bold text-gray-900">{res.name} <span className="text-gray-400 font-normal">'{res.year.slice(2)}</span></h3>
-                                    <p className="text-sm text-gray-500">Pos: {res.pos}</p>
+                                    <div className="flex gap-2 text-xs text-gray-500 mt-1">
+                                        <span className="flex items-center gap-1"><Mountain size={10} /> {res.elevation}</span>
+                                        <span className="flex items-center gap-1"><Activity size={10} /> {res.distance}</span>
+                                    </div>
                                 </div>
                             </div>
-                            <span className="font-mono text-sm font-medium text-gray-700">{res.time}</span>
+                            <div className="text-right">
+                                <span className="font-mono text-sm font-bold text-gray-900 block">{res.time}</span>
+                                <span className="text-xs text-gray-500">Pos: {res.pos}</span>
+                            </div>
                         </GlassCard>
                     ))}
                 </div>

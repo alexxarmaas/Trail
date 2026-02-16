@@ -2,8 +2,11 @@ import React, { useState } from 'react';
 import { Search, Users, Trophy, MapPin } from 'lucide-react';
 import GlassCard from '../components/GlassCard';
 import Button from '../components/Button';
+import ClubDetail from '../components/ClubDetail';
+import { useLanguage } from '../context/LanguageContext';
 
 const CLUBS = [
+  // ... (keep data as is for now, maybe translate descriptions later if needed, but names remain)
   {
     id: 1,
     name: 'Summit Striders',
@@ -55,7 +58,9 @@ const CLUBS = [
 ];
 
 const ClubsDirectory = () => {
+  const { t } = useLanguage();
   const [searchTerm, setSearchTerm] = useState('');
+  const [selectedClub, setSelectedClub] = useState(null);
 
   const filteredClubs = CLUBS.filter(club =>
     club.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
@@ -71,8 +76,8 @@ const ClubsDirectory = () => {
       {/* Header & Search */}
       <div className="flex flex-col md:flex-row md:items-center justify-between gap-6">
         <div>
-          <h1 className="text-3xl font-bold text-gray-900 tracking-tight">Running Clubs</h1>
-          <p className="text-gray-500 mt-1">Connect with local communities and train together.</p>
+          <h1 className="text-3xl font-bold text-gray-900 tracking-tight">{t('clubs.directory.title')}</h1>
+          <p className="text-gray-500 mt-1">{t('clubs.directory.subtitle')}</p>
         </div>
         
         <div className="relative w-full md:w-96">
@@ -81,7 +86,7 @@ const ClubsDirectory = () => {
           </div>
           <input
             type="text"
-            placeholder="Search clubs by name or location..."
+            placeholder={t('clubs.directory.searchPlaceholder')}
             className="block w-full pl-10 pr-3 py-3 border border-gray-200 rounded-xl leading-5 bg-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-primary focus:border-transparent transition-all shadow-sm hover:shadow-md"
             value={searchTerm}
             onChange={(e) => setSearchTerm(e.target.value)}
@@ -92,7 +97,11 @@ const ClubsDirectory = () => {
       {/* Grid */}
       <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
         {filteredClubs.map((club) => (
-          <GlassCard key={club.id} className="group hover:scale-[1.02] transition-all duration-300 flex flex-col items-center text-center p-6 border-transparent hover:border-primary/20 bg-white/60">
+          <GlassCard 
+            key={club.id} 
+            className="group hover:scale-[1.02] transition-all duration-300 flex flex-col items-center text-center p-6 border-transparent hover:border-primary/20 bg-white/60 cursor-pointer"
+            onClick={() => setSelectedClub(club)}
+          >
             <div className="relative mb-4">
                 <div className="w-24 h-24 rounded-full overflow-hidden border-4 border-white shadow-lg relative z-10">
                     <img 
@@ -119,15 +128,20 @@ const ClubsDirectory = () => {
                  <div className="flex items-center justify-center gap-2 text-sm text-gray-500 bg-gray-50 py-2 rounded-lg">
                     <Users size={16} />
                     <span className="font-semibold text-gray-900">{club.members}</span>
-                    <span>members</span>
+                    <span>{t('clubs.card.members')}</span>
                 </div>
-                <Button variant="outline" className="w-full py-2 text-sm">
-                    Join Club
+                <Button variant="outline" className="w-full py-2 text-sm hover:bg-primary hover:text-white transition-colors">
+                    {t('clubs.card.viewDetails')}
                 </Button>
             </div>
           </GlassCard>
         ))}
       </div>
+
+      {/* Club Detail Overlay */}
+      {selectedClub && (
+        <ClubDetail club={selectedClub} onClose={() => setSelectedClub(null)} />
+      )}
     </div>
   );
 };

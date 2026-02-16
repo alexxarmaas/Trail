@@ -7,7 +7,11 @@ export const LanguageProvider = ({ children }) => {
   const [language, setLanguage] = useState('es'); // Default to Spanish
 
   const t = (key) => {
-    return TRANSLATIONS[language][key] || key;
+    // 1. Try direct lookup (for flat keys)
+    if (TRANSLATIONS[language][key]) return TRANSLATIONS[language][key];
+    
+    // 2. Try nested lookup (for structured objects)
+    return key.split('.').reduce((acc, part) => acc && acc[part], TRANSLATIONS[language]) || key;
   };
 
   const toggleLanguage = () => {

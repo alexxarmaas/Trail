@@ -155,7 +155,7 @@ const Shops = () => {
             <MapPin size={24} fill={selectedShop?.id === 3 ? "currentColor" : "none"} />
         </button>
 
-        <Button className="absolute bottom-6 left-1/2 -translate-x-1/2 md:hidden bg-white text-gray-900 shadow-xl z-20">
+        <Button className="text-grey-900 absolute bottom-6 left-1/2 -translate-x-1/2 md:hidden shadow-xl z-20 ">
             View Expanded Map
         </Button>
       </div>

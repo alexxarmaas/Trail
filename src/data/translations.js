@@ -1,6 +1,13 @@
 export const TRANSLATIONS = {
   es: {
-    // Navigation
+    // Onboarding
+    onboard: {
+      title: 'Domina la Montaña',
+      subtitle: 'Tu compañero definitivo para trail running.',
+      start: 'Empezar Aventura',
+    },
+    
+    // Navigation (Flat)
     'nav.calendar': 'Calendario',
     'nav.races': 'Carreras',
     'nav.clubs': 'Clubes',
@@ -8,26 +15,57 @@ export const TRANSLATIONS = {
     'nav.shopsAndMaps': 'Tiendas y Mapas',
     'nav.profile': 'Perfil',
     'nav.nextRace': 'Próxima Carrera',
-    
-    // Race Calendar
-    'race.title': 'Calendario de Carreras',
-    'race.subtitle': 'Encuentra tu próximo desafío en las montañas.',
-    'race.filter.all': 'Todas',
-    'race.filter.short': 'Corta',
-    'race.filter.ultra': 'Ultra',
-    'race.elevation': 'Desnivel',
-    'race.distance': 'Distancia',
-    'race.register': 'Ver Detalles',
-    
-    // Race Detail
-    'race.detail.elevation': 'Desnivel',
-    'race.detail.distance': 'Distancia',
-    'race.detail.startTime': 'Hora de Inicio',
-    'race.detail.checkpoints': 'Puntos de Control',
-    'race.detail.profile': 'Perfil de Elevación',
-    'race.detail.mandatoryGear': 'Material Obligatorio',
-    'race.detail.about': 'Sobre el Recorrido',
-    'race.detail.registration': 'Inscribirse Ahora',
+      
+    // Race (Nested)
+    race: {
+        title: 'Calendario de Carreras',
+        subtitle: 'Encuentra tu próximo desafío en las montañas.',
+        filter: {
+            all: 'Todas',
+            short: 'Cortas',
+            ultra: 'Ultra',
+        },
+        register: 'Ver Detalles',
+        elevation: 'Desnivel',
+        distance: 'Distancia',
+        strategy: {
+            title: 'Estrategia',
+            recommends: 'Recomendado',
+            water: 'Agua Est.',
+            carbs: 'Carbohidratos',
+            time: 'Tiempo Est.',
+            explanation: 'Basado en la dificultad del recorrido (Distancia + Desnivel).',
+        },
+        detail: {
+            elevation: 'Desnivel',
+            distance: 'Distancia',
+            startTime: 'Hora de Inicio',
+            checkpoints: 'Puntos de Control',
+            profile: 'Perfil de Elevación',
+            map: 'Mapa Interactivo',
+            profileLegend: 'Altitud (m) vs Distancia (km)',
+            mandatoryGear: 'Material Obligatorio',
+            about: 'Sobre el Recorrido',
+            registration: 'Inscribirse Ahora',
+            downloadGpx: 'Descargar GPX',
+            infoTab: 'Info',
+            closesIn: 'Cierre de inscripciones en',
+            weather: {
+                title: 'El Tiempo en Carrera',
+                temp: 'Temp',
+                wind: 'Viento',
+                conditions: 'Condiciones',
+                humidity: 'Humedad',
+            },
+            countdown: {
+                title: 'La carrera empieza en',
+                days: 'Días',
+                hours: 'Horas',
+                mins: 'Mins',
+            },
+            similar: 'También te podría gustar',
+        }
+    },
 
     // Shops Section
     'shops.title': 'Tiendas Locales',
@@ -37,6 +75,31 @@ export const TRANSLATIONS = {
     'shops.brands': 'Marcas Destacadas',
     'shops.storeInfo': 'Información',
     
+    // Clubs
+    clubs: {
+        directory: {
+            title: 'Clubes de Running',
+            subtitle: 'Conecta con comunidades locales y entrena en grupo.',
+            searchPlaceholder: 'Buscar clubes por nombre o ubicación...',
+        },
+        card: {
+            members: 'miembros',
+            viewDetails: 'Ver Detalles',
+        },
+        detail: {
+            verified: 'Club Verificado',
+            members: 'Miembros',
+            avgDist: 'Dist. Media',
+            avgElev: 'Desnivel Medio',
+            meetups: 'Salidas Semanales',
+            about: 'Sobre Nosotros',
+            upcomingRuns: 'Próximas Salidas',
+            viewAll: 'Ver Todas',
+            runners: 'corredores',
+            join: 'Unirse al Club',
+        }
+    },
+
     // Profile
     'profile.follow': 'Seguir',
     'profile.message': 'Mensaje',
@@ -60,26 +123,25 @@ export const TRANSLATIONS = {
     'badge.verticalBeast': 'Bestia Vertical',
     'badge.marathoner': 'Maratoniano',
     'badge.dataNerd': 'Nerd de Datos',
+    
+    // Safety
+    safety: {
+        sos: 'SOS',
+        sending: 'ENVIANDO...',
+    },
+    pro: {
+        badge: 'Summit PRO',
+    }
 
   },
   en: {
     // Onboarding
-    'onboard.title': 'Domina la Montaña',
-    'onboard.subtitle': 'Tu compañero definitivo para trail running.',
-    'onboard.start': 'Empezar Aventura',
+    onboard: {
+      title: 'Master the Mountain',
+      subtitle: 'Your ultimate companion for trail running.',
+      start: 'Start Adventure',
+    },
     
-    // Strategy
-    'strategy.tab': 'Estrategia',
-    'strategy.water': 'Agua Est.',
-    'strategy.carbs': 'Carbohidratos',
-    'strategy.time': 'Tiempo Est.',
-    'strategy.recommends': 'Recomendado',
-    
-    // Safety & Pro
-    'safety.sos': 'SOS',
-    'safety.sending': 'ENVIANDO...',
-    'pro.badge': 'Summit PRO',
-
     // Navigation
     'nav.calendar': 'Calendar',
     'nav.races': 'Races',
@@ -88,26 +150,57 @@ export const TRANSLATIONS = {
     'nav.shopsAndMaps': 'Shops & Maps',
     'nav.profile': 'Profile',
     'nav.nextRace': 'Next Race',
-      
-    // Race Calendar
-    'race.title': 'Race Calendar',
-    'race.subtitle': 'Find your next challenge in the mountains.',
-    'race.filter.all': 'All',
-    'race.filter.short': 'Short',
-    'race.filter.ultra': 'Ultra',
-    'race.elevation': 'Elevation',
-    'race.distance': 'Distance',
-    'race.register': 'View Details',
 
-    // Race Detail
-    'race.detail.elevation': 'Elevation',
-    'race.detail.distance': 'Distance',
-    'race.detail.startTime': 'Start Time',
-    'race.detail.checkpoints': 'Checkpoints',
-    'race.detail.profile': 'Elevation Profile',
-    'race.detail.mandatoryGear': 'Mandatory Gear',
-    'race.detail.about': 'About the Course',
-    'race.detail.registration': 'Register Now',
+    // Race (Nested)
+    race: {
+        title: 'Race Calendar',
+        subtitle: 'Find your next challenge in the mountains.',
+        filter: {
+            all: 'All',
+            short: 'Short',
+            ultra: 'Ultra',
+        },
+        register: 'View Details',
+        elevation: 'Elevation',
+        distance: 'Distance',
+        strategy: {
+            title: 'Strategy',
+            recommends: 'Recommends',
+            water: 'Est. Water',
+            carbs: 'Est. Carbs',
+            time: 'Est. Time',
+            explanation: 'Based on course difficulty (Distance + Elevation Gain).',
+        },
+        detail: {
+            elevation: 'Elevation',
+            distance: 'Distance',
+            startTime: 'Start Time',
+            checkpoints: 'Checkpoints',
+            profile: 'Elevation Profile',
+            map: 'Interactive Map',
+            profileLegend: 'Elevation (m) vs Distance (km)',
+            mandatoryGear: 'Mandatory Gear',
+            about: 'About the Course',
+            registration: 'Register Now',
+            downloadGpx: 'Download GPX',
+            infoTab: 'Info',
+            closesIn: 'Registration closes in',
+            weather: {
+                title: 'Race Day Weather',
+                temp: 'Temp',
+                wind: 'Wind',
+                conditions: 'Conditions',
+                humidity: 'Humidity',
+            },
+            countdown: {
+                title: 'Race Starts In',
+                days: 'Days',
+                hours: 'Hours',
+                mins: 'Mins',
+            },
+            similar: 'You might also like',
+        }
+    },
     
     // Shops
     'shops.title': 'Local Shops',
@@ -116,6 +209,31 @@ export const TRANSLATIONS = {
     'shops.directions': 'Get Directions',
     'shops.brands': 'Featured Brands',
     'shops.storeInfo': 'Store Info',
+
+    // Clubs
+    clubs: {
+        directory: {
+            title: 'Running Clubs',
+            subtitle: 'Connect with local communities and train together.',
+            searchPlaceholder: 'Search clubs by name or location...',
+        },
+        card: {
+            members: 'members',
+            viewDetails: 'View Details',
+        },
+        detail: {
+            verified: 'Verified Club',
+            members: 'Members',
+            avgDist: 'Avg Dist',
+            avgElev: 'Avg Elev',
+            meetups: 'Weekly Meetups',
+            about: 'About Us',
+            upcomingRuns: 'Upcoming Runs',
+            viewAll: 'View All',
+            runners: 'runners',
+            join: 'Join Club',
+        }
+    },
 
     // Profile
     'profile.follow': 'Follow',
@@ -140,22 +258,14 @@ export const TRANSLATIONS = {
     'badge.verticalBeast': 'Vertical Beast',
     'badge.marathoner': 'Marathoner',
     'badge.dataNerd': 'Data Nerd',
-    
-    // Onboarding
-    'onboard.title': 'Master the Mountain',
-    'onboard.subtitle': 'Your ultimate companion for trail running.',
-    'onboard.start': 'Start Adventure',
-    
-    // Strategy
-    'strategy.tab': 'Strategy',
-    'strategy.water': 'Est. Water',
-    'strategy.carbs': 'Est. Carbs',
-    'strategy.time': 'Est. Time',
-    'strategy.recommends': 'Recommends',
-    
-    // Safety & Pro
-    'safety.sos': 'SOS',
-    'safety.sending': 'SENDING...',
-    'pro.badge': 'Summit PRO',
+
+    // Safety
+    safety: {
+        sos: 'SOS',
+        sending: 'SENDING...',
+    },
+    pro: {
+        badge: 'Summit PRO',
+    }
   }
 };

@@ -15,8 +15,14 @@ const RACES = [
     elevation: '+6600m',
     elevVal: 6600,
     location: 'Bagà, Spain',
-    image: 'https://images.unsplash.com/photo-1542663914-7264879659e9?auto=format&fit=crop&q=80&w=600',
+    image: 'https://images.unsplash.com/photo-1551632811-561732d1e306?auto=format&fit=crop&q=80&w=800',
     type: 'ultra',
+    courses: [
+      { name: '100K', distance: '100km', distVal: 100, elevation: '+6600m', elevVal: 6600 },
+      { name: '42K', distance: '42km', distVal: 42, elevation: '+2800m', elevVal: 2800 },
+      { name: '21K', distance: '21km', distVal: 21, elevation: '+1500m', elevVal: 1500 },
+      { name: 'vertical', distance: '5km', distVal: 5, elevation: '+1000m', elevVal: 1000 },
+    ]
   },
   {
     id: 2,
@@ -27,7 +33,7 @@ const RACES = [
     elevation: '+2736m',
     elevVal: 2736,
     location: 'Zegama, Spain',
-    image: 'https://images.unsplash.com/photo-1541819660-f47055734567?auto=format&fit=crop&q=80&w=600',
+    image: 'https://images.unsplash.com/photo-1594882645126-14020914d58d?auto=format&fit=crop&q=80&w=800',
     type: 'marathon',
   },
   {
@@ -39,7 +45,7 @@ const RACES = [
     elevation: '+4735m',
     elevVal: 4735,
     location: 'La Palma, Spain',
-    image: 'https://images.unsplash.com/photo-1486749969622-4467c6999b82?auto=format&fit=crop&q=80&w=600',
+    image: 'https://images.unsplash.com/photo-1541280910158-c4e14f9c94a3?auto=format&fit=crop&q=80&w=800',
     type: 'ultra',
   },
   {
@@ -51,7 +57,7 @@ const RACES = [
     elevation: '+1750m',
     elevVal: 1750,
     location: 'Canazei, Italy',
-    image: 'https://images.unsplash.com/photo-1522888147772-74d32a493a7d?auto=format&fit=crop&q=80&w=600',
+    image: 'https://images.unsplash.com/photo-1464822759023-fed622ff2c3b?auto=format&fit=crop&q=80&w=800',
     type: 'short',
   },
   {
@@ -63,7 +69,7 @@ const RACES = [
     elevation: '+10000m',
     elevVal: 10000,
     location: 'Chamonix, France',
-    image: 'https://images.unsplash.com/photo-1517457373958-b7bdd4587205?auto=format&fit=crop&q=80&w=600',
+    image: 'https://images.unsplash.com/photo-1533130061792-64b345e4a833?auto=format&fit=crop&q=80&w=800',
     type: 'ultra',
   },
   {
@@ -75,8 +81,20 @@ const RACES = [
     elevation: '+2200m',
     elevVal: 2200,
     location: 'Valais, Switzerland',
-    image: 'https://images.unsplash.com/photo-1551632811-561732d1e306?auto=format&fit=crop&q=80&w=600',
+    image: 'https://images.unsplash.com/photo-1526506118085-60ce8714f8c5?auto=format&fit=crop&q=80&w=800',
     type: 'short',
+  },
+  {
+    id: 7,
+    name: 'Pilancones Tunte Trail',
+    date: 'Jan 17, 2026',
+    distance: '34km',
+    distVal: 34,
+    elevation: '+1900m',
+    elevVal: 1900,
+    location: 'San Bartolomé de Tirajana, Spain',
+    image: 'https://images.unsplash.com/photo-1502126324834-38f8e02d7160?auto=format&fit=crop&q=80&w=800',
+    type: 'marathon',
   },
 ];
 
@@ -171,7 +189,25 @@ const RaceCalendar = () => {
                         </div>
                         <div>
                             <p className="text-xs text-gray-500 font-semibold uppercase">{t('race.distance')}</p>
-                            <p className="font-bold text-gray-900">{race.distance}</p>
+                            {race.courses && race.courses.length > 0 ? (
+                                <div className="flex flex-wrap gap-1 mt-1">
+                                    {race.courses.map(course => {
+                                        const colorClass = course.distVal < 21 
+                                            ? 'bg-green-100 text-green-700 border-green-200'
+                                            : course.distVal <= 42 
+                                                ? 'bg-orange-100 text-orange-700 border-orange-200' 
+                                                : 'bg-purple-100 text-purple-700 border-purple-200';
+                                        
+                                        return (
+                                            <span key={course.name} className={`text-[10px] px-1.5 py-0.5 rounded border ${colorClass} font-bold`}>
+                                                {course.name}
+                                            </span>
+                                        );
+                                    })}
+                                </div>
+                            ) : (
+                                <p className="font-bold text-gray-900">{race.distance}</p>
+                            )}
                         </div>
                     </div>
                 </div>
@@ -182,13 +218,19 @@ const RaceCalendar = () => {
             </div>
           </GlassCard>
           </div>
+          
         ))}
+        
       </div>
     </div>
     
     {/* Detail Overlay */}
     {selectedRace && (
-        <RaceDetail race={selectedRace} onClose={() => setSelectedRace(null)} />
+        <RaceDetail 
+            race={selectedRace} 
+            similarRaces={RACES.filter(r => r.id !== selectedRace.id)}
+            onClose={() => setSelectedRace(null)} 
+        />
     )}
     </>
   );
