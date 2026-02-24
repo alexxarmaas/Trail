@@ -6,6 +6,7 @@ import Badge from '../components/Badge';
 import { useLanguage } from '../context/LanguageContext';
 import { useFavorites } from '../context/FavoritesContext';
 import { useUser } from '../context/UserContext';
+import { useRaces } from '../context/RacesContext';
 
 // Import races data (we'll need to export this from RaceCalendar)
 const RACES = [
@@ -75,11 +76,12 @@ const Dashboard = ({ onNavigate }) => {
   const { t } = useLanguage();
   const { favorites } = useFavorites();
   const { userProfile } = useUser();
+  const { races } = useRaces();
 
   // Get favorited races
   const favoritedRaces = useMemo(() => {
-    return RACES.filter(race => favorites.includes(race.id));
-  }, [favorites]);
+    return races.filter(race => favorites.includes(race.id));
+  }, [favorites, races]);
 
   // Get upcoming favorited races (next 3)
   const upcomingFavorites = useMemo(() => {
@@ -91,14 +93,14 @@ const Dashboard = ({ onNavigate }) => {
   // Recommend races based on user preferences
   const recommendedRaces = useMemo(() => {
     if (!userProfile?.preferredRaceTypes || userProfile.preferredRaceTypes.length === 0) {
-      return RACES.slice(0, 3);
+      return races.slice(0, 3);
     }
     
-    return RACES
+    return races
       .filter(race => userProfile.preferredRaceTypes.includes(race.type))
       .filter(race => !favorites.includes(race.id))
       .slice(0, 3);
-  }, [userProfile, favorites]);
+  }, [userProfile, favorites, races]);
 
   // Calculate days until next race
   const getDaysUntil = (dateStr) => {
@@ -120,7 +122,7 @@ const Dashboard = ({ onNavigate }) => {
       </div>
 
       {/* Quick Stats */}
-      <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
+      <div className="grid grid-cols-2 lg:grid-cols-4 gap-4">
         <GlassCard className="p-4 bg-white/80 dark:bg-gray-900/80 border-gray-100 dark:border-gray-800">
           <div className="flex items-center gap-3">
             <div className="p-2 bg-red-100 dark:bg-red-900/30 rounded-lg">
@@ -151,7 +153,7 @@ const Dashboard = ({ onNavigate }) => {
               <TrendingUp size={20} className="text-blue-600 dark:text-blue-400" />
             </div>
             <div>
-              <p className="text-2xl font-bold text-gray-900 dark:text-white">{RACES.length}</p>
+              <p className="text-2xl font-bold text-gray-900 dark:text-white">{races.length}</p>
               <p className="text-xs text-gray-500 dark:text-gray-400 uppercase font-medium">{t('dashboard.available')}</p>
             </div>
           </div>
@@ -182,7 +184,7 @@ const Dashboard = ({ onNavigate }) => {
               {t('dashboard.viewAll')} <ArrowRight size={16} />
             </button>
           </div>
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+          <div className="grid grid-cols-1 lg:grid-cols-3 gap-4">
             {upcomingFavorites.map((race) => {
               const daysUntil = getDaysUntil(race.date);
               return (
@@ -232,7 +234,7 @@ const Dashboard = ({ onNavigate }) => {
               <p className="text-sm text-gray-500 dark:text-gray-400">{t('dashboard.recommendedSubtitle')}</p>
             </div>
           </div>
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+          <div className="grid grid-cols-1 lg:grid-cols-3 gap-4">
             {recommendedRaces.map((race) => (
               <GlassCard 
                 key={race.id} 

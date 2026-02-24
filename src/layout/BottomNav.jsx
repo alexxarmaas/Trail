@@ -13,7 +13,7 @@ const BottomNav = ({ activeTab, setActiveTab }) => {
   ];
 
   return (
-    <div className="md:hidden fixed bottom-4 left-4 right-4 bg-white/90 dark:bg-gray-900/90 backdrop-blur-lg border border-white/20 dark:border-white/10 shadow-xl rounded-2xl z-50 h-16 flex items-center justify-around px-2 transition-colors duration-300">
+    <div className="nav:hidden fixed bottom-4 left-4 right-4 bg-white/90 dark:bg-gray-900/90 backdrop-blur-lg border border-white/20 dark:border-white/10 shadow-xl rounded-2xl z-50 h-16 flex items-center justify-around px-2 transition-colors duration-300">
       {menuItems.map((item) => {
         const Icon = item.icon;
         const isActive = activeTab === item.id;

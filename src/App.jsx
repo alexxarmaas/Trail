@@ -5,6 +5,7 @@ import { LanguageProvider } from './context/LanguageContext';
 import { UserProvider } from './context/UserContext';
 import { ThemeProvider } from './context/ThemeContext';
 import { FavoritesProvider } from './context/FavoritesContext';
+import { RacesProvider } from './context/RacesContext';
 
 function App() {
   const [showOnboarding, setShowOnboarding] = useState(() => {
@@ -17,11 +18,13 @@ function App() {
       <UserProvider>
         <ThemeProvider>
           <FavoritesProvider>
-            {showOnboarding ? (
-              <Onboarding onStart={() => setShowOnboarding(false)} />
-            ) : (
-              <Layout />
-            )}
+            <RacesProvider>
+              {showOnboarding ? (
+                <Onboarding onStart={() => setShowOnboarding(false)} />
+              ) : (
+                <Layout />
+              )}
+            </RacesProvider>
           </FavoritesProvider>
         </ThemeProvider>
       </UserProvider>

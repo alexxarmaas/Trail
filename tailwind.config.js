@@ -7,6 +7,9 @@ export default {
   darkMode: 'class',
   theme: {
     extend: {
+      screens: {
+        'nav': '1150px',
+      },
       colors: {
         primary: "#2E5C34", // Deep Forest Green
         accent: "#FF7F11",  // Signal Orange

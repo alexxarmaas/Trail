@@ -1,3 +1,4 @@
+/* eslint-disable react-refresh/only-export-components */
 import React, { createContext, useContext, useState, useEffect } from 'react';
 
 const UserContext = createContext();
@@ -10,7 +11,8 @@ export const UserProvider = ({ children }) => {
       weight: 70, // kg
       height: 175, // cm
       age: 30,
-      gender: 'male' // 'male' | 'female'
+      gender: 'male', // 'male' | 'female'
+      role: 'runner' // 'runner' | 'club_admin' | 'shop_owner'
     };
   });
 

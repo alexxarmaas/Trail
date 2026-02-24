@@ -127,7 +127,7 @@ const ClubsDirectory = () => {
             <div className="mt-auto w-full space-y-3">
                  <div className="flex items-center justify-center gap-2 text-sm text-gray-500 bg-gray-50 py-2 rounded-lg">
                     <Users size={16} />
-                    <span className="font-semibold text-gray-900 dark:text-white">{club.members}</span>
+                    <span className="font-semibold text-gray-900">{club.members}</span>
                     <span>{t('clubs.card.members')}</span>
                 </div>
                 <Button variant="outline" className="w-full py-2 text-sm hover:bg-primary hover:text-white transition-colors">

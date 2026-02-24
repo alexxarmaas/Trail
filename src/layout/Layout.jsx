@@ -30,7 +30,7 @@ const Layout = () => {
       <Sidebar activeTab={activeTab} setActiveTab={setActiveTab} />
 
       {/* Main Content Area */}
-      <main className="flex-1 md:ml-64 relative min-h-screen pb-20 md:pb-0">
+      <main className="flex-1 nav:ml-64 relative min-h-screen pb-20 nav:pb-0 w-full overflow-hidden">
         <div className="max-w-7xl mx-auto w-full h-full">
            {renderContent()}
         </div>

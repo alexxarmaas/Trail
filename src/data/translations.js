@@ -92,6 +92,7 @@ export const TRANSLATIONS = {
             infoTab: 'Info',
             closesIn: 'Cierre de inscripciones en',
             weather: {
+                historical: 'Media Histórica',
                 title: 'El Tiempo en Carrera',
                 temp: 'Temp',
                 wind: 'Viento',
@@ -124,14 +125,7 @@ export const TRANSLATIONS = {
             },
             addToCalendar: 'Añadir al Calendario',
             shareCopied: '¡Enlace copiado al portapapeles!',
-            weather: {
-                historical: 'Media Histórica',
-                title: 'El Tiempo en Carrera',
-                temp: 'Temp',
-                wind: 'Viento',
-                conditions: 'Condiciones',
-                humidity: 'Humedad',
-            },
+
         }
     },
 
@@ -202,6 +196,70 @@ export const TRANSLATIONS = {
     },
     pro: {
         badge: 'Summit PRO',
+    },
+    
+    // Roles & Specific Views
+    'profile.role.runner': 'Corredor',
+    'profile.role.club_admin': 'Admin Club',
+    'profile.role.shop_owner': 'Propietario Tienda',
+    'profile.switcher.title': 'Cambiar Perfil',
+    
+    admin: {
+        clubName: 'Club Trail Chamonix',
+        members: 'Miembros',
+        events: 'Eventos Organizados',
+        upcomingEvents: 'Próximos Eventos',
+        manageMembers: 'Gestionar Miembros',
+        createEvent: 'Crear Evento',
+        manageClub: 'Gestionar Club',
+        stats: 'Estadísticas del Club',
+        tabs: {
+            members: 'Miembros',
+            events: 'Eventos'
+        },
+        membersList: {
+            title: 'Directorio de Miembros',
+            roleAdmin: 'Administrador',
+            roleRunner: 'Corredor',
+            roleCoach: 'Entrenador',
+            remove: 'Expulsar',
+            edit: 'Editar'
+        }
+    },
+    
+    shop: {
+        name: 'Trail Store Chamonix',
+        sales: 'Ventas Mensuales',
+        visits: 'Visitas en Tienda',
+        promos: 'Promociones Activas',
+        manageInventory: 'Gestionar Inventario',
+        createPromo: 'Crear Promoción',
+        businessHub: 'Centro de Negocios',
+        inventory: {
+            title: 'Inventario de Productos',
+            inStock: 'En Stock',
+            lowStock: 'Stock Bajo',
+            outOfStock: 'Agotado',
+            shoes: 'Zapatillas Trail',
+            jackets: 'Chaquetas Impermeables',
+            nutrition: 'Geles y Nutrición',
+            hydration: 'Mochilas Hidratación'
+        },
+        promo: {
+            title: 'Campañas Promocionales',
+            active: 'Activas',
+            past: 'Pasadas',
+            usage: 'usos',
+            endsIn: 'Termina en',
+            days: 'días',
+            create: {
+                title: 'Nueva Promoción',
+                name: 'Nombre de la Promoción',
+                discount: 'Descuento (%)',
+                duration: 'Duración (días)',
+                btn: 'Lanzar Promoción'
+            }
+        }
     }
 
   },
@@ -297,6 +355,7 @@ export const TRANSLATIONS = {
             infoTab: 'Info',
             closesIn: 'Registration closes in',
             weather: {
+                historical: 'Historical Avg.',
                 title: 'Race Day Weather',
                 temp: 'Temp',
                 wind: 'Wind',
@@ -329,14 +388,7 @@ export const TRANSLATIONS = {
             },
             addToCalendar: 'Add to Calendar',
             shareCopied: 'Link copied to clipboard!',
-            weather: {
-                historical: 'Historical Avg.',
-                title: 'Race Day Weather',
-                temp: 'Temp',
-                wind: 'Wind',
-                conditions: 'Conditions',
-                humidity: 'Humidity',
-            },
+
         }
     },
     
@@ -407,6 +459,70 @@ export const TRANSLATIONS = {
     },
     pro: {
         badge: 'Summit PRO',
+    },
+    
+    // Roles & Specific Views
+    'profile.role.runner': 'Runner',
+    'profile.role.club_admin': 'Club Admin',
+    'profile.role.shop_owner': 'Shop Owner',
+    'profile.switcher.title': 'Switch Profile',
+    
+    admin: {
+        clubName: 'Chamonix Trail Club',
+        members: 'Members',
+        events: 'Organized Events',
+        upcomingEvents: 'Upcoming Events',
+        manageMembers: 'Manage Members',
+        createEvent: 'Create Event',
+        manageClub: 'Manage Club',
+        stats: 'Club Statistics',
+        tabs: {
+            members: 'Members',
+            events: 'Events'
+        },
+        membersList: {
+            title: 'Member Directory',
+            roleAdmin: 'Administrator',
+            roleRunner: 'Runner',
+            roleCoach: 'Coach',
+            remove: 'Remove',
+            edit: 'Edit'
+        }
+    },
+    
+    shop: {
+        name: 'Chamonix Trail Store',
+        sales: 'Monthly Sales',
+        visits: 'Store Visits',
+        promos: 'Active Promos',
+        manageInventory: 'Manage Inventory',
+        createPromo: 'Create Promo',
+        businessHub: 'Business Hub',
+        inventory: {
+            title: 'Product Inventory',
+            inStock: 'In Stock',
+            lowStock: 'Low Stock',
+            outOfStock: 'Out of Stock',
+            shoes: 'Trail Running Shoes',
+            jackets: 'Waterproof Jackets',
+            nutrition: 'Gels & Nutrition',
+            hydration: 'Hydration Vests'
+        },
+        promo: {
+            title: 'Promotional Campaigns',
+            active: 'Active',
+            past: 'Past',
+            usage: 'uses',
+            endsIn: 'Ends in',
+            days: 'days',
+            create: {
+                title: 'New Promotion',
+                name: 'Promotion Name',
+                discount: 'Discount (%)',
+                duration: 'Duration (days)',
+                btn: 'Launch Promo'
+            }
+        }
     }
   }
 };
