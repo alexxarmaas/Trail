@@ -1,11 +1,14 @@
 import React, { useState, useMemo } from 'react';
-import { ChevronLeft, Calendar, Mountain, Clock, MapPin, Shield, CheckCircle, Heart, Share2, Calculator, Droplets, Zap, Download, CloudSun, Wind, Thermometer, ArrowRight } from 'lucide-react';
+import { ChevronLeft, Calendar, Mountain, Clock, MapPin, Shield, CheckCircle, Heart, Share2, Calculator, Droplets, Zap, Download, CloudSun, Wind, Thermometer, ArrowRight, Loader2 } from 'lucide-react';
 import Button from './Button';
 import Badge from './Badge';
 import GlassCard from './GlassCard';
+import RouteMap from './RouteMap';
 import { useLanguage } from '../context/LanguageContext';
 import { useUser } from '../context/UserContext';
 import { useFavorites } from '../context/FavoritesContext';
+import { AreaChart, Area, XAxis, YAxis, Tooltip, ResponsiveContainer } from 'recharts';
+import { useGpxData } from '../hooks/useGpxData';
 
   // Define Mandatory Gear items with IDs
   const MANDATORY_GEAR = [
@@ -22,6 +25,11 @@ import { useFavorites } from '../context/FavoritesContext';
   const { toggleFavorite, isFavorite } = useFavorites();
   const [activeTab, setActiveTab] = useState('info'); // info, strategy
   const [activeView, setActiveView] = useState('profile'); // profile, map
+
+  // Fetch GPX Data for elevation profile
+  const centerFallback = [45.9237, 6.8694]; // Default Chamonix
+  const distNum = parseFloat(race?.distance) || 34;
+  const { elevationData, metadata, loading: gpxLoading } = useGpxData(centerFallback, distNum);
 
   // Gear Checklist State (Persisted in LocalStorage)
   const [gearState, setGearState] = useState(() => {
@@ -338,64 +346,134 @@ import { useFavorites } from '../context/FavoritesContext';
                 
                 {activeView === 'profile' ? (
                     <>
-                        <div className="h-64 w-full bg-gray-50 dark:bg-gray-900/50 rounded-2xl p-6 border border-gray-100 dark:border-gray-800 relative overflow-hidden flex items-end gap-1 group/graph">
-                            {/* Checkpoints Layer */}
-                            <div className="absolute inset-0 pointer-events-none z-10">
-                                {/* Simulated Checkpoints based on distance */}
-                                {[
-                                    { km: displayRace.distVal * 0.2, type: 'water', icon: Droplets, color: 'text-blue-500 bg-blue-50 dark:bg-blue-900/50', label: 'Aid 1' },
-                                    { km: displayRace.distVal * 0.5, type: 'food', icon: Zap, color: 'text-orange-500 bg-orange-50 dark:bg-orange-900/50', label: 'Aid 2 (Food)' },
-                                    { km: displayRace.distVal * 0.8, type: 'water', icon: Droplets, color: 'text-blue-500 bg-blue-50 dark:bg-blue-900/50', label: 'Aid 3' }
-                                ].map((cp, i) => (
-                                    <div 
-                                        key={i}
-                                        className="absolute bottom-12 -translate-x-1/2 flex flex-col items-center group/point pointer-events-auto cursor-help"
-                                        style={{ left: `${(cp.km / displayRace.distVal) * 100}%` }}
-                                    >
-                                        <div className={`w-6 h-6 rounded-full shadow-sm border border-white dark:border-gray-700 flex items-center justify-center transform transition-transform group-hover/point:scale-125 ${cp.color}`}>
-                                            <cp.icon size={12} />
-                                        </div>
-                                        <div className="absolute bottom-full mb-2 bg-gray-900 dark:bg-black text-white text-[10px] py-1 px-2 rounded opacity-0 group-hover/point:opacity-100 transition-opacity whitespace-nowrap z-20 pointer-events-none">
-                                            <span className="font-bold block">{cp.label}</span>
-                                            {Math.round(cp.km)}km
-                                        </div>
-                                        {/* Dotted Line */}
-                                        <div className="w-px h-12 border-l border-dashed border-gray-300/50 dark:border-gray-600/50 mt-1"></div>
-                                    </div>
-                                ))}
-                            </div>
-
-                            {/* Simulated Graph Bars */}
-                            {[20, 35, 45, 30, 60, 80, 55, 40, 65, 90, 70, 45, 55, 30, 20].map((h, i) => (
-                                <div 
-                                    key={i} 
-                                    className="flex-1 bg-primary/20 dark:bg-primary/30 hover:bg-primary/40 dark:hover:bg-primary/50 transition-colors rounded-t-sm relative group"
-                                    style={{ height: `${h}%` }}
-                                >
-                                     <div className="absolute bottom-full left-1/2 -translate-x-1/2 mb-1 bg-gray-900 dark:bg-black text-white text-[10px] px-1 rounded opacity-0 group-hover:opacity-100 transition-opacity whitespace-nowrap">
-                                        {Math.round((i * (displayRace.distVal / 15)))}km
-                                    </div>
+                        <div className="h-64 w-full bg-gray-50 dark:bg-gray-900/50 rounded-2xl border border-gray-100 dark:border-gray-800 relative overflow-hidden flex items-end gap-1 group/graph px-2 pt-6">
+                            
+                            {gpxLoading ? (
+                                <div className="absolute inset-0 flex items-center justify-center flex-col z-20">
+                                    <Loader2 className="w-8 h-8 text-primary animate-spin mb-2" />
+                                    <span className="text-sm font-medium text-gray-500">Loading Elevation Profile...</span>
                                 </div>
-                            ))}
+                            ) : (
+                                <ResponsiveContainer width="100%" height="100%">
+                                    <AreaChart
+                                        data={elevationData}
+                                        margin={{ top: 10, right: 0, left: 0, bottom: 0 }}
+                                    >
+                                        <defs>
+                                            <linearGradient id="colorElevation" x1="0" y1="0" x2="0" y2="1">
+                                                <stop offset="5%" stopColor="#f97316" stopOpacity={0.4}/>
+                                                <stop offset="95%" stopColor="#f97316" stopOpacity={0}/>
+                                            </linearGradient>
+                                        </defs>
+
+                                        <XAxis 
+                                            dataKey="distance" 
+                                            hide={true} // Hide internal axis line because we add our own below
+                                        />
+                                        <YAxis 
+                                            domain={['dataMin - 100', 'dataMax + 100']} 
+                                            hide={true} 
+                                        />
+                                        
+                                        <Tooltip 
+                                            content={({ active, payload }) => {
+                                                if (active && payload && payload.length) {
+                                                    const point = payload[0].payload;
+                                                    return (
+                                                        <div className="bg-gray-900 dark:bg-black text-white text-xs px-3 py-2 rounded-lg shadow-xl border border-gray-700">
+                                                            <p className="font-bold flex items-center gap-1">
+                                                                <Mountain size={12} className="text-primary"/> 
+                                                                {point.elevation}m
+                                                            </p>
+                                                            <p className="text-gray-400">Dist: {point.distance}km</p>
+                                                        </div>
+                                                    );
+                                                }
+                                                return null;
+                                            }}
+                                            position={{ y: 0 }}
+                                            cursor={{ stroke: '#f97316', strokeWidth: 1, strokeDasharray: '5 5' }}
+                                        />
+                                        
+                                        <Area 
+                                            type="monotone" 
+                                            dataKey="elevation" 
+                                            stroke="#f97316" 
+                                            strokeWidth={3}
+                                            fillOpacity={1} 
+                                            fill="url(#colorElevation)" 
+                                            isAnimationActive={true}
+                                        />
+                                    </AreaChart>
+                                </ResponsiveContainer>
+                            )}
+
+                            {/* Checkpoints Layer (Simulated on top of graph) */}
+                            {!gpxLoading && elevationData.length > 0 && (
+                                <div className="absolute inset-0 pointer-events-none z-10">
+                                    {[
+                                        { offsetRatio: 0.3, type: 'water', icon: Droplets, color: 'text-blue-500 bg-blue-50 dark:bg-blue-900/50', label: 'Aid 1' },
+                                        { offsetRatio: 0.7, type: 'food', icon: Zap, color: 'text-orange-500 bg-orange-50 dark:bg-orange-900/50', label: 'Aid 2 (Food)' },
+                                    ].map((cp, i) => {
+                                        // 1. Find the nearest point in our elevation array that matches this distance ratio
+                                        const targetDist = distNum * cp.offsetRatio;
+                                        // Array is sorted by distance, find closest
+                                        let closestPt = elevationData[0];
+                                        let minDiff = Infinity;
+                                        for(let pt of elevationData) {
+                                            const diff = Math.abs(pt.distance - targetDist);
+                                            if (diff < minDiff) {
+                                                minDiff = diff;
+                                                closestPt = pt;
+                                            }
+                                        }
+                                        
+                                        // 2. The AreaChart fills the parent container. `scaledElevation` is 0-100.
+                                        // We map the scale 0-100 to CSS `bottom: X%`.
+                                        // However, AreaChart scales domain=['dataMin - 100', 'dataMax + 100'].
+                                        // For a slick visual approximation, we map `scaledElevation` (0 to 100) to roughly 10% to 90%
+                                        // height so it visually hovers right above the line.
+                                        const heightPercent = 10 + (closestPt.scaledElevation * 0.80);
+
+                                        return (
+                                            <div 
+                                                key={i}
+                                                className="absolute flex flex-col items-center group/point pointer-events-auto cursor-help"
+                                                style={{ 
+                                                    left: `${cp.offsetRatio * 100}%`, 
+                                                    bottom: `${heightPercent}%`,
+                                                    transform: 'translateX(-50%) translate-y-1/2' // Center the dot, push half up over line
+                                                }}
+                                            >
+                                                <div className={`relative z-10 w-6 h-6 rounded-full shadow-sm border border-white dark:border-gray-700 flex items-center justify-center transform transition-transform group-hover/point:scale-125 ${cp.color}`}>
+                                                    <cp.icon size={12} />
+                                                </div>
+                                                <div className="absolute bottom-full mb-1 bg-gray-900 dark:bg-black text-white text-[10px] py-1 px-2 rounded opacity-0 group-hover/point:opacity-100 transition-opacity whitespace-nowrap z-20 pointer-events-none">
+                                                    <span className="font-bold block">{cp.label}</span>
+                                                    {Math.round(targetDist)}km ({closestPt.elevation}m)
+                                                </div>
+                                                {/* Drop line from marker straight down to axis */}
+                                                <div className="absolute top-6 left-1/2 -ml-[0.5px] w-[1px] h-[1000px] border-l border-dashed border-gray-400 dark:border-gray-600 opacity-50 pointer-events-none"></div>
+                                            </div>
+                                        );
+                                    })}
+                                </div>
+                            )}
+
                              {/* Decorative Line */}
-                             <div className="absolute bottom-0 left-0 right-0 h-1 bg-primary/10"></div>
+                             <div className="absolute bottom-0 left-0 right-0 h-1 bg-primary/10 z-0"></div>
                         </div>
                         {/* Legend */}
                         <div className="flex justify-between items-center mt-2 text-xs text-gray-400 dark:text-gray-500 px-1">
                             <span>0km</span>
-                            <span className="font-medium text-gray-500 dark:text-gray-400">{t('race.detail.profileLegend')}</span>
+                            <span className="font-medium text-gray-500 dark:text-gray-400">
+                                {gpxLoading ? 'Loading...' : (metadata?.name || t('race.detail.profileLegend'))}
+                            </span>
                             <span>{displayRace.distance}</span>
                         </div>
                     </>
                 ) : (
-                    <div className="h-64 w-full bg-gray-100 dark:bg-gray-800 rounded-2xl border border-gray-200 dark:border-gray-700 relative overflow-hidden flex items-center justify-center">
-                        <div className="absolute inset-0 opacity-50 bg-[url('https://upload.wikimedia.org/wikipedia/commons/e/ec/World_map_blank_without_borders.svg')] bg-cover bg-center invert dark:invert-0" />
-                        <div className="z-10 bg-white/80 dark:bg-gray-900/80 backdrop-blur-md p-4 rounded-xl shadow-sm text-center">
-                            <MapPin size={32} className="mx-auto text-primary mb-2" />
-                            <p className="font-bold text-gray-900 dark:text-white">{t('race.detail.map')}</p>
-                            <p className="text-xs text-gray-500 dark:text-gray-400">{t('race.detail.mapPlaceholder.subtitle')}</p>
-                        </div>
-                    </div>
+                    <RouteMap location={displayRace.location} distance={displayRace.distance} />
                 )}
             </div>
 
