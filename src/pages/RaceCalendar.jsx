@@ -1,16 +1,14 @@
-import React, { useState } from 'react';
-import { Calendar, MapPin, Mountain, Heart, Filter } from 'lucide-react';
-import { useNavigate } from 'react-router-dom';
+import React, { useState, useMemo } from 'react';
+import { Calendar, MapPin, Mountain, Heart, Filter, Search, ArrowUpDown, Plus, Megaphone, CheckCircle } from 'lucide-react';
+import { useNavigate, Link } from 'react-router-dom';
 import GlassCard from '../components/GlassCard';
-import Button from '../components/Button';
-import { useLanguage } from '../context/LanguageContext';
 import { useFavorites } from '../context/FavoritesContext';
 import { useRaces } from '../context/RacesContext';
 import SEO from '../components/SEO';
 import FeaturedBadge from '../components/FeaturedBadge';
 import DemoDataNotice from '../components/DemoDataNotice';
 import NewsletterSignup from '../components/NewsletterSignup';
-import { ISLANDS_DATA } from '../data/islands';
+import { ISLANDS_DATA, getIslandName } from '../data/islands';
 
 const RACE_TYPES = [
   { value: 'all', label: 'Todas' },
@@ -19,20 +17,64 @@ const RACE_TYPES = [
   { value: 'short', label: 'Corta' },
 ];
 
+const SORT_OPTIONS = [
+  { value: 'date-asc', label: 'Próximas primero' },
+  { value: 'dist-desc', label: 'Más distancia' },
+  { value: 'elev-desc', label: 'Más desnivel' },
+  { value: 'featured', label: 'Destacadas primero' },
+];
+
+const STATUS_LABEL = {
+  confirmed: { text: '✓ Confirmada', cls: 'bg-green-100 text-green-800 dark:bg-green-900/30 dark:text-green-300' },
+  pending: { text: '⏳ Pendiente', cls: 'bg-amber-100 text-amber-800 dark:bg-amber-900/30 dark:text-amber-300' },
+};
+
 const RaceCalendar = () => {
-  const { t } = useLanguage();
-  const { favorites, toggleFavorite, isFavorite } = useFavorites();
+  const { toggleFavorite, isFavorite } = useFavorites();
   const { races } = useRaces();
   const navigate = useNavigate();
 
   const [typeFilter, setTypeFilter] = useState('all');
   const [islandFilter, setIslandFilter] = useState('all');
+  const [searchTerm, setSearchTerm] = useState('');
+  const [sortBy, setSortBy] = useState('date-asc');
 
-  const filteredRaces = races.filter((race) => {
-    const typeMatch = typeFilter === 'all' || race.type === typeFilter;
-    const islandMatch = islandFilter === 'all' || race.island === islandFilter;
-    return typeMatch && islandMatch;
-  });
+  const filteredRaces = useMemo(() => {
+    let list = races.filter((race) => {
+      const typeMatch = typeFilter === 'all' || race.type === typeFilter;
+      const islandMatch = islandFilter === 'all' || race.island === islandFilter;
+      const q = searchTerm.toLowerCase();
+      const searchMatch =
+        !q ||
+        race.name.toLowerCase().includes(q) ||
+        (race.island && getIslandName(race.island).toLowerCase().includes(q)) ||
+        (race.municipality && race.municipality.toLowerCase().includes(q)) ||
+        (race.location && race.location.toLowerCase().includes(q));
+      return typeMatch && islandMatch && searchMatch;
+    });
+
+    // Sort
+    list = [...list].sort((a, b) => {
+      if (sortBy === 'date-asc') {
+        return new Date(a.date) - new Date(b.date);
+      }
+      if (sortBy === 'dist-desc') {
+        return (b.distVal || 0) - (a.distVal || 0);
+      }
+      if (sortBy === 'elev-desc') {
+        return (b.elevVal || 0) - (a.elevVal || 0);
+      }
+      if (sortBy === 'featured') {
+        return (b.featured ? 1 : 0) - (a.featured ? 1 : 0);
+      }
+      return 0;
+    });
+
+    return list;
+  }, [races, typeFilter, islandFilter, searchTerm, sortBy]);
+
+  // Stats for hero
+  const islandsWithRaces = [...new Set(races.map((r) => r.island))].length;
 
   return (
     <>
@@ -47,25 +89,76 @@ const RaceCalendar = () => {
         <div className="fixed -top-40 -right-40 w-96 h-96 bg-primary/10 dark:bg-primary/5 rounded-full blur-3xl -z-10" />
         <div className="fixed top-1/2 -left-40 w-96 h-96 bg-amber-500/10 dark:bg-amber-500/5 rounded-full blur-3xl -z-10" />
 
-        {/* Header */}
-        <div className="flex flex-col md:flex-row md:items-center justify-between gap-4">
-          <div>
-            <h1 className="text-3xl font-bold text-gray-900 dark:text-white tracking-tight">
-              🏔️ Carreras Trail Canarias
-            </h1>
-            <p className="text-gray-500 dark:text-gray-400 mt-1">
-              Calendario de carreras de montaña en las Islas Canarias
-            </p>
+        {/* HERO BLOCK */}
+        <div className="rounded-3xl bg-gradient-to-br from-primary to-green-800 p-6 md:p-8 text-white shadow-2xl shadow-primary/20 relative overflow-hidden">
+          <div className="absolute inset-0 opacity-10">
+            <div className="absolute top-0 right-0 w-64 h-64 bg-white rounded-full -translate-y-1/2 translate-x-1/3" />
+            <div className="absolute bottom-0 left-0 w-48 h-48 bg-white rounded-full translate-y-1/2 -translate-x-1/3" />
+          </div>
+          <div className="relative z-10 flex flex-col md:flex-row md:items-center justify-between gap-6">
+            <div>
+              <h1 className="text-3xl md:text-4xl font-bold tracking-tight mb-2">
+                Calendario Trail Canarias
+              </h1>
+              <p className="text-white/80 text-base md:text-lg max-w-xl">
+                Carreras, clubes y tiendas de trail running en las Islas Canarias.
+              </p>
+              {/* Mini stats */}
+              <div className="flex gap-4 mt-4 flex-wrap">
+                <div className="flex items-center gap-2 bg-white/15 backdrop-blur-sm rounded-xl px-3 py-1.5">
+                  <Mountain size={16} />
+                  <span className="font-bold">{races.length}</span>
+                  <span className="text-white/75 text-sm">carreras</span>
+                </div>
+                <div className="flex items-center gap-2 bg-white/15 backdrop-blur-sm rounded-xl px-3 py-1.5">
+                  <MapPin size={16} />
+                  <span className="font-bold">{islandsWithRaces}</span>
+                  <span className="text-white/75 text-sm">islas</span>
+                </div>
+              </div>
+            </div>
+            <div className="flex flex-col sm:flex-row gap-3 shrink-0">
+              <Link
+                to="/publica-tu-carrera"
+                className="flex items-center gap-2 px-5 py-2.5 rounded-xl bg-white text-primary font-bold hover:bg-white/90 transition-colors shadow-lg"
+              >
+                <Plus size={18} />
+                Publica tu carrera
+              </Link>
+              <Link
+                to="/anunciate"
+                className="flex items-center gap-2 px-5 py-2.5 rounded-xl border border-white/30 text-white font-semibold hover:bg-white/10 transition-colors"
+              >
+                <Megaphone size={18} />
+                Anúnciate
+              </Link>
+            </div>
+          </div>
+        </div>
+
+        {/* Filters + Search */}
+        <div className="flex flex-col lg:flex-row lg:items-center justify-between gap-3">
+          {/* Search */}
+          <div className="relative w-full lg:w-80">
+            <Search size={16} className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400" />
+            <input
+              type="text"
+              value={searchTerm}
+              onChange={(e) => setSearchTerm(e.target.value)}
+              placeholder="Buscar carrera, isla o municipio..."
+              className="w-full pl-9 pr-4 py-2.5 rounded-xl border border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-900 text-gray-900 dark:text-white text-sm focus:outline-none focus:ring-2 focus:ring-primary"
+              aria-label="Buscar carrera"
+            />
           </div>
 
-          {/* Filters */}
-          <div className="flex flex-wrap gap-2">
+          <div className="flex flex-wrap gap-2 items-center">
             {/* Island filter */}
             <div className="flex items-center gap-1">
-              <Filter size={14} className="text-gray-400" />
+              <Filter size={14} className="text-gray-400 shrink-0" />
               <select
                 value={islandFilter}
                 onChange={(e) => setIslandFilter(e.target.value)}
+                aria-label="Filtrar por isla"
                 className="text-sm border border-gray-200 dark:border-gray-700 rounded-lg px-3 py-1.5 bg-white dark:bg-gray-800 text-gray-700 dark:text-gray-300 focus:outline-none focus:ring-2 focus:ring-primary"
               >
                 <option value="all">Todas las islas</option>
@@ -93,114 +186,143 @@ const RaceCalendar = () => {
                 </button>
               ))}
             </div>
+
+            {/* Sort */}
+            <div className="flex items-center gap-1">
+              <ArrowUpDown size={14} className="text-gray-400 shrink-0" />
+              <select
+                value={sortBy}
+                onChange={(e) => setSortBy(e.target.value)}
+                aria-label="Ordenar carreras"
+                className="text-sm border border-gray-200 dark:border-gray-700 rounded-lg px-3 py-1.5 bg-white dark:bg-gray-800 text-gray-700 dark:text-gray-300 focus:outline-none focus:ring-2 focus:ring-primary"
+              >
+                {SORT_OPTIONS.map((o) => (
+                  <option key={o.value} value={o.value}>{o.label}</option>
+                ))}
+              </select>
+            </div>
           </div>
         </div>
 
         {/* Grid */}
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-          {filteredRaces.map((race) => (
-            <div key={race.id} className="cursor-pointer relative">
-              <GlassCard
-                className="group hover:-translate-y-1 transition-transform duration-300 p-0 overflow-hidden border-0 bg-white/40 dark:bg-gray-900/40 hover:bg-white/60 dark:hover:bg-gray-800/60"
+          {filteredRaces.map((race) => {
+            const islandName = getIslandName(race.island);
+            const statusInfo = STATUS_LABEL[race.status] || STATUS_LABEL.pending;
+
+            return (
+              <div
+                key={race.id}
+                className="cursor-pointer relative"
                 onClick={() => navigate(`/carreras/${race.slug}`)}
               >
-                {/* Image Header */}
-                <div className="h-48 relative overflow-hidden">
-                  <div className="absolute inset-0 bg-gradient-to-t from-black/60 to-transparent z-10" />
-                  <img
-                    src={race.image}
-                    alt={race.name}
-                    className="w-full h-full object-cover transform group-hover:scale-110 transition-transform duration-500"
-                  />
-
-                  {/* Badges */}
-                  <div className="absolute top-3 left-3 z-20 flex gap-2">
-                    {race.featured && <FeaturedBadge />}
-                    {race.isPublished && (
-                      <span className="bg-primary/90 text-white text-[10px] font-bold px-2 py-0.5 rounded-full uppercase tracking-wide">
-                        Nueva
-                      </span>
-                    )}
-                  </div>
-
-                  {/* Title */}
-                  <div className="absolute bottom-4 left-4 z-20 text-white">
-                    <h3 className="text-xl font-bold leading-tight">{race.name}</h3>
-                    <div className="flex items-center gap-1 text-sm text-gray-200 mt-1">
-                      <MapPin size={14} />
-                      <span>{race.location}</span>
-                    </div>
-                  </div>
-
-                  {/* Favorite + Date */}
-                  <div className="absolute top-4 right-4 z-20 flex gap-2">
-                    <button
-                      onClick={(e) => {
-                        e.stopPropagation();
-                        toggleFavorite(race.id);
-                      }}
-                      className="p-2 bg-white/20 backdrop-blur-md rounded-full text-white hover:bg-white/30 transition-all hover:scale-110"
-                      aria-label="Toggle favorite"
-                    >
-                      <Heart size={18} fill={isFavorite(race.id) ? 'currentColor' : 'none'} />
-                    </button>
-                    <span className="bg-white/20 backdrop-blur-md text-white border border-white/30 px-3 py-1 rounded-full text-xs font-bold">
-                      {race.dateLabel || race.date}
-                    </span>
-                  </div>
-                </div>
-
-                {/* Content */}
-                <div className="p-5">
-                  {race.demo && (
-                    <DemoDataNotice
-                      message="Datos pendientes de verificación oficial."
-                      className="mb-3 text-xs py-2"
+                <GlassCard className="group hover:-translate-y-1 transition-transform duration-300 p-0 overflow-hidden border-0 bg-white/40 dark:bg-gray-900/40 hover:bg-white/60 dark:hover:bg-gray-800/60 h-full flex flex-col">
+                  {/* Image Header */}
+                  <div className="h-48 relative overflow-hidden shrink-0">
+                    <div className="absolute inset-0 bg-gradient-to-t from-black/60 to-transparent z-10" />
+                    <img
+                      src={race.image}
+                      alt={race.name}
+                      className="w-full h-full object-cover transform group-hover:scale-110 transition-transform duration-500"
+                      loading="lazy"
                     />
-                  )}
 
-                  <div className="flex items-center justify-between mb-4">
-                    <div className="flex items-center gap-2">
-                      <div className="p-2 bg-orange-100/80 dark:bg-orange-900/30 text-orange-600 dark:text-orange-400 rounded-lg">
-                        <Mountain size={18} />
-                      </div>
-                      <div>
-                        <p className="text-xs text-gray-500 dark:text-gray-400 font-semibold uppercase">
-                          Desnivel
-                        </p>
-                        <p className="font-bold text-gray-900 dark:text-white">
-                          {race.elevationLabel || race.elevation}
-                        </p>
+                    {/* Badges top-left */}
+                    <div className="absolute top-3 left-3 z-20 flex gap-2 flex-wrap">
+                      {race.featured && <FeaturedBadge />}
+                      {race.isPublished && (
+                        <span className="bg-primary/90 text-white text-[10px] font-bold px-2 py-0.5 rounded-full uppercase tracking-wide">
+                          Nueva
+                        </span>
+                      )}
+                    </div>
+
+                    {/* Island name top-right */}
+                    <div className="absolute top-3 right-3 z-20">
+                      <span className="bg-black/40 backdrop-blur-sm text-white text-[10px] font-semibold px-2 py-1 rounded-full">
+                        {islandName}
+                      </span>
+                    </div>
+
+                    {/* Title */}
+                    <div className="absolute bottom-4 left-4 z-20 text-white">
+                      <h2 className="text-xl font-bold leading-tight">{race.name}</h2>
+                      <div className="flex items-center gap-1 text-sm text-gray-200 mt-1">
+                        <MapPin size={14} />
+                        <span>{race.municipality || race.location}</span>
                       </div>
                     </div>
-                    <div className="flex items-center gap-2">
-                      <div className="p-2 bg-green-100/80 dark:bg-green-900/30 text-green-700 dark:text-green-400 rounded-lg">
-                        <Calendar size={18} />
-                      </div>
-                      <div>
-                        <p className="text-xs text-gray-500 dark:text-gray-400 font-semibold uppercase">
-                          Distancia
-                        </p>
-                        <p className="font-bold text-gray-900 dark:text-white">
-                          {race.distanceLabel || race.distance}
-                        </p>
-                      </div>
+
+                    {/* Favorite + Date */}
+                    <div className="absolute bottom-4 right-4 z-20 flex flex-col items-end gap-2">
+                      <button
+                        onClick={(e) => {
+                          e.stopPropagation();
+                          toggleFavorite(race.id);
+                        }}
+                        aria-label={isFavorite(race.id) ? 'Quitar de favoritos' : 'Añadir a favoritos'}
+                        className="p-2 bg-white/20 backdrop-blur-md rounded-full text-white hover:bg-white/30 transition-all hover:scale-110"
+                      >
+                        <Heart size={18} fill={isFavorite(race.id) ? 'currentColor' : 'none'} />
+                      </button>
+                      <span className="bg-white/20 backdrop-blur-md text-white border border-white/30 px-2 py-0.5 rounded-full text-[10px] font-bold">
+                        {race.dateLabel || race.date}
+                      </span>
                     </div>
                   </div>
 
-                  <Button variant="primary" className="w-full pointer-events-none">
-                    Ver detalles
-                  </Button>
-                </div>
-              </GlassCard>
-            </div>
-          ))}
+                  {/* Content */}
+                  <div className="p-4 flex flex-col flex-1">
+                    {race.demo && (
+                      <DemoDataNotice
+                        message="Datos pendientes de verificación."
+                        className="mb-3 text-xs py-1.5"
+                      />
+                    )}
+
+                    <div className="flex items-center gap-3 mb-3">
+                      <div className="flex items-center gap-1.5 flex-1">
+                        <Mountain size={16} className="text-orange-500 shrink-0" />
+                        <span className="text-sm font-bold text-gray-900 dark:text-white">
+                          {race.elevationLabel || race.elevation || 'N/D'}
+                        </span>
+                      </div>
+                      <div className="flex items-center gap-1.5">
+                        <Calendar size={16} className="text-green-600 shrink-0" />
+                        <span className="text-sm font-bold text-gray-900 dark:text-white">
+                          {race.distanceLabel || race.distance || 'N/D'}
+                        </span>
+                      </div>
+                    </div>
+
+                    {/* Status + registration badges */}
+                    <div className="flex gap-2 flex-wrap mt-auto pt-2">
+                      <span className={`text-[10px] font-bold px-2 py-0.5 rounded-full ${statusInfo.cls}`}>
+                        {statusInfo.text}
+                      </span>
+                      {race.registrationUrl && (
+                        <span className="text-[10px] font-bold px-2 py-0.5 rounded-full bg-blue-100 text-blue-800 dark:bg-blue-900/30 dark:text-blue-300 flex items-center gap-1">
+                          <CheckCircle size={10} /> Inscripción disponible
+                        </span>
+                      )}
+                    </div>
+                  </div>
+                </GlassCard>
+              </div>
+            );
+          })}
         </div>
 
         {filteredRaces.length === 0 && (
           <div className="text-center py-16 text-gray-500 dark:text-gray-400">
             <Mountain size={48} className="mx-auto mb-4 opacity-30" />
             <p className="font-medium">No hay carreras para este filtro.</p>
+            <button
+              onClick={() => { setSearchTerm(''); setTypeFilter('all'); setIslandFilter('all'); }}
+              className="mt-3 text-sm text-primary hover:underline"
+            >
+              Borrar filtros
+            </button>
           </div>
         )}
 

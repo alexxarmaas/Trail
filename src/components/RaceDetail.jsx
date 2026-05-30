@@ -1,5 +1,5 @@
 import React, { useState, useMemo } from 'react';
-import { ChevronLeft, Calendar, Mountain, Clock, MapPin, Shield, CheckCircle, Heart, Share2, Calculator, Droplets, Zap, Download, CloudSun, Wind, Thermometer, ArrowRight, Loader2, ExternalLink } from 'lucide-react';
+import { ChevronLeft, Calendar, Mountain, Clock, MapPin, Shield, CheckCircle, Heart, Share2, Calculator, Droplets, Zap, Download, CloudSun, Wind, Thermometer, ArrowRight, Loader2, ExternalLink, Globe } from 'lucide-react';
 import Button from './Button';
 import Badge from './Badge';
 import GlassCard from './GlassCard';
@@ -13,6 +13,7 @@ import AffiliateGearBlock from './AffiliateGearBlock';
 import BusinessCTA from './BusinessCTA';
 import DemoDataNotice from './DemoDataNotice';
 import { trackEvent } from '../utils/trackEvent';
+import { Link } from 'react-router-dom';
 
   // Define Mandatory Gear items with IDs
   const MANDATORY_GEAR = [
@@ -61,10 +62,25 @@ import { trackEvent } from '../utils/trackEvent';
     return {
       ...race,
       ...selectedCourse,
-      name: race.name, // Keep the original race name (e.g. "Ultra Pirineu")
-      courseName: selectedCourse.name // Store course name separately if needed
+      name: race.name,
+      courseName: selectedCourse.name
     };
   }, [race, selectedCourse]);
+
+  // Derived safe field helpers — never show undefined
+  const raceDistance = displayRace.distanceLabel || displayRace.distance || 'Distancia pendiente';
+  const raceElevation = displayRace.elevationLabel || displayRace.elevation || 'Desnivel pendiente';
+  const raceDate = displayRace.dateLabel || displayRace.date || 'Fecha pendiente';
+  const raceLocation = displayRace.location || displayRace.municipality || 'Canarias';
+  const raceStartTime = displayRace.startTime || null;
+  const raceCheckpoints = displayRace.checkpoints ?? null;
+
+  // Real countdown from race.date
+  const countdownDays = useMemo(() => {
+    if (!race.date) return null;
+    const diff = Math.ceil((new Date(race.date) - new Date()) / (1000 * 60 * 60 * 24));
+    return diff;
+  }, [race.date]);
 
   // Dynamic Strategy Calculation
   const strategy = useMemo(() => {
@@ -102,33 +118,29 @@ import { trackEvent } from '../utils/trackEvent';
   // Calendar Export
   const downloadIcsFile = () => {
     if (!displayRace) return;
-    
-    // Parse date (Assuming "Oct 2, 2026" format)
-    const raceDate = new Date(displayRace.date);
-    // Set default start time to 06:00
-    raceDate.setHours(6, 0, 0);
-    
-    const formatDate = (date) => {
-        return date.toISOString().replace(/-|:|\.\d+/g, '');
-    };
 
+    const raceDate = new Date(displayRace.date);
+    const startHour = raceStartTime ? parseInt(raceStartTime.split(':')[0]) : 6;
+    const startMin = raceStartTime ? parseInt(raceStartTime.split(':')[1]) : 0;
+    raceDate.setHours(startHour, startMin, 0);
+
+    const formatDate = (date) => date.toISOString().replace(/-|:|\.\d+/g, '');
     const start = formatDate(raceDate);
-    // End time + 12 hours
     const endDate = new Date(raceDate);
-    endDate.setHours(18, 0, 0);
+    endDate.setHours(raceDate.getHours() + 12, 0, 0);
     const end = formatDate(endDate);
 
     const icsContent = [
-        'BEGIN:VCALENDAR',
-        'VERSION:2.0',
-        'BEGIN:VEVENT',
-        `DTSTART:${start}`,
-        `DTEND:${end}`,
-        `SUMMARY:${displayRace.name} - ${displayRace.distance}`,
-        `DESCRIPTION:Race day! ${displayRace.distance} with ${displayRace.elevation} elevation gain.`,
-        `LOCATION:${displayRace.location}`,
-        'END:VEVENT',
-        'END:VCALENDAR'
+      'BEGIN:VCALENDAR',
+      'VERSION:2.0',
+      'BEGIN:VEVENT',
+      `DTSTART:${start}`,
+      `DTEND:${end}`,
+      `SUMMARY:${displayRace.name} - ${raceDistance}`,
+      `DESCRIPTION:${displayRace.name}. ${raceDistance} | ${raceElevation}`,
+      `LOCATION:${raceLocation}`,
+      'END:VEVENT',
+      'END:VCALENDAR'
     ].join('\n');
 
     const blob = new Blob([icsContent], { type: 'text/calendar;charset=utf-8' });
@@ -138,6 +150,7 @@ import { trackEvent } from '../utils/trackEvent';
     document.body.appendChild(link);
     link.click();
     document.body.removeChild(link);
+    trackEvent('add_to_calendar', { raceId: race.id, raceName: race.name });
   };
 
   if (!race) return null;
@@ -168,17 +181,24 @@ import { trackEvent } from '../utils/trackEvent';
             <ChevronLeft size={24} />
           </button>
           <div className="flex gap-3">
-             <button 
-                onClick={() => toggleFavorite(race.id)}
-                className={`p-2 backdrop-blur-md rounded-full transition-colors ${isFavorite(race.id) ? 'bg-red-500/80 text-white' : 'bg-white/20 text-white hover:bg-white/30'}`}
+            <button 
+               onClick={() => toggleFavorite(race.id)}
+               aria-label={isFavorite(race.id) ? 'Quitar de favoritos' : 'Añadir a favoritos'}
+               className={`p-2 backdrop-blur-md rounded-full transition-colors ${isFavorite(race.id) ? 'bg-red-500/80 text-white' : 'bg-white/20 text-white hover:bg-white/30'}`}
               >
                 <Heart size={24} fill={isFavorite(race.id) ? "currentColor" : "none"} />
             </button>
             <button 
+              aria-label="Compartir carrera"
               onClick={() => {
-                const shareText = `Check out ${displayRace.name} - ${displayRace.distance} on ${displayRace.date}! 🏔️`;
-                navigator.clipboard.writeText(shareText);
-                alert(t('race.detail.shareCopied') || 'Link copied to clipboard!');
+                const shareUrl = `${window.location.origin}/carreras/${race.slug}`;
+                trackEvent('share_race', { raceSlug: race.slug });
+                if (navigator.share) {
+                  navigator.share({ title: race.name, url: shareUrl }).catch(() => {});
+                } else {
+                  navigator.clipboard.writeText(shareUrl);
+                  alert('¡Enlace copiado al portapapeles!');
+                }
               }}
               className="p-2 bg-white/20 backdrop-blur-md rounded-full text-white hover:bg-white/30 transition-colors"
             >
@@ -190,20 +210,67 @@ import { trackEvent } from '../utils/trackEvent';
         {/* Title Block */}
         <div className="absolute bottom-6 left-6 right-6 z-20 text-white">
           <Badge variant="accent" className="mb-2 uppercase tracking-wider text-[10px]">
-            {displayRace.type} Series
+            {displayRace.type === 'ultra' ? 'Ultra Trail' : displayRace.type === 'marathon' ? 'Trail Maratón' : 'Trail'}
           </Badge>
           <h1 className="text-4xl font-bold leading-tight mb-2">{displayRace.name}</h1>
           <div className="flex items-center gap-4 text-sm opacity-90">
              <span className="flex items-center gap-1">
                 <Calendar size={16} />
-                {displayRace.date}
+                {raceDate}
              </span>
              <span className="flex items-center gap-1">
                 <MapPin size={16} />
-                {displayRace.location}
+                {raceLocation}
              </span>
           </div>
         </div>
+      </div>
+
+      {/* CTA bar below hero */}
+      <div className="flex flex-wrap gap-2 px-6 py-3 border-b border-gray-100 dark:border-gray-800 bg-white dark:bg-gray-950">
+        {race.registrationUrl && (
+          <a
+            href={race.registrationUrl}
+            target="_blank"
+            rel="noopener noreferrer"
+            onClick={() => trackEvent('registration_click', { raceId: race.id, raceName: race.name })}
+            className="flex items-center gap-1.5 px-4 py-2 rounded-xl bg-primary text-white text-sm font-bold hover:bg-primary/90 transition-colors shadow-lg shadow-primary/20"
+          >
+            <ExternalLink size={14} />
+            Inscribirse
+          </a>
+        )}
+        {race.officialWebsite && (
+          <a
+            href={race.officialWebsite}
+            target="_blank"
+            rel="noopener noreferrer"
+            onClick={() => trackEvent('official_website_click', { raceId: race.id, raceName: race.name })}
+            className="flex items-center gap-1.5 px-4 py-2 rounded-xl border border-gray-200 dark:border-gray-700 text-gray-800 dark:text-white text-sm font-semibold hover:bg-gray-50 dark:hover:bg-gray-800 transition-colors"
+          >
+            <Globe size={14} />
+            Web oficial
+          </a>
+        )}
+        {race.priceFrom && !race.demo && (
+          <span className="flex items-center px-3 py-2 rounded-xl bg-green-50 dark:bg-green-900/20 text-green-800 dark:text-green-300 text-sm font-semibold border border-green-200 dark:border-green-800">
+            Desde {race.priceFrom} €
+          </span>
+        )}
+        {race.status && (
+          <span className={`flex items-center px-3 py-2 rounded-xl text-xs font-bold uppercase tracking-wide border ${
+            race.status === 'confirmed'
+              ? 'bg-green-50 text-green-800 border-green-200 dark:bg-green-900/20 dark:text-green-300 dark:border-green-800'
+              : 'bg-amber-50 text-amber-800 border-amber-200 dark:bg-amber-900/20 dark:text-amber-300 dark:border-amber-800'
+          }`}>
+            {race.status === 'confirmed' ? '✓ Confirmada' : '⏳ Pendiente'}
+          </span>
+        )}
+        {race.demo && (
+          <span className="flex items-center px-3 py-2 rounded-xl text-xs font-bold uppercase tracking-wide bg-amber-50 text-amber-800 border border-amber-200 dark:bg-amber-900/20 dark:text-amber-300 dark:border-amber-800">
+            ⚠ Datos demo
+          </span>
+        )}
       </div>
 
       {/* Tabs */}
@@ -233,23 +300,27 @@ import { trackEvent } from '../utils/trackEvent';
             <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
                  <div className="p-4 bg-green-50 dark:bg-green-900/20 rounded-2xl border border-green-100 dark:border-green-800 flex flex-col items-center text-center">
                     <Mountain className="text-green-600 dark:text-green-400 mb-2" size={24} />
-                    <span className="text-2xl font-bold text-gray-900 dark:text-white">{displayRace.elevation}</span>
+                    <span className="text-2xl font-bold text-gray-900 dark:text-white">{raceElevation}</span>
                     <span className="text-xs text-green-700 dark:text-green-400 font-medium uppercase">{t('race.detail.elevation')}</span>
                  </div>
                  <div className="p-4 bg-orange-50 dark:bg-orange-900/20 rounded-2xl border border-orange-100 dark:border-orange-800 flex flex-col items-center text-center">
                     <MapPin className="text-orange-600 dark:text-orange-400 mb-2" size={24} />
-                    <span className="text-2xl font-bold text-gray-900 dark:text-white">{displayRace.distance}</span>
+                    <span className="text-2xl font-bold text-gray-900 dark:text-white">{raceDistance}</span>
                     <span className="text-xs text-orange-700 dark:text-orange-400 font-medium uppercase">{t('race.detail.distance')}</span>
                  </div>
                   <div className="p-4 bg-blue-50 dark:bg-blue-900/20 rounded-2xl border border-blue-100 dark:border-blue-800 flex flex-col items-center text-center">
                     <Clock className="text-blue-600 dark:text-blue-400 mb-2" size={24} />
-                    <span className="text-2xl font-bold text-gray-900 dark:text-white">06:00</span>
+                    <span className="text-xl font-bold text-gray-900 dark:text-white">{raceStartTime || '—'}</span>
                     <span className="text-xs text-blue-700 dark:text-blue-400 font-medium uppercase">{t('race.detail.startTime')}</span>
+                    {!raceStartTime && <span className="text-[10px] text-gray-400 mt-0.5">Pendiente</span>}
                  </div>
                   <div className="p-4 bg-purple-50 dark:bg-purple-900/20 rounded-2xl border border-purple-100 dark:border-purple-800 flex flex-col items-center text-center">
                     <CheckCircle className="text-purple-600 dark:text-purple-400 mb-2" size={24} />
-                    <span className="text-2xl font-bold text-gray-900 dark:text-white">8</span>
+                    <span className="text-2xl font-bold text-gray-900 dark:text-white">
+                      {raceCheckpoints !== null ? raceCheckpoints : '—'}
+                    </span>
                     <span className="text-xs text-purple-700 dark:text-purple-400 font-medium uppercase">{t('race.detail.checkpoints')}</span>
+                    {raceCheckpoints === null && <span className="text-[10px] text-gray-400 mt-0.5">Pendiente</span>}
                  </div>
             </div>
 
@@ -260,29 +331,19 @@ import { trackEvent } from '../utils/trackEvent';
                     <div className="absolute top-0 right-0 p-4 opacity-10">
                         <CloudSun size={100} className="text-sky-900 dark:text-sky-100" />
                     </div>
-                    
                     <div className="flex justify-between items-start mb-4 z-10">
                         <div>
                             <h3 className="font-bold text-gray-900 dark:text-white">{t('race.detail.weather.title')}</h3>
                             <p className="text-xs text-gray-500 dark:text-gray-400">{t('race.detail.weather.historical')}</p>
                         </div>
                     </div>
-
-                    <div className="flex items-end gap-4 z-10">
-                        <div>
-                            <span className="text-4xl font-bold text-gray-900 dark:text-white">12°</span>
-                            <span className="text-sm text-gray-500 dark:text-gray-400 ml-1">C</span>
-                        </div>
-                        <div className="space-y-1 text-xs font-medium text-gray-600 dark:text-gray-300 mb-1">
-                            <div className="flex items-center gap-1">
-                                <Wind size={12} />
-                                15 km/h NW
-                            </div>
-                            <div className="flex items-center gap-1">
-                                <Droplets size={12} />
-                                45% {t('race.detail.weather.humidity')}
-                            </div>
-                        </div>
+                    <div className="z-10">
+                        <p className="text-gray-700 dark:text-gray-300 font-medium">
+                          Clima pendiente de confirmar
+                        </p>
+                        <p className="text-xs text-gray-500 dark:text-gray-400 mt-1">
+                          Añadiremos previsión cercana a la fecha de carrera.
+                        </p>
                     </div>
                 </div>
 
@@ -292,22 +353,28 @@ import { trackEvent } from '../utils/trackEvent';
                         <Clock size={100} />
                     </div>
                     <h3 className="font-bold mb-4">{t('race.detail.countdown.title')}</h3>
-                    <div className="flex justify-between text-center z-10">
-                        <div>
-                            <div className="text-3xl font-mono font-bold text-primary">142</div>
-                            <div className="text-[10px] uppercase tracking-wider opacity-60">{t('race.detail.countdown.days')}</div>
-                        </div>
-                         <div className="text-2xl font-mono text-gray-600">:</div>
-                         <div>
-                            <div className="text-3xl font-mono font-bold">12</div>
-                            <div className="text-[10px] uppercase tracking-wider opacity-60">{t('race.detail.countdown.hours')}</div>
-                        </div>
-                        <div className="text-2xl font-mono text-gray-600">:</div>
-                         <div>
-                            <div className="text-3xl font-mono font-bold">45</div>
-                            <div className="text-[10px] uppercase tracking-wider opacity-60">{t('race.detail.countdown.mins')}</div>
-                        </div>
-                    </div>
+                    {countdownDays === null ? (
+                      <p className="text-gray-400 text-sm">Fecha pendiente</p>
+                    ) : countdownDays < 0 ? (
+                      <p className="text-amber-400 text-sm font-semibold">Fecha pasada o pendiente de actualizar</p>
+                    ) : (
+                      <div className="flex justify-between text-center z-10">
+                          <div>
+                              <div className="text-3xl font-mono font-bold text-primary">{countdownDays}</div>
+                              <div className="text-[10px] uppercase tracking-wider opacity-60">{t('race.detail.countdown.days')}</div>
+                          </div>
+                          <div className="text-2xl font-mono text-gray-600">días</div>
+                          <div>
+                              <div className="text-3xl font-mono font-bold">{Math.floor((new Date(race.date) - new Date()) / (1000 * 60 * 60) % 24)}</div>
+                              <div className="text-[10px] uppercase tracking-wider opacity-60">{t('race.detail.countdown.hours')}</div>
+                          </div>
+                          <div className="text-2xl font-mono text-gray-600">:</div>
+                          <div>
+                              <div className="text-3xl font-mono font-bold">{Math.floor((new Date(race.date) - new Date()) / (1000 * 60) % 60)}</div>
+                              <div className="text-[10px] uppercase tracking-wider opacity-60">{t('race.detail.countdown.mins')}</div>
+                          </div>
+                      </div>
+                    )}
                 </div>
             </div>
 
@@ -551,8 +618,8 @@ import { trackEvent } from '../utils/trackEvent';
                  <h3 className="text-xl font-bold text-gray-900 dark:text-white mb-4">{t('race.detail.similar')}</h3>
                  <div className="flex gap-4 overflow-x-auto pb-4 snap-x ml-[-1.5rem] px-6 w-[calc(100%+3rem)] md:w-full md:ml-0 md:px-0">
                     {similarRaces.slice(0, 3).map(r => (
-                        <div key={r.id} className="min-w-[280px] snap-center">
-                             <GlassCard className="p-0 overflow-hidden bg-white dark:bg-gray-900 border-gray-100 dark:border-gray-800 hover:border-primary/30 dark:hover:border-primary/30 transition-colors">
+                        <Link key={r.id} to={`/carreras/${r.slug}`} className="min-w-[280px] snap-center block">
+                             <GlassCard className="p-0 overflow-hidden bg-white dark:bg-gray-900 border-gray-100 dark:border-gray-800 hover:border-primary/30 dark:hover:border-primary/30 transition-colors h-full">
                                 <div className="h-32 relative">
                                     <img src={r.image} className="w-full h-full object-cover" alt={r.name} />
                                     <div className="absolute inset-0 bg-black/20" />
@@ -560,15 +627,13 @@ import { trackEvent } from '../utils/trackEvent';
                                 </div>
                                 <div className="p-3 flex justify-between items-center">
                                     <div className="text-xs text-gray-500 dark:text-gray-400">
-                                        <div className="flex items-center gap-1"><Calendar size={12}/> {r.date}</div>
-                                        <div className="flex items-center gap-1 mt-1"><Mountain size={12}/> {r.elevation}</div>
+                                        <div className="flex items-center gap-1"><Calendar size={12}/> {r.dateLabel || r.date}</div>
+                                        <div className="flex items-center gap-1 mt-1"><Mountain size={12}/> {r.elevationLabel || r.elevation || 'N/D'}</div>
                                     </div>
-                                    <button className="p-2 bg-primary/10 text-primary rounded-full hover:bg-primary hover:text-white transition-colors">
-                                        <ArrowRight size={16} />
-                                    </button>
+                                    <ArrowRight size={16} className="text-primary" />
                                 </div>
                              </GlassCard>
-                        </div>
+                        </Link>
                     ))}
                  </div>
             </div>
