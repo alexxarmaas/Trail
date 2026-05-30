@@ -2,19 +2,21 @@ import React from 'react';
 import { useParams, useNavigate, Link } from 'react-router-dom';
 import { ChevronLeft, Mountain, MapPin, Calendar, Users, ShoppingBag } from 'lucide-react';
 import { getIslandBySlug } from '../data/islands';
-import { BASE_RACES } from '../data/races';
+import { useRaces } from '../context/RacesContext';
 import { CLUBS_DATA } from '../data/clubs';
 import { SHOPS_DATA } from '../data/shops';
 import SEO from '../components/SEO';
 import DemoDataNotice from '../components/DemoDataNotice';
 import FeaturedBadge from '../components/FeaturedBadge';
+import { SITE_CONFIG } from '../config/site';
 
 const IslandPage = () => {
   const { island } = useParams();
   const navigate = useNavigate();
   const islandData = getIslandBySlug(island);
+  const { races } = useRaces();
 
-  const races = BASE_RACES.filter((r) => r.island === island);
+  const islandRaces = races.filter((r) => r.island === island);
   const clubs = CLUBS_DATA.filter((c) => c.island === island);
   const shops = SHOPS_DATA.filter((s) => s.island === island);
 
@@ -39,7 +41,7 @@ const IslandPage = () => {
       <SEO
         title={`Trail Running en ${islandData.name} · Carreras, Clubes y Tiendas`}
         description={islandData.seoText}
-        canonical={`https://trailcanarias.com/islas/${island}`}
+        canonical={`${SITE_CONFIG.url}/islas/${island}`}
         ogImage={islandData.image}
       />
 
@@ -79,11 +81,11 @@ const IslandPage = () => {
                 Ver todas →
               </Link>
             </div>
-            {races.length === 0 ? (
+            {islandRaces.length === 0 ? (
               <p className="text-gray-500 text-sm">No hay carreras registradas para esta isla todavía.</p>
             ) : (
               <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-                {races.map((race) => (
+                {islandRaces.map((race) => (
                   <Link
                     key={race.id}
                     to={`/carreras/${race.slug}`}

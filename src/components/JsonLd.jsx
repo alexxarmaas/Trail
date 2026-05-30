@@ -1,8 +1,8 @@
 import { useEffect } from 'react';
+import { SITE_CONFIG } from '../config/site';
 
 /**
  * JsonLd — injects JSON-LD structured data into <head>.
- * Used for SportsEvent schema on race detail pages.
  */
 const JsonLd = ({ data }) => {
   useEffect(() => {
@@ -29,15 +29,20 @@ const JsonLd = ({ data }) => {
 
 /**
  * Build a SportsEvent JSON-LD object from a race.
- * Only populates fields we have data for; avoids asserting demo data as official.
+ * - Internal URL is always the canonical page URL.
+ * - officialWebsite goes into sameAs.
+ * - offers only populated if priceFrom exists and demo === false.
  */
-export function buildSportsEventLd(race, url = '') {
+export function buildSportsEventLd(race) {
   if (!race) return null;
+
+  const pageUrl = `${SITE_CONFIG.url}/carreras/${race.slug}`;
 
   const ld = {
     '@context': 'https://schema.org',
     '@type': 'SportsEvent',
     name: race.name,
+    url: pageUrl,
     startDate: race.date,
     location: {
       '@type': 'Place',
@@ -51,13 +56,29 @@ export function buildSportsEventLd(race, url = '') {
   };
 
   if (race.image) ld.image = race.image;
-  if (url) ld.url = url;
-  if (race.officialWebsite) ld.url = race.officialWebsite;
+
   if (race.organizer && !race.demo) {
     ld.organizer = { '@type': 'Organization', name: race.organizer };
   }
+
   if (race.description && !race.demo) {
     ld.description = race.description;
+  }
+
+  // sameAs: official website if different from internal URL
+  if (race.officialWebsite && race.officialWebsite !== pageUrl) {
+    ld.sameAs = race.officialWebsite;
+  }
+
+  // Offers block — only when we have verified data
+  if (race.priceFrom && !race.demo) {
+    ld.offers = {
+      '@type': 'Offer',
+      price: race.priceFrom,
+      priceCurrency: 'EUR',
+      url: race.registrationUrl || pageUrl,
+      availability: 'https://schema.org/InStock',
+    };
   }
 
   return ld;

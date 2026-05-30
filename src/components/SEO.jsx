@@ -1,48 +1,77 @@
 import { useEffect } from 'react';
+import { SITE_CONFIG } from '../config/site';
 
 /**
  * SEO component — updates document head for client-side SEO.
- * No SSR. Sets title, meta description, og:title, og:description, canonical.
+ * No SSR. Sets title, meta description, og tags, twitter card, canonical.
+ *
+ * Props:
+ *   title        — page-specific title (without site name suffix)
+ *   description  — meta description
+ *   canonical    — full canonical URL; auto-built from SITE_CONFIG.url + pathname if omitted
+ *   ogImage      — absolute path or URL for og:image
+ *   type         — og:type (default: 'website')
  */
 const SEO = ({
   title,
   description,
   canonical,
-  ogImage = '/og-image.svg',
+  ogImage,
+  type = 'website',
 }) => {
-  const siteName = 'Trail Canarias';
+  const resolvedOgImage = ogImage
+    ? ogImage.startsWith('http')
+      ? ogImage
+      : `${SITE_CONFIG.url}${ogImage}`
+    : `${SITE_CONFIG.url}${SITE_CONFIG.ogImage}`;
+
+  const resolvedDescription = description || SITE_CONFIG.description;
+
   const fullTitle = title
-    ? `${title} | ${siteName}`
-    : `${siteName} | Carreras, rutas y clubes de trail running en Canarias`;
+    ? `${title} | ${SITE_CONFIG.name}`
+    : `${SITE_CONFIG.name} | Carreras, rutas y clubes de trail running en Canarias`;
+
+  const resolvedCanonical =
+    canonical ||
+    (typeof window !== 'undefined'
+      ? `${SITE_CONFIG.url}${window.location.pathname}`
+      : SITE_CONFIG.url);
 
   useEffect(() => {
     // Title
     document.title = fullTitle;
 
     // Meta description
-    setMeta('name', 'description', description || 'Calendario de carreras trail en Canarias, rutas por isla, clubes, tiendas especializadas y recursos para corredores de montaña.');
+    setMeta('name', 'description', resolvedDescription);
 
     // Open Graph
     setMeta('property', 'og:title', fullTitle);
-    setMeta('property', 'og:description', description || '');
-    setMeta('property', 'og:image', ogImage);
+    setMeta('property', 'og:description', resolvedDescription);
+    setMeta('property', 'og:image', resolvedOgImage);
+    setMeta('property', 'og:url', resolvedCanonical);
+    setMeta('property', 'og:type', type);
+    setMeta('property', 'og:site_name', SITE_CONFIG.name);
 
-    // Canonical
-    if (canonical) {
-      let link = document.querySelector('link[rel="canonical"]');
-      if (!link) {
-        link = document.createElement('link');
-        link.setAttribute('rel', 'canonical');
-        document.head.appendChild(link);
-      }
-      link.setAttribute('href', canonical);
+    // Twitter Card
+    setMeta('name', 'twitter:card', 'summary_large_image');
+    setMeta('name', 'twitter:title', fullTitle);
+    setMeta('name', 'twitter:description', resolvedDescription);
+    setMeta('name', 'twitter:image', resolvedOgImage);
+
+    // Canonical link
+    let link = document.querySelector('link[rel="canonical"]');
+    if (!link) {
+      link = document.createElement('link');
+      link.setAttribute('rel', 'canonical');
+      document.head.appendChild(link);
     }
+    link.setAttribute('href', resolvedCanonical);
 
+    // Cleanup: only reset title; leave meta tags — next page's SEO will overwrite them
     return () => {
-      // Reset to default on unmount
-      document.title = `${siteName} | Carreras, rutas y clubes de trail running en Canarias`;
+      document.title = `${SITE_CONFIG.name} | Carreras, rutas y clubes de trail running en Canarias`;
     };
-  }, [fullTitle, description, canonical, ogImage]);
+  }, [fullTitle, resolvedDescription, resolvedCanonical, resolvedOgImage, type]);
 
   return null;
 };

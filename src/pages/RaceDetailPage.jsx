@@ -5,6 +5,7 @@ import { useRaces } from '../context/RacesContext';
 import RaceDetail from '../components/RaceDetail';
 import SEO from '../components/SEO';
 import JsonLd, { buildSportsEventLd } from '../components/JsonLd';
+import { SITE_CONFIG } from '../config/site';
 
 const RaceDetailPage = () => {
   const { slug } = useParams();
@@ -35,7 +36,7 @@ const RaceDetailPage = () => {
   }
 
   const similarRaces = races.filter((r) => r.id !== race.id && r.island === race.island);
-  const jsonLd = buildSportsEventLd(race, `https://trailcanarias.com/carreras/${race.slug}`);
+  const jsonLd = buildSportsEventLd(race);
 
   return (
     <>
@@ -46,7 +47,7 @@ const RaceDetailPage = () => {
             ? `Información sobre ${race.name} en ${race.location}. Datos pendientes de verificación oficial.`
             : race.description
         }
-        canonical={`https://trailcanarias.com/carreras/${race.slug}`}
+        canonical={`${SITE_CONFIG.url}/carreras/${race.slug}`}
         ogImage={race.image}
       />
       <JsonLd data={jsonLd} />

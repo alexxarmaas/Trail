@@ -39,7 +39,6 @@ const RaceCalendar = () => {
       <SEO
         title="Calendario de Carreras Trail en Canarias"
         description="Todas las carreras de trail running en Canarias: Transgrancanaria, Transvulcania, Tenerife Bluetrail y más. Filtra por isla y tipo."
-        canonical="https://trailcanarias.com/carreras"
       />
 
       <div className="p-6 md:p-8 space-y-8 min-h-screen relative overflow-hidden transition-colors duration-300">
