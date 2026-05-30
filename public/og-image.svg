@@ -1,0 +1,28 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1200 630" fill="none">
+  <rect width="1200" height="630" fill="#0f172a"/>
+  <!-- Background gradient -->
+  <defs>
+    <linearGradient id="bg" x1="0" y1="0" x2="1200" y2="630" gradientUnits="userSpaceOnUse">
+      <stop offset="0%" stop-color="#052e16"/>
+      <stop offset="100%" stop-color="#0f172a"/>
+    </linearGradient>
+    <linearGradient id="sun" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0%" stop-color="#fbbf24"/>
+      <stop offset="100%" stop-color="#f97316"/>
+    </linearGradient>
+  </defs>
+  <rect width="1200" height="630" fill="url(#bg)"/>
+  <!-- Sun -->
+  <circle cx="950" cy="200" r="80" fill="url(#sun)" opacity="0.9"/>
+  <!-- Mountains -->
+  <polygon points="0,630 300,220 600,630" fill="#16a34a" opacity="0.7"/>
+  <polygon points="200,630 500,180 800,630" fill="#15803d" opacity="0.8"/>
+  <polygon points="500,630 750,250 1000,630" fill="#166534" opacity="0.6"/>
+  <polygon points="700,630 950,300 1200,630" fill="#14532d" opacity="0.7"/>
+  <!-- Text -->
+  <text x="100" y="200" font-family="system-ui, sans-serif" font-size="90" font-weight="800" fill="#ffffff" opacity="0.98">Trail Canarias</text>
+  <text x="100" y="270" font-family="system-ui, sans-serif" font-size="36" fill="#86efac" opacity="0.9">Carreras · Clubes · Tiendas · Rutas</text>
+  <!-- Badge -->
+  <rect x="100" y="310" width="340" height="52" rx="26" fill="#f97316"/>
+  <text x="270" y="345" font-family="system-ui, sans-serif" font-size="24" font-weight="700" fill="#ffffff" text-anchor="middle">🏔️ Canarias Trail Running</text>
+</svg>

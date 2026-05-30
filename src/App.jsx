@@ -1,6 +1,6 @@
-import React, { useState } from 'react';
+import React from 'react';
+import { BrowserRouter } from 'react-router-dom';
 import Layout from './layout/Layout';
-import Onboarding from './pages/Onboarding';
 import { LanguageProvider } from './context/LanguageContext';
 import { UserProvider } from './context/UserContext';
 import { ThemeProvider } from './context/ThemeContext';
@@ -8,27 +8,20 @@ import { FavoritesProvider } from './context/FavoritesContext';
 import { RacesProvider } from './context/RacesContext';
 
 function App() {
-  const [showOnboarding, setShowOnboarding] = useState(() => {
-    const completed = localStorage.getItem('trail-companion-onboarding');
-    return !completed; // Show if not completed or skipped
-  });
-
   return (
-    <LanguageProvider>
-      <UserProvider>
-        <ThemeProvider>
-          <FavoritesProvider>
-            <RacesProvider>
-              {showOnboarding ? (
-                <Onboarding onStart={() => setShowOnboarding(false)} />
-              ) : (
+    <BrowserRouter>
+      <LanguageProvider>
+        <UserProvider>
+          <ThemeProvider>
+            <FavoritesProvider>
+              <RacesProvider>
                 <Layout />
-              )}
-            </RacesProvider>
-          </FavoritesProvider>
-        </ThemeProvider>
-      </UserProvider>
-    </LanguageProvider>
+              </RacesProvider>
+            </FavoritesProvider>
+          </ThemeProvider>
+        </UserProvider>
+      </LanguageProvider>
+    </BrowserRouter>
   );
 }
 

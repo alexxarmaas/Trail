@@ -1,5 +1,5 @@
 import React, { useState, useMemo } from 'react';
-import { ChevronLeft, Calendar, Mountain, Clock, MapPin, Shield, CheckCircle, Heart, Share2, Calculator, Droplets, Zap, Download, CloudSun, Wind, Thermometer, ArrowRight, Loader2 } from 'lucide-react';
+import { ChevronLeft, Calendar, Mountain, Clock, MapPin, Shield, CheckCircle, Heart, Share2, Calculator, Droplets, Zap, Download, CloudSun, Wind, Thermometer, ArrowRight, Loader2, ExternalLink } from 'lucide-react';
 import Button from './Button';
 import Badge from './Badge';
 import GlassCard from './GlassCard';
@@ -9,6 +9,10 @@ import { useUser } from '../context/UserContext';
 import { useFavorites } from '../context/FavoritesContext';
 import { AreaChart, Area, XAxis, YAxis, Tooltip, ResponsiveContainer } from 'recharts';
 import { useGpxData } from '../hooks/useGpxData';
+import AffiliateGearBlock from './AffiliateGearBlock';
+import BusinessCTA from './BusinessCTA';
+import DemoDataNotice from './DemoDataNotice';
+import { trackEvent } from '../utils/trackEvent';
 
   // Define Mandatory Gear items with IDs
   const MANDATORY_GEAR = [
@@ -27,8 +31,8 @@ import { useGpxData } from '../hooks/useGpxData';
   const [activeView, setActiveView] = useState('profile'); // profile, map
 
   // Fetch GPX Data for elevation profile
-  const centerFallback = [45.9237, 6.8694]; // Default Chamonix
-  const distNum = parseFloat(race?.distance) || 34;
+  const centerFallback = [28.2916, -16.6291]; // Default Tenerife
+  const distNum = parseFloat(race?.distVal) || parseFloat(race?.distance) || 34;
   const { elevationData, metadata, loading: gpxLoading } = useGpxData(centerFallback, distNum);
 
   // Gear Checklist State (Persisted in LocalStorage)
@@ -140,6 +144,12 @@ import { useGpxData } from '../hooks/useGpxData';
 
   return (
     <div className="fixed inset-0 z-[100] bg-white dark:bg-gray-950 overflow-y-auto animate-in fade-in slide-in-from-bottom-10 duration-300">
+      {race.demo && (
+        <DemoDataNotice
+          message="Datos demo. Esta ficha está pendiente de verificación con fuentes y organizadores oficiales."
+          className="m-4 mb-0"
+        />
+      )}
       {/* Hero Section */}
       <div className="relative h-72 md:h-96">
         <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/20 to-transparent z-10" />
@@ -467,10 +477,15 @@ import { useGpxData } from '../hooks/useGpxData';
                         <div className="flex justify-between items-center mt-2 text-xs text-gray-400 dark:text-gray-500 px-1">
                             <span>0km</span>
                             <span className="font-medium text-gray-500 dark:text-gray-400">
-                                {gpxLoading ? 'Loading...' : (metadata?.name || t('race.detail.profileLegend'))}
+                                {gpxLoading ? 'Cargando...' : (race.gpxUrl ? (metadata?.name || t('race.detail.profileLegend')) : 'Simulación de recorrido')}
                             </span>
-                            <span>{displayRace.distance}</span>
+                            <span>{displayRace.distanceLabel || displayRace.distance}</span>
                         </div>
+                        {!race.gpxUrl && (
+                          <p className="text-xs text-amber-600 dark:text-amber-400 mt-1 text-center">
+                            ⚠ Recorrido demo. GPX oficial pendiente de añadir.
+                          </p>
+                        )}
                     </>
                 ) : (
                     <RouteMap location={displayRace.location} distance={displayRace.distance} />
@@ -558,15 +573,19 @@ import { useGpxData } from '../hooks/useGpxData';
                  </div>
             </div>
             
-            {/* Description Placeholder */}
+            {/* Description */}
             <div>
                  <h3 className="text-xl font-bold text-gray-900 dark:text-white mb-2">{t('race.detail.about')}</h3>
                  <p className="text-gray-600 dark:text-gray-300 leading-relaxed">
-                    This legendary course takes you through the most spectacular peaks of the region. 
-                    Prepare for technical descents, steep climbs, and breathtaking views. 
-                    The terrain varies from soft forest trails to rocky alpine ridges.
+                    {race.description || 'Información pendiente de completar.'}
                  </p>
             </div>
+
+            {/* Gear Block */}
+            <AffiliateGearBlock />
+
+            {/* Organizer CTA */}
+            <BusinessCTA type="race" name={race.name} />
            </>
         ) : (
             <div className="space-y-6">
@@ -624,16 +643,33 @@ import { useGpxData } from '../hooks/useGpxData';
       {/* Sticky Bottom Action */}
       <div className="fixed bottom-0 left-0 right-0 p-4 bg-white/80 dark:bg-gray-950/80 backdrop-blur-xl border-t border-gray-200 dark:border-gray-800 z-[110] flex gap-3 items-center md:pl-72 transition-colors duration-300">
         <div className="hidden md:block flex-1">
-            <p className="text-sm text-gray-500 dark:text-gray-400">{t('race.detail.closesIn')} 12 days</p>
-            <p className="font-bold text-lg text-primary">€120.00</p>
+            {race.priceFrom && !race.demo && (
+              <p className="font-bold text-lg text-primary">Desde {race.priceFrom} €</p>
+            )}
+            {race.demo && (
+              <p className="text-xs text-amber-600 dark:text-amber-400 font-semibold">⚠ Datos demo</p>
+            )}
         </div>
         <Button variant="outline" className="flex-1 md:flex-none border-gray-300 dark:border-gray-700 dark:text-white dark:hover:bg-gray-800" onClick={downloadIcsFile}>
             <Calendar size={18} className="mr-2" />
             {t('race.detail.addToCalendar')}
         </Button>
-        <Button className="flex-[2] md:flex-none md:w-48 shadow-xl shadow-primary/20">
-            {t('race.detail.registration')}
-        </Button>
+        {race.registrationUrl ? (
+          <a
+            href={race.registrationUrl}
+            target="_blank"
+            rel="noopener noreferrer"
+            onClick={() => trackEvent('click_inscribirse', { raceId: race.id, raceName: race.name })}
+            className="flex-[2] md:flex-none md:w-48 flex items-center justify-center gap-2 py-2.5 px-4 rounded-xl bg-primary text-white font-bold shadow-xl shadow-primary/20 hover:bg-primary/90 transition-colors"
+          >
+            <ExternalLink size={16} />
+            Inscribirse
+          </a>
+        ) : (
+          <Button className="flex-[2] md:flex-none md:w-48 shadow-xl shadow-primary/20" disabled={race.demo}>
+            {race.demo ? 'Inscripción pendiente' : t('race.detail.registration')}
+          </Button>
+        )}
       </div>
     </div>
   );
