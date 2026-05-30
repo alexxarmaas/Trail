@@ -40,6 +40,7 @@ const RaceCalendar = () => {
   const [distanceFilter, setDistanceFilter] = useState('all');
   const [searchTerm, setSearchTerm] = useState('');
   const [sortBy, setSortBy] = useState('date-asc');
+  const [qualityFilter, setQualityFilter] = useState('all');
 
   const filteredRaces = useMemo(() => {
     let list = races.filter((race) => {
@@ -59,7 +60,14 @@ const RaceCalendar = () => {
         (race.island && getIslandName(race.island).toLowerCase().includes(q)) ||
         (race.municipality && race.municipality.toLowerCase().includes(q)) ||
         (race.location && race.location.toLowerCase().includes(q));
-      return typeMatch && islandMatch && distanceMatch && searchMatch;
+
+      let matchesQuality = true;
+      if (qualityFilter === 'verified') matchesQuality = race.verified === true;
+      else if (qualityFilter === 'pending') matchesQuality = race.status === 'pending' || race.verified === false;
+      else if (qualityFilter === 'demo') matchesQuality = race.demo === true;
+      else if (qualityFilter === 'featured') matchesQuality = race.featured === true;
+
+      return typeMatch && islandMatch && distanceMatch && searchMatch && matchesQuality;
     });
 
     // Sort
@@ -80,7 +88,7 @@ const RaceCalendar = () => {
     });
 
     return list;
-  }, [races, typeFilter, islandFilter, distanceFilter, searchTerm, sortBy]);
+  }, [races, typeFilter, islandFilter, distanceFilter, searchTerm, sortBy, qualityFilter]);
 
   // Stats for hero
   const islandsWithRaces = [...new Set(races.map((r) => r.island))].length;
@@ -161,6 +169,23 @@ const RaceCalendar = () => {
           </div>
 
           <div className="flex flex-wrap gap-2 items-center">
+            {/* Quality filter */}
+            <div className="flex items-center gap-1">
+              <Filter size={14} className="text-gray-400 shrink-0" />
+              <select
+                value={qualityFilter}
+                onChange={(e) => setQualityFilter(e.target.value)}
+                aria-label="Filtrar por estado"
+                className="text-sm border border-gray-200 dark:border-gray-700 rounded-lg px-3 py-1.5 bg-white dark:bg-gray-800 text-gray-700 dark:text-gray-300 focus:outline-none focus:ring-2 focus:ring-primary"
+              >
+                <option value="all">Todas</option>
+                <option value="verified">Verificadas</option>
+                <option value="pending">Pendientes</option>
+                <option value="demo">Demo</option>
+                <option value="featured">Destacadas</option>
+              </select>
+            </div>
+            
             {/* Island filter */}
             <div className="flex items-center gap-1">
               <Filter size={14} className="text-gray-400 shrink-0" />

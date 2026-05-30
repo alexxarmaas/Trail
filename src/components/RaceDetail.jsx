@@ -15,6 +15,7 @@ import DemoDataNotice from './DemoDataNotice';
 import { trackEvent } from '../utils/trackEvent';
 import { Link } from 'react-router-dom';
 import { getImageFallback, getImageAlt } from '../utils/getImageFallback';
+import DataInfoBlock from './DataInfoBlock';
 
   // Define Mandatory Gear items with IDs
   const MANDATORY_GEAR = [
@@ -705,6 +706,9 @@ import { getImageFallback, getImageAlt } from '../utils/getImageFallback';
 
             {/* Organizer CTA */}
             <BusinessCTA type="race" name={race.name} />
+
+            {/* Data Info */}
+            <DataInfoBlock item={race} type="carrera" />
            </>
         ) : (
             <div className="space-y-6">

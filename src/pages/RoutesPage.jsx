@@ -1,22 +1,42 @@
-import React from 'react';
+import React, { useState } from 'react';
 import { Link } from 'react-router-dom';
-import { Map, Mail, AlertCircle, ArrowRight } from 'lucide-react';
+import { Map, Mail, AlertCircle, ArrowRight, Search, Filter } from 'lucide-react';
 import SEO from '../components/SEO';
 import DemoDataNotice from '../components/DemoDataNotice';
 import { trackEvent } from '../utils/trackEvent';
 import { SITE_CONFIG } from '../config/site';
 import { REAL_ROUTES } from '../data/routes.real';
 import { getImageFallback, getImageAlt } from '../utils/getImageFallback';
+import { ISLANDS_DATA } from '../data/islands';
 
 const DIFFICULTY_COLOR = {
-  'Alta': 'bg-red-100 text-red-800 dark:bg-red-900/30 dark:text-red-300',
-  'Media-Alta': 'bg-orange-100 text-orange-800 dark:bg-orange-900/30 dark:text-orange-300',
-  'Media': 'bg-yellow-100 text-yellow-800 dark:bg-yellow-900/30 dark:text-yellow-300',
-  'Baja': 'bg-green-100 text-green-800 dark:bg-green-900/30 dark:text-green-300',
+  'muy-alta': 'bg-red-200 text-red-900 dark:bg-red-900/50 dark:text-red-300 font-bold',
+  'alta': 'bg-red-100 text-red-800 dark:bg-red-900/30 dark:text-red-300',
+  'media-alta': 'bg-orange-100 text-orange-800 dark:bg-orange-900/30 dark:text-orange-300',
+  'media': 'bg-yellow-100 text-yellow-800 dark:bg-yellow-900/30 dark:text-yellow-300',
+  'baja': 'bg-green-100 text-green-800 dark:bg-green-900/30 dark:text-green-300',
 };
 
 const RoutesPage = () => {
   const mailtoHref = `mailto:${SITE_CONFIG.email}?subject=${encodeURIComponent('Sugerencia de ruta trail en Canarias')}`;
+
+  const [searchTerm, setSearchTerm] = useState('');
+  const [islandFilter, setIslandFilter] = useState('all');
+  const [qualityFilter, setQualityFilter] = useState('all');
+
+  const filteredRoutes = REAL_ROUTES.filter((route) => {
+    const searchStr = `${route.name} ${route.municipality} ${route.island} ${route.description || ''}`.toLowerCase();
+    const searchMatch = !searchTerm || searchStr.includes(searchTerm.toLowerCase());
+    const islandMatch = islandFilter === 'all' || route.island === islandFilter;
+    
+    let matchesQuality = true;
+    if (qualityFilter === 'verified') matchesQuality = route.verified === true;
+    else if (qualityFilter === 'pending') matchesQuality = route.status === 'pending' || route.verified === false;
+    else if (qualityFilter === 'demo') matchesQuality = route.demo === true;
+    else if (qualityFilter === 'featured') matchesQuality = route.featured === true;
+
+    return searchMatch && islandMatch && matchesQuality;
+  });
 
   return (
     <>
@@ -53,6 +73,50 @@ const RoutesPage = () => {
           </a>
         </div>
 
+        {/* Filters */}
+        <div className="flex flex-col sm:flex-row gap-2 w-full max-w-4xl">
+          <div className="relative flex-1 sm:w-64">
+            <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
+              <Search className="h-5 w-5 text-gray-400" />
+            </div>
+            <input
+              type="text"
+              placeholder="Buscar ruta o municipio..."
+              className="block w-full pl-10 pr-3 py-2 border border-gray-200 dark:border-gray-700 rounded-xl bg-white dark:bg-gray-900 text-gray-900 dark:text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-primary shadow-sm text-sm"
+              value={searchTerm}
+              onChange={(e) => setSearchTerm(e.target.value)}
+            />
+          </div>
+          
+          <div className="flex items-center gap-1">
+            <Filter size={14} className="text-gray-400" />
+            <select
+              value={qualityFilter}
+              onChange={(e) => setQualityFilter(e.target.value)}
+              className="text-sm border border-gray-200 dark:border-gray-700 rounded-xl px-3 py-2 bg-white dark:bg-gray-800 text-gray-700 dark:text-gray-300 focus:outline-none focus:ring-2 focus:ring-primary"
+            >
+              <option value="all">Todas</option>
+              <option value="verified">Verificadas</option>
+              <option value="pending">Pendientes</option>
+              <option value="demo">Demo</option>
+              <option value="featured">Destacadas</option>
+            </select>
+
+            <select
+              value={islandFilter}
+              onChange={(e) => setIslandFilter(e.target.value)}
+              className="text-sm border border-gray-200 dark:border-gray-700 rounded-xl px-3 py-2 bg-white dark:bg-gray-800 text-gray-700 dark:text-gray-300 focus:outline-none focus:ring-2 focus:ring-primary"
+            >
+              <option value="all">Todas las islas</option>
+              {ISLANDS_DATA.map((island) => (
+                <option key={island.slug} value={island.slug}>
+                  {island.name}
+                </option>
+              ))}
+            </select>
+          </div>
+        </div>
+
         {REAL_ROUTES.some(r => r.demo) && (
           <DemoDataNotice
             message="Algunas rutas de esta página son fichas demo o pendientes de verificación. Los datos de distancia, desnivel y trazados son aproximados."
@@ -62,9 +126,9 @@ const RoutesPage = () => {
 
         {/* Route cards */}
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-          {REAL_ROUTES.map((route) => (
+          {filteredRoutes.map((route) => (
             <div
-              key={route.slug}
+              key={route.id}
               className="rounded-2xl border border-gray-100 dark:border-gray-800 bg-white dark:bg-gray-900 overflow-hidden hover:border-primary/30 transition-all hover:-translate-y-0.5"
             >
               <div className="relative h-44">
@@ -108,8 +172,8 @@ const RoutesPage = () => {
                   <span className="text-xs font-semibold bg-gray-100 dark:bg-gray-800 text-gray-700 dark:text-gray-300 px-2 py-0.5 rounded-full">
                     {route.elevationLabel || 'Desnivel pendiente'}
                   </span>
-                  <span className={`text-xs font-semibold px-2 py-0.5 rounded-full ${route.difficulty ? (DIFFICULTY_COLOR[route.difficulty.charAt(0).toUpperCase() + route.difficulty.slice(1)] || 'bg-gray-100 text-gray-800 dark:bg-gray-800 dark:text-gray-300') : 'bg-gray-100 text-gray-800 dark:bg-gray-800 dark:text-gray-300'}`}>
-                    {route.difficulty ? route.difficulty.charAt(0).toUpperCase() + route.difficulty.slice(1) : 'Dificultad pendiente'}
+                  <span className={`text-xs font-semibold px-2 py-0.5 rounded-full ${route.difficulty ? (DIFFICULTY_COLOR[route.difficulty.toLowerCase()] || 'bg-gray-100 text-gray-800 dark:bg-gray-800 dark:text-gray-300') : 'bg-gray-100 text-gray-800 dark:bg-gray-800 dark:text-gray-300'}`}>
+                    {route.difficulty ? route.difficulty.replace('-', ' ').replace(/\b\w/g, l => l.toUpperCase()) : 'Dificultad pendiente'}
                   </span>
                 </div>
 

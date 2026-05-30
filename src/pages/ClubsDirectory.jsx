@@ -16,13 +16,20 @@ const ClubsDirectory = () => {
   const navigate = useNavigate();
   const [searchTerm, setSearchTerm] = useState('');
   const [islandFilter, setIslandFilter] = useState('all');
+  const [qualityFilter, setQualityFilter] = useState('all');
 
   const filteredClubs = CLUBS_DATA.filter((club) => {
-    const searchMatch =
-      club.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
-      club.municipality.toLowerCase().includes(searchTerm.toLowerCase());
+    const searchStr = `${club.name} ${club.municipality} ${club.island} ${club.description || ''}`.toLowerCase();
+    const searchMatch = !searchTerm || searchStr.includes(searchTerm.toLowerCase());
     const islandMatch = islandFilter === 'all' || club.island === islandFilter;
-    return searchMatch && islandMatch;
+    
+    let matchesQuality = true;
+    if (qualityFilter === 'verified') matchesQuality = club.verified === true;
+    else if (qualityFilter === 'pending') matchesQuality = club.status === 'pending' || club.verified === false;
+    else if (qualityFilter === 'demo') matchesQuality = club.demo === true;
+    else if (qualityFilter === 'featured') matchesQuality = club.featured === true;
+
+    return searchMatch && islandMatch && matchesQuality;
   });
 
   return (
@@ -64,6 +71,18 @@ const ClubsDirectory = () => {
             </div>
             <div className="flex items-center gap-1">
               <Filter size={14} className="text-gray-400" />
+              <select
+                value={qualityFilter}
+                onChange={(e) => setQualityFilter(e.target.value)}
+                className="text-sm border border-gray-200 dark:border-gray-700 rounded-xl px-3 py-3 bg-white dark:bg-gray-800 text-gray-700 dark:text-gray-300 focus:outline-none focus:ring-2 focus:ring-primary"
+              >
+                <option value="all">Todos</option>
+                <option value="verified">Verificados</option>
+                <option value="pending">Pendientes</option>
+                <option value="demo">Demo</option>
+                <option value="featured">Destacados</option>
+              </select>
+
               <select
                 value={islandFilter}
                 onChange={(e) => setIslandFilter(e.target.value)}

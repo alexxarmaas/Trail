@@ -6,6 +6,7 @@ import SEO from '../components/SEO';
 import DemoDataNotice from '../components/DemoDataNotice';
 import BusinessCTA from '../components/BusinessCTA';
 import FeaturedBadge from '../components/FeaturedBadge';
+import DataInfoBlock from '../components/DataInfoBlock';
 import { getImageFallback, getImageAlt } from '../utils/getImageFallback';
 
 const ShopDetailPage = () => {
@@ -133,6 +134,9 @@ const ShopDetailPage = () => {
 
           {/* Business CTA */}
           <BusinessCTA type="shop" name={shop.name} />
+
+          {/* Data Info */}
+          <DataInfoBlock item={shop} type="tienda" />
         </div>
       </div>
     </>

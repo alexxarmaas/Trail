@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
-import { MapPin, Phone, Star, ExternalLink, Filter } from 'lucide-react';
-import { useNavigate } from 'react-router-dom';
+import { MapPin, Phone, Star, ExternalLink, Filter, Search } from 'lucide-react';
+import { Link } from 'react-router-dom';
 import GlassCard from '../components/GlassCard';
 import SEO from '../components/SEO';
 import FeaturedBadge from '../components/FeaturedBadge';
@@ -10,12 +10,23 @@ import { ISLANDS_DATA } from '../data/islands';
 import { getImageFallback, getImageAlt } from '../utils/getImageFallback';
 
 const Shops = () => {
-  const navigate = useNavigate();
   const [islandFilter, setIslandFilter] = useState('all');
+  const [searchTerm, setSearchTerm] = useState('');
+  const [qualityFilter, setQualityFilter] = useState('all');
 
-  const filteredShops = SHOPS_DATA.filter(
-    (shop) => islandFilter === 'all' || shop.island === islandFilter
-  );
+  const filteredShops = SHOPS_DATA.filter((shop) => {
+    const searchStr = `${shop.name} ${shop.municipality} ${shop.island} ${shop.tags?.join(' ')} ${shop.description || ''}`.toLowerCase();
+    const matchesSearch = !searchTerm || searchStr.includes(searchTerm.toLowerCase());
+    const matchesIsland = islandFilter === 'all' || shop.island === islandFilter;
+    
+    let matchesQuality = true;
+    if (qualityFilter === 'verified') matchesQuality = shop.verified === true;
+    else if (qualityFilter === 'pending') matchesQuality = shop.status === 'pending' || shop.verified === false;
+    else if (qualityFilter === 'demo') matchesQuality = shop.demo === true;
+    else if (qualityFilter === 'featured') matchesQuality = shop.featured === true;
+
+    return matchesSearch && matchesIsland && matchesQuality;
+  });
 
   return (
     <>
@@ -40,30 +51,57 @@ const Shops = () => {
             </p>
           </div>
 
-          <div className="flex items-center gap-2">
-            <Filter size={14} className="text-gray-400" />
-            <select
-              value={islandFilter}
-              onChange={(e) => setIslandFilter(e.target.value)}
-              className="text-sm border border-gray-200 dark:border-gray-700 rounded-xl px-3 py-2 bg-white dark:bg-gray-800 text-gray-700 dark:text-gray-300 focus:outline-none focus:ring-2 focus:ring-primary"
-            >
-              <option value="all">Todas las islas</option>
-              {ISLANDS_DATA.map((island) => (
-                <option key={island.slug} value={island.slug}>
-                  {island.name}
-                </option>
-              ))}
-            </select>
+          <div className="flex flex-col sm:flex-row gap-2 w-full md:w-auto">
+            <div className="relative flex-1 sm:w-64">
+              <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
+                <Search className="h-5 w-5 text-gray-400" />
+              </div>
+              <input
+                type="text"
+                placeholder="Buscar tienda o municipio..."
+                className="block w-full pl-10 pr-3 py-2 border border-gray-200 dark:border-gray-700 rounded-xl bg-white dark:bg-gray-900 text-gray-900 dark:text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-primary shadow-sm text-sm"
+                value={searchTerm}
+                onChange={(e) => setSearchTerm(e.target.value)}
+              />
+            </div>
+            
+            <div className="flex items-center gap-1">
+              <Filter size={14} className="text-gray-400" />
+              <select
+                value={qualityFilter}
+                onChange={(e) => setQualityFilter(e.target.value)}
+                className="text-sm border border-gray-200 dark:border-gray-700 rounded-xl px-3 py-2 bg-white dark:bg-gray-800 text-gray-700 dark:text-gray-300 focus:outline-none focus:ring-2 focus:ring-primary"
+              >
+                <option value="all">Todas</option>
+                <option value="verified">Verificadas</option>
+                <option value="pending">Pendientes</option>
+                <option value="demo">Demo</option>
+                <option value="featured">Destacadas</option>
+              </select>
+
+              <select
+                value={islandFilter}
+                onChange={(e) => setIslandFilter(e.target.value)}
+                className="text-sm border border-gray-200 dark:border-gray-700 rounded-xl px-3 py-2 bg-white dark:bg-gray-800 text-gray-700 dark:text-gray-300 focus:outline-none focus:ring-2 focus:ring-primary"
+              >
+                <option value="all">Todas las islas</option>
+                {ISLANDS_DATA.map((island) => (
+                  <option key={island.slug} value={island.slug}>
+                    {island.name}
+                  </option>
+                ))}
+              </select>
+            </div>
           </div>
         </div>
 
         {/* Grid */}
         <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
           {filteredShops.map((shop) => (
-            <div
+            <Link
               key={shop.id}
-              onClick={() => navigate(`/tiendas/${shop.slug}`)}
-              className="cursor-pointer"
+              to={`/tiendas/${shop.slug}`}
+              className="block group"
             >
               <GlassCard className="bg-white dark:bg-gray-900 p-0 flex flex-col shadow-sm hover:shadow-md h-full border-gray-100 dark:border-gray-800 hover:border-primary/30 dark:hover:border-primary/30 transition-all overflow-hidden">
                 <div className="h-48 overflow-hidden relative">
@@ -124,19 +162,25 @@ const Shops = () => {
                   </div>
 
                   <div className="mt-3 flex gap-2">
-                    <button className="flex items-center gap-1 px-3 py-1.5 text-xs font-semibold text-primary border border-primary/30 rounded-lg hover:bg-primary hover:text-white transition-colors">
+                    <button 
+                      className="flex items-center gap-1 px-3 py-1.5 text-xs font-semibold text-primary border border-primary/30 rounded-lg group-hover:bg-primary group-hover:text-white transition-colors"
+                      onClick={(e) => { e.preventDefault(); e.stopPropagation(); }}
+                    >
                       <ExternalLink size={12} />
                       Ver tienda
                     </button>
                     {shop.phone && (
-                      <button className="p-2 rounded-lg bg-gray-100 dark:bg-gray-800 text-gray-600 dark:text-gray-300 hover:bg-gray-200 transition-colors">
+                      <button 
+                        className="p-2 rounded-lg bg-gray-100 dark:bg-gray-800 text-gray-600 dark:text-gray-300 hover:bg-gray-200 transition-colors"
+                        onClick={(e) => { e.preventDefault(); e.stopPropagation(); window.location.href = `tel:${shop.phone}`; }}
+                      >
                         <Phone size={14} />
                       </button>
                     )}
                   </div>
                 </div>
               </GlassCard>
-            </div>
+            </Link>
           ))}
         </div>
 
