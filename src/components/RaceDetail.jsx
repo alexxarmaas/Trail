@@ -555,7 +555,7 @@ import { Link } from 'react-router-dom';
                         )}
                     </>
                 ) : (
-                    <RouteMap location={displayRace.location} distance={displayRace.distance} />
+                    <RouteMap location={raceLocation} distance={raceDistance} />
                 )}
             </div>
 
@@ -647,7 +647,7 @@ import { Link } from 'react-router-dom';
             </div>
 
             {/* Gear Block */}
-            <AffiliateGearBlock />
+            <AffiliateGearBlock race={race} />
 
             {/* Organizer CTA */}
             <BusinessCTA type="race" name={race.name} />

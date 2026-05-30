@@ -36,6 +36,7 @@ const RaceCalendar = () => {
 
   const [typeFilter, setTypeFilter] = useState('all');
   const [islandFilter, setIslandFilter] = useState('all');
+  const [distanceFilter, setDistanceFilter] = useState('all');
   const [searchTerm, setSearchTerm] = useState('');
   const [sortBy, setSortBy] = useState('date-asc');
 
@@ -43,6 +44,13 @@ const RaceCalendar = () => {
     let list = races.filter((race) => {
       const typeMatch = typeFilter === 'all' || race.type === typeFilter;
       const islandMatch = islandFilter === 'all' || race.island === islandFilter;
+      
+      let distanceMatch = true;
+      if (distanceFilter === 'lt15') distanceMatch = race.distVal <= 15;
+      else if (distanceFilter === '15-30') distanceMatch = race.distVal > 15 && race.distVal <= 30;
+      else if (distanceFilter === '30-50') distanceMatch = race.distVal > 30 && race.distVal <= 50;
+      else if (distanceFilter === 'gt50') distanceMatch = race.distVal > 50;
+
       const q = searchTerm.toLowerCase();
       const searchMatch =
         !q ||
@@ -50,7 +58,7 @@ const RaceCalendar = () => {
         (race.island && getIslandName(race.island).toLowerCase().includes(q)) ||
         (race.municipality && race.municipality.toLowerCase().includes(q)) ||
         (race.location && race.location.toLowerCase().includes(q));
-      return typeMatch && islandMatch && searchMatch;
+      return typeMatch && islandMatch && distanceMatch && searchMatch;
     });
 
     // Sort
@@ -167,6 +175,22 @@ const RaceCalendar = () => {
                     {island.name}
                   </option>
                 ))}
+              </select>
+            </div>
+
+            {/* Distance filter */}
+            <div className="flex items-center gap-1">
+              <select
+                value={distanceFilter}
+                onChange={(e) => setDistanceFilter(e.target.value)}
+                aria-label="Filtrar por distancia"
+                className="text-sm border border-gray-200 dark:border-gray-700 rounded-lg px-3 py-1.5 bg-white dark:bg-gray-800 text-gray-700 dark:text-gray-300 focus:outline-none focus:ring-2 focus:ring-primary"
+              >
+                <option value="all">Todas las distancias</option>
+                <option value="lt15">Hasta 15 km</option>
+                <option value="15-30">15–30 km</option>
+                <option value="30-50">30–50 km</option>
+                <option value="gt50">50 km+</option>
               </select>
             </div>
 
@@ -318,7 +342,7 @@ const RaceCalendar = () => {
             <Mountain size={48} className="mx-auto mb-4 opacity-30" />
             <p className="font-medium">No hay carreras para este filtro.</p>
             <button
-              onClick={() => { setSearchTerm(''); setTypeFilter('all'); setIslandFilter('all'); }}
+              onClick={() => { setSearchTerm(''); setTypeFilter('all'); setIslandFilter('all'); setDistanceFilter('all'); }}
               className="mt-3 text-sm text-primary hover:underline"
             >
               Borrar filtros

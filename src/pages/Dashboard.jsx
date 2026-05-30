@@ -8,6 +8,7 @@ import { useLanguage } from '../context/LanguageContext';
 import { useFavorites } from '../context/FavoritesContext';
 import { useUser } from '../context/UserContext';
 import { useRaces } from '../context/RacesContext';
+import { BarChart3 } from 'lucide-react';
 
 const Dashboard = () => {
   const { t } = useLanguage();
@@ -39,6 +40,32 @@ const Dashboard = () => {
       .filter(race => !favorites.includes(race.id))
       .slice(0, 3);
   }, [userProfile, favorites, races]);
+
+  // Local Metrics
+  const localMetrics = useMemo(() => {
+    try {
+      const events = JSON.parse(localStorage.getItem('trailcanarias_events') || '[]');
+      const listingReqs = JSON.parse(localStorage.getItem('trailcanarias_listing_requests') || '[]');
+      const newsletter = JSON.parse(localStorage.getItem('trailcanarias_newsletter') || '[]');
+      const submittedRaces = JSON.parse(localStorage.getItem('trailcanarias_submitted_races') || '[]');
+
+      return {
+        clicksInscripcion: events.filter(e => e.eventName === 'register_click').length,
+        clicksWeb: events.filter(e => e.eventName === 'website_click').length,
+        clicksAnunciate: events.filter(e => e.eventName === 'advertise_cta_click' || e.eventName === 'pricing_cta_click').length,
+        altasNewsletter: newsletter.length,
+        solicitudesFicha: listingReqs.length,
+        clicksAfiliacion: events.filter(e => e.eventName === 'affiliate_gear_click').length,
+        clicksDestacar: events.filter(e => e.eventName === 'highlight_race_cta_click').length,
+        carrerasEnviadas: submittedRaces.length,
+      };
+    } catch {
+      return {
+        clicksInscripcion: 0, clicksWeb: 0, clicksAnunciate: 0, altasNewsletter: 0,
+        solicitudesFicha: 0, clicksAfiliacion: 0, clicksDestacar: 0, carrerasEnviadas: 0
+      };
+    }
+  }, []);
 
   // Calculate days until next race
   const getDaysUntil = (dateStr) => {
@@ -211,6 +238,45 @@ const Dashboard = () => {
           </Button>
         </GlassCard>
       )}
+
+      {/* Métricas locales */}
+      <div className="mt-12">
+        <div className="flex items-center justify-between mb-6">
+          <div className="flex items-center gap-3">
+            <div className="w-10 h-10 rounded-xl bg-purple-100 dark:bg-purple-900/30 text-purple-600 flex items-center justify-center">
+              <BarChart3 size={20} className="fill-current" />
+            </div>
+            <div>
+              <h2 className="text-xl font-bold text-gray-900 dark:text-white">Métricas locales (MVP)</h2>
+              <p className="text-sm text-gray-500 dark:text-gray-400">
+                Estas métricas se guardan solo en este navegador y sirven para validar el MVP. No son analítica real.
+              </p>
+            </div>
+          </div>
+        </div>
+
+        <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
+          {[
+            { label: 'Clicks inscripción', value: localMetrics.clicksInscripcion },
+            { label: 'Clicks web oficial', value: localMetrics.clicksWeb },
+            { label: 'Clicks anunciate', value: localMetrics.clicksAnunciate },
+            { label: 'Altas newsletter', value: localMetrics.altasNewsletter },
+            { label: 'Solicitudes ficha', value: localMetrics.solicitudesFicha },
+            { label: 'Clicks afiliación', value: localMetrics.clicksAfiliacion },
+            { label: 'Destacar carrera', value: localMetrics.clicksDestacar },
+            { label: 'Carreras enviadas', value: localMetrics.carrerasEnviadas }
+          ].map((m, i) => (
+            <GlassCard key={i} className="p-4 bg-white/60 dark:bg-gray-900/60 flex flex-col justify-between">
+              <span className="text-xs font-medium text-gray-500 dark:text-gray-400 uppercase tracking-wider mb-2">
+                {m.label}
+              </span>
+              <span className="text-2xl font-black text-gray-900 dark:text-white">
+                {m.value}
+              </span>
+            </GlassCard>
+          ))}
+        </div>
+      </div>
     </div>
   );
 };

@@ -15,6 +15,9 @@ import PublicaCarrera from '../pages/PublicaCarrera';
 import RoutesPage from '../pages/RoutesPage';
 import DataNotice from '../pages/DataNotice';
 import Dashboard from '../pages/Dashboard';
+import AddListing from '../pages/AddListing';
+import Pricing from '../pages/Pricing';
+import FavoritesPage from '../pages/FavoritesPage';
 
 const Layout = () => {
   return (
@@ -35,6 +38,9 @@ const Layout = () => {
             <Route path="/tiendas/:slug" element={<ShopDetailPage />} />
             <Route path="/islas/:island" element={<IslandPage />} />
             <Route path="/anunciate" element={<Anunciate />} />
+            <Route path="/anade-tu-ficha" element={<AddListing />} />
+            <Route path="/precios" element={<Pricing />} />
+            <Route path="/favoritos" element={<FavoritesPage />} />
             <Route path="/publica-tu-carrera" element={<PublicaCarrera />} />
             <Route path="/perfil" element={<UserProfile />} />
             <Route path="/rutas" element={<RoutesPage />} />
