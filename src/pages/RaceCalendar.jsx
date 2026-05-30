@@ -79,7 +79,7 @@ const RaceCalendar = () => {
     });
 
     return list;
-  }, [races, typeFilter, islandFilter, searchTerm, sortBy]);
+  }, [races, typeFilter, islandFilter, distanceFilter, searchTerm, sortBy]);
 
   // Stats for hero
   const islandsWithRaces = [...new Set(races.map((r) => r.island))].length;

@@ -118,7 +118,7 @@ const PublicaCarrera = () => {
       <SEO
         title="Publica tu Carrera Trail en Canarias"
         description="¿Organizas una carrera de trail en Canarias? Añádela al directorio de Trail Canarias gratis. Rellena el formulario y llegamos a miles de corredores."
-        canonical="https://trailcanarias.com/publica-tu-carrera"
+        canonical="https://trailcanarias.vercel.app/publica-tu-carrera"
       />
 
       <div className="p-6 md:p-8 min-h-screen">

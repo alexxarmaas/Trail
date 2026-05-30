@@ -34,7 +34,7 @@ const ClubDetailPage = () => {
       <SEO
         title={`${club.name} · Club de Trail en ${club.municipality}`}
         description={club.description}
-        canonical={`https://trailcanarias.com/clubes/${club.slug}`}
+        canonical={`https://trailcanarias.vercel.app/clubes/${club.slug}`}
         ogImage={club.image}
       />
 

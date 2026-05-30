@@ -50,9 +50,11 @@ const Dashboard = () => {
       const submittedRaces = JSON.parse(localStorage.getItem('trailcanarias_submitted_races') || '[]');
 
       return {
-        clicksInscripcion: events.filter(e => e.eventName === 'register_click').length,
-        clicksWeb: events.filter(e => e.eventName === 'website_click').length,
-        clicksAnunciate: events.filter(e => e.eventName === 'advertise_cta_click' || e.eventName === 'pricing_cta_click').length,
+        clicksInscripcion: events.filter(e => e.eventName === 'registration_click').length,
+        clicksWeb: events.filter(e => e.eventName === 'official_website_click').length,
+        clicksAnunciate: events.filter(e => 
+          ['advertise_cta_click', 'anunciate_cta_click', 'pricing_cta_click'].includes(e.eventName)
+        ).length,
         altasNewsletter: newsletter.length,
         solicitudesFicha: listingReqs.length,
         clicksAfiliacion: events.filter(e => e.eventName === 'affiliate_gear_click').length,

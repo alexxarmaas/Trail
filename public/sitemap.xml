@@ -38,6 +38,26 @@
     <priority>0.6</priority>
   </url>
   <url>
+    <loc>https://trailcanarias.vercel.app/anade-tu-ficha</loc>
+    <changefreq>monthly</changefreq>
+    <priority>0.6</priority>
+  </url>
+  <url>
+    <loc>https://trailcanarias.vercel.app/precios</loc>
+    <changefreq>monthly</changefreq>
+    <priority>0.6</priority>
+  </url>
+  <url>
+    <loc>https://trailcanarias.vercel.app/favoritos</loc>
+    <changefreq>monthly</changefreq>
+    <priority>0.4</priority>
+  </url>
+  <url>
+    <loc>https://trailcanarias.vercel.app/dashboard</loc>
+    <changefreq>monthly</changefreq>
+    <priority>0.3</priority>
+  </url>
+  <url>
     <loc>https://trailcanarias.vercel.app/legal/aviso-datos</loc>
     <changefreq>monthly</changefreq>
     <priority>0.3</priority>

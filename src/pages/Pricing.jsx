@@ -1,13 +1,14 @@
 import React from 'react';
 import SEO from '../components/SEO';
 import { trackEvent } from '../utils/trackEvent';
+import { SITE_CONFIG } from '../config/site';
 
 const Pricing = () => {
   const handleContact = (product) => {
     trackEvent('pricing_cta_click', { product });
   };
 
-  const emailUrl = `mailto:hola@trailcanarias.com?subject=Información sobre publicidad en Trail Canarias`;
+  const emailUrl = `mailto:${SITE_CONFIG.email}?subject=${encodeURIComponent('Información sobre publicidad en Trail Canarias')}`;
 
   const items = [
     { name: 'Carrera destacada', price: 'desde 49 € / evento' },

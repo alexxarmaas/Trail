@@ -34,7 +34,7 @@ const ShopDetailPage = () => {
       <SEO
         title={`${shop.name} · Tienda Trail en ${shop.municipality}`}
         description={`Tienda especializada en trail running en ${shop.municipality}. ${shop.tags.join(', ')}.`}
-        canonical={`https://trailcanarias.com/tiendas/${shop.slug}`}
+        canonical={`https://trailcanarias.vercel.app/tiendas/${shop.slug}`}
         ogImage={shop.image}
       />
 

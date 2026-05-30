@@ -29,7 +29,7 @@ const ClubsDirectory = () => {
       <SEO
         title="Clubes de Trail Running en Canarias"
         description="Directorio de clubes de trail running y carrera de montaña en Canarias. Encuentra tu club en Tenerife, Gran Canaria, La Palma, Lanzarote y más islas."
-        canonical="https://trailcanarias.com/clubes"
+        canonical="https://trailcanarias.vercel.app/clubes"
       />
 
       <div className="p-6 md:p-8 space-y-8 min-h-screen relative overflow-hidden">

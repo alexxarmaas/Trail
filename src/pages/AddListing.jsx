@@ -37,9 +37,13 @@ const AddListing = () => {
     if (!validate()) return;
     
     // Save to localStorage
-    const stored = JSON.parse(localStorage.getItem('trailcanarias_listing_requests') || '[]');
-    stored.push({ ...form, timestamp: new Date().toISOString() });
-    localStorage.setItem('trailcanarias_listing_requests', JSON.stringify(stored));
+    try {
+      const stored = JSON.parse(localStorage.getItem('trailcanarias_listing_requests') || '[]');
+      stored.push({ ...form, timestamp: new Date().toISOString() });
+      localStorage.setItem('trailcanarias_listing_requests', JSON.stringify(stored));
+    } catch (error) {
+      console.error('Error saving listing request:', error);
+    }
     
     // Track event
     trackEvent('listing_request_submit', { type: form.type, island: form.island, wantsFeatured: form.wantsFeatured });

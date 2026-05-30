@@ -21,7 +21,7 @@ const Shops = () => {
       <SEO
         title="Tiendas de Trail Running en Canarias"
         description="Directorio de tiendas especializadas en trail running en Canarias. Zapatillas, equipamiento técnico, nutrición y más en Tenerife, Gran Canaria y otras islas."
-        canonical="https://trailcanarias.com/tiendas"
+        canonical="https://trailcanarias.vercel.app/tiendas"
       />
 
       <div className="p-6 md:p-8 space-y-8 min-h-screen relative overflow-hidden">

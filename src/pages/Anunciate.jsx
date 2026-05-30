@@ -74,7 +74,7 @@ const Anunciate = () => {
       <SEO
         title="Anúnciate en Trail Canarias · Publicidad para Marcas y Organizadores"
         description="Llega a los corredores de trail running de Canarias. Publicita tu carrera, tienda o club en Trail Canarias. Precios desde 9 €/mes."
-        canonical="https://trailcanarias.com/anunciate"
+        canonical="https://trailcanarias.vercel.app/anunciate"
       />
 
       <div className="p-6 md:p-8 space-y-10 min-h-screen">
