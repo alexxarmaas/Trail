@@ -4,6 +4,7 @@ import { useNavigate, Link } from 'react-router-dom';
 import GlassCard from '../components/GlassCard';
 import { useFavorites } from '../context/FavoritesContext';
 import { useRaces } from '../context/RacesContext';
+import { getImageFallback, getImageAlt } from '../utils/getImageFallback';
 import SEO from '../components/SEO';
 import FeaturedBadge from '../components/FeaturedBadge';
 import DemoDataNotice from '../components/DemoDataNotice';
@@ -242,13 +243,17 @@ const RaceCalendar = () => {
               >
                 <GlassCard className="group hover:-translate-y-1 transition-transform duration-300 p-0 overflow-hidden border-0 bg-white/40 dark:bg-gray-900/40 hover:bg-white/60 dark:hover:bg-gray-800/60 h-full flex flex-col">
                   {/* Image Header */}
-                  <div className="h-48 relative overflow-hidden shrink-0">
+                  <div className="relative h-48 sm:h-56">
                     <div className="absolute inset-0 bg-gradient-to-t from-black/60 to-transparent z-10" />
                     <img
-                      src={race.image}
-                      alt={race.name}
-                      className="w-full h-full object-cover transform group-hover:scale-110 transition-transform duration-500"
+                      src={getImageFallback(race, 'race')}
+                      alt={getImageAlt(race, 'carrera trail')}
+                      className="w-full h-full object-cover"
                       loading="lazy"
+                      onError={(e) => {
+                        e.currentTarget.onerror = null;
+                        e.currentTarget.src = '/placeholders/race.svg';
+                      }}
                     />
 
                     {/* Badges top-left */}

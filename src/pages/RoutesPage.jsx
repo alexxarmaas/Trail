@@ -5,39 +5,8 @@ import SEO from '../components/SEO';
 import DemoDataNotice from '../components/DemoDataNotice';
 import { trackEvent } from '../utils/trackEvent';
 import { SITE_CONFIG } from '../config/site';
-
-const DEMO_ROUTES = [
-  {
-    slug: 'ruta-de-los-volcanes',
-    name: 'Ruta de los Volcanes',
-    island: 'La Palma',
-    distance: '~34 km',
-    elevation: '+2.200 m',
-    difficulty: 'Alta',
-    image: 'https://images.unsplash.com/photo-1541280910158-c4e14f9c94a3?auto=format&fit=crop&q=80&w=800',
-    description: 'Recorrido icónico por la dorsal de La Palma. Pasa por el Roque de los Muchachos y los campos de lava del volcán.',
-  },
-  {
-    slug: 'pico-de-las-nieves',
-    name: 'Circular Pico de las Nieves',
-    island: 'Gran Canaria',
-    distance: '~18 km',
-    elevation: '+900 m',
-    difficulty: 'Media',
-    image: 'https://images.unsplash.com/photo-1502126324834-38f8e02d7160?auto=format&fit=crop&q=80&w=800',
-    description: 'Ruta circular desde el Mirador de Pozo de las Nieves hasta el punto más alto de Gran Canaria.',
-  },
-  {
-    slug: 'macizo-de-anaga',
-    name: 'Travesía del Macizo de Anaga',
-    island: 'Tenerife',
-    distance: '~22 km',
-    elevation: '+1.400 m',
-    difficulty: 'Media-Alta',
-    image: 'https://images.unsplash.com/photo-1533130061792-64b345e4a833?auto=format&fit=crop&q=80&w=800',
-    description: 'Travesía por el bosque de laurisilva del Macizo de Anaga. Flora endémica y vistas al Atlántico.',
-  },
-];
+import { REAL_ROUTES } from '../data/routes.real';
+import { getImageFallback, getImageAlt } from '../utils/getImageFallback';
 
 const DIFFICULTY_COLOR = {
   'Alta': 'bg-red-100 text-red-800 dark:bg-red-900/30 dark:text-red-300',
@@ -84,63 +53,100 @@ const RoutesPage = () => {
           </a>
         </div>
 
-        <DemoDataNotice
-          message="Las rutas de esta página son fichas demo. Los datos de distancia, desnivel y trazados son aproximados y están pendientes de verificación."
-          showLink
-        />
+        {REAL_ROUTES.some(r => r.demo) && (
+          <DemoDataNotice
+            message="Algunas rutas de esta página son fichas demo o pendientes de verificación. Los datos de distancia, desnivel y trazados son aproximados."
+            showLink
+          />
+        )}
 
         {/* Route cards */}
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-          {DEMO_ROUTES.map((route) => (
+          {REAL_ROUTES.map((route) => (
             <div
               key={route.slug}
               className="rounded-2xl border border-gray-100 dark:border-gray-800 bg-white dark:bg-gray-900 overflow-hidden hover:border-primary/30 transition-all hover:-translate-y-0.5"
             >
               <div className="relative h-44">
                 <img
-                  src={route.image}
-                  alt={route.name}
+                  src={getImageFallback(route, 'route')}
+                  alt={getImageAlt(route, 'ruta trail')}
                   className="w-full h-full object-cover"
                   loading="lazy"
+                  onError={(e) => {
+                    e.currentTarget.onerror = null;
+                    e.currentTarget.src = '/placeholders/route.svg';
+                  }}
                 />
                 <div className="absolute inset-0 bg-gradient-to-t from-black/60 to-transparent" />
                 <div className="absolute bottom-3 left-3 text-white">
                   <p className="font-bold text-lg leading-tight">{route.name}</p>
-                  <p className="text-sm text-white/80">{route.island}</p>
+                  <p className="text-sm text-white/80 capitalize">{route.island.replace('-', ' ')} {route.municipality ? `- ${route.municipality}` : ''}</p>
                 </div>
                 {/* Demo badge */}
-                <div className="absolute top-3 right-3">
-                  <span className="flex items-center gap-1 bg-amber-500/90 text-white text-[10px] font-bold px-2 py-0.5 rounded-full">
-                    <AlertCircle size={10} /> Demo
-                  </span>
-                </div>
+                {route.demo && (
+                  <div className="absolute top-3 right-3">
+                    <span className="flex items-center gap-1 bg-amber-500/90 text-white text-[10px] font-bold px-2 py-0.5 rounded-full">
+                      <AlertCircle size={10} /> Demo / Pendiente
+                    </span>
+                  </div>
+                )}
+                {route.verified && (
+                  <div className="absolute top-3 right-3">
+                    <span className="flex items-center gap-1 bg-green-500/90 text-white text-[10px] font-bold px-2 py-0.5 rounded-full">
+                      Verificado
+                    </span>
+                  </div>
+                )}
               </div>
 
               <div className="p-4 space-y-3">
                 <div className="flex gap-2 flex-wrap">
                   <span className="text-xs font-semibold bg-gray-100 dark:bg-gray-800 text-gray-700 dark:text-gray-300 px-2 py-0.5 rounded-full">
-                    {route.distance}
+                    {route.distanceLabel || 'Distancia pendiente'}
                   </span>
                   <span className="text-xs font-semibold bg-gray-100 dark:bg-gray-800 text-gray-700 dark:text-gray-300 px-2 py-0.5 rounded-full">
-                    {route.elevation}
+                    {route.elevationLabel || 'Desnivel pendiente'}
                   </span>
-                  <span className={`text-xs font-semibold px-2 py-0.5 rounded-full ${DIFFICULTY_COLOR[route.difficulty] || ''}`}>
-                    {route.difficulty}
+                  <span className={`text-xs font-semibold px-2 py-0.5 rounded-full ${route.difficulty ? (DIFFICULTY_COLOR[route.difficulty.charAt(0).toUpperCase() + route.difficulty.slice(1)] || 'bg-gray-100 text-gray-800 dark:bg-gray-800 dark:text-gray-300') : 'bg-gray-100 text-gray-800 dark:bg-gray-800 dark:text-gray-300'}`}>
+                    {route.difficulty ? route.difficulty.charAt(0).toUpperCase() + route.difficulty.slice(1) : 'Dificultad pendiente'}
                   </span>
                 </div>
 
                 <p className="text-sm text-gray-600 dark:text-gray-400 leading-relaxed">
-                  {route.description}
+                  {route.description || 'Información pendiente de completar.'}
                 </p>
 
-                <button
-                  className="w-full flex items-center justify-center gap-2 py-2 rounded-xl border border-gray-200 dark:border-gray-700 text-sm font-semibold text-gray-500 dark:text-gray-400 cursor-not-allowed opacity-60"
-                  disabled
-                  title="Próximamente"
-                >
-                  <Map size={14} />
-                  GPX · Próximamente
-                </button>
+                {route.warnings && (
+                  <p className="text-xs text-amber-600 dark:text-amber-400 mt-2">
+                    <span className="font-bold">Aviso:</span> {route.warnings}
+                  </p>
+                )}
+
+                {route.officialInfoUrl ? (
+                  <a href={route.officialInfoUrl} target="_blank" rel="noopener noreferrer" className="block text-xs text-primary hover:underline mt-2">
+                    Ver fuente oficial: {route.sourceName || 'Enlace'}
+                  </a>
+                ) : null}
+
+                {route.gpxUrl ? (
+                  <a
+                    href={route.gpxUrl}
+                    className="w-full flex items-center justify-center gap-2 py-2 mt-4 rounded-xl border border-primary text-sm font-semibold text-primary hover:bg-primary hover:text-white transition-colors"
+                  >
+                    <Map size={14} />
+                    Descargar GPX
+                  </a>
+                ) : (
+                  <button
+                    className="w-full flex items-center justify-center gap-2 py-2 mt-4 rounded-xl border border-gray-200 dark:border-gray-700 text-sm font-semibold text-gray-500 dark:text-gray-400 cursor-not-allowed opacity-60"
+                    disabled
+                    title="GPX pendiente de añadir"
+                  >
+                    <Map size={14} />
+                    GPX pendiente de añadir
+                  </button>
+                )}
               </div>
             </div>
           ))}

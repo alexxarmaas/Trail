@@ -9,6 +9,7 @@ import FeaturedBadge from '../components/FeaturedBadge';
 import DemoDataNotice from '../components/DemoDataNotice';
 import { CLUBS_DATA } from '../data/clubs';
 import { ISLANDS_DATA } from '../data/islands';
+import { getImageFallback, getImageAlt } from '../utils/getImageFallback';
 
 const ClubsDirectory = () => {
   const { t } = useLanguage();
@@ -89,7 +90,15 @@ const ClubsDirectory = () => {
             >
               <div className="relative mb-4">
                 <div className="w-24 h-24 rounded-full overflow-hidden border-4 border-white shadow-lg relative z-10">
-                  <img src={club.image} alt={club.name} className="w-full h-full object-cover" />
+                  <img 
+                    src={getImageFallback(club, 'club')} 
+                    alt={getImageAlt(club, 'club')} 
+                    className="w-full h-full object-cover" 
+                    onError={(e) => {
+                      e.currentTarget.onerror = null;
+                      e.currentTarget.src = '/placeholders/club.svg';
+                    }}
+                  />
                 </div>
                 <div className="absolute -bottom-1 -right-1 z-20 bg-yellow-400 rounded-full p-1.5 border-2 border-white shadow-sm">
                   <Trophy size={14} className="text-yellow-900" />

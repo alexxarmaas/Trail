@@ -14,6 +14,7 @@ import BusinessCTA from './BusinessCTA';
 import DemoDataNotice from './DemoDataNotice';
 import { trackEvent } from '../utils/trackEvent';
 import { Link } from 'react-router-dom';
+import { getImageFallback, getImageAlt } from '../utils/getImageFallback';
 
   // Define Mandatory Gear items with IDs
   const MANDATORY_GEAR = [
@@ -164,12 +165,16 @@ import { Link } from 'react-router-dom';
         />
       )}
       {/* Hero Section */}
-      <div className="relative h-72 md:h-96">
-        <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/20 to-transparent z-10" />
+      <div className="relative h-64 md:h-96">
+        <div className="absolute inset-0 bg-gradient-to-t from-gray-950 via-gray-900/60 to-transparent z-10" />
         <img 
-          src={displayRace.image} 
-          alt={displayRace.name} 
-          className="w-full h-full object-cover"
+          src={getImageFallback(displayRace, 'race')} 
+          alt={getImageAlt(displayRace, 'carrera trail')} 
+          className="w-full h-full object-cover" 
+          onError={(e) => {
+            e.currentTarget.onerror = null;
+            e.currentTarget.src = '/placeholders/race.svg';
+          }}
         />
         
         {/* Navigation & Actions */}
@@ -618,21 +623,70 @@ import { Link } from 'react-router-dom';
                  <h3 className="text-xl font-bold text-gray-900 dark:text-white mb-4">{t('race.detail.similar')}</h3>
                  <div className="flex gap-4 overflow-x-auto pb-4 snap-x ml-[-1.5rem] px-6 w-[calc(100%+3rem)] md:w-full md:ml-0 md:px-0">
                     {similarRaces.slice(0, 3).map(r => (
-                        <Link key={r.id} to={`/carreras/${r.slug}`} className="min-w-[280px] snap-center block">
-                             <GlassCard className="p-0 overflow-hidden bg-white dark:bg-gray-900 border-gray-100 dark:border-gray-800 hover:border-primary/30 dark:hover:border-primary/30 transition-colors h-full">
-                                <div className="h-32 relative">
-                                    <img src={r.image} className="w-full h-full object-cover" alt={r.name} />
-                                    <div className="absolute inset-0 bg-black/20" />
-                                    <div className="absolute bottom-3 left-3 text-white font-bold">{r.name}</div>
-                                </div>
-                                <div className="p-3 flex justify-between items-center">
-                                    <div className="text-xs text-gray-500 dark:text-gray-400">
-                                        <div className="flex items-center gap-1"><Calendar size={12}/> {r.dateLabel || r.date}</div>
-                                        <div className="flex items-center gap-1 mt-1"><Mountain size={12}/> {r.elevationLabel || r.elevation || 'N/D'}</div>
+                        <Link key={r.id} to={`/carreras/${r.slug}`} className="min-w-[260px] snap-center block group">
+                            <div className="h-full rounded-2xl border border-gray-100 dark:border-gray-800 bg-white dark:bg-gray-900 shadow-sm hover:shadow-lg hover:-translate-y-0.5 transition-all overflow-hidden flex flex-col">
+                                {r.image ? (
+                                    <div className="h-24 relative p-4 shrink-0">
+                                        <img 
+                                            src={getImageFallback(r, 'race')} 
+                                            alt={getImageAlt(r, 'carrera trail')} 
+                                            className="absolute inset-0 w-full h-full object-cover"
+                                            onError={(e) => {
+                                                e.currentTarget.onerror = null;
+                                                e.currentTarget.src = '/placeholders/race.svg';
+                                            }}
+                                        />
+                                        <div className="absolute inset-0 bg-black/40" />
+                                        <div className="relative z-10 w-10 h-10 rounded-xl bg-white/20 backdrop-blur flex items-center justify-center text-white border border-white/20 shadow-sm">
+                                            <Mountain size={22} />
+                                        </div>
                                     </div>
-                                    <ArrowRight size={16} className="text-primary" />
+                                ) : (
+                                    <div className="h-24 bg-gradient-to-br from-green-600 via-emerald-500 to-orange-400 relative p-4 shrink-0">
+                                        <div className="absolute inset-0 opacity-20 bg-[radial-gradient(circle_at_top_right,_white,_transparent_35%)]" />
+                                        <div className="relative z-10 w-10 h-10 rounded-xl bg-white/20 backdrop-blur flex items-center justify-center text-white border border-white/20 shadow-sm">
+                                            <Mountain size={22} />
+                                        </div>
+                                    </div>
+                                )}
+
+                                <div className="p-4 flex-1 flex flex-col justify-between">
+                                    <div>
+                                        <h4 className="font-bold text-gray-900 dark:text-white leading-tight line-clamp-2 group-hover:text-primary transition-colors">
+                                            {r.name}
+                                        </h4>
+
+                                        <p className="mt-1 text-xs text-gray-500 dark:text-gray-400">
+                                            {r.location || (r.island ? r.island.replace('-', ' ').replace(/\b\w/g, l => l.toUpperCase()) : 'Canarias')}
+                                        </p>
+
+                                        <div className="mt-3 flex flex-wrap gap-2">
+                                            {(r.distanceLabel || r.distance) && !String(r.distanceLabel || r.distance).toLowerCase().includes('pendiente') && (
+                                                <span className="text-[11px] font-semibold px-2 py-1 rounded-full bg-green-50 text-green-700 dark:bg-green-900/30 dark:text-green-300">
+                                                    {r.distanceLabel || r.distance}
+                                                </span>
+                                            )}
+
+                                            {(r.elevationLabel || r.elevation) && !String(r.elevationLabel || r.elevation).toLowerCase().includes('pendiente') && (
+                                                <span className="text-[11px] font-semibold px-2 py-1 rounded-full bg-orange-50 text-orange-700 dark:bg-orange-900/30 dark:text-orange-300">
+                                                    {r.elevationLabel || r.elevation}
+                                                </span>
+                                            )}
+
+                                            {r.status === 'pending' && (
+                                                <span className="text-[11px] font-semibold px-2 py-1 rounded-full bg-amber-50 text-amber-700 dark:bg-amber-900/30 dark:text-amber-300">
+                                                    Pendiente
+                                                </span>
+                                            )}
+                                        </div>
+                                    </div>
+
+                                    <div className="mt-4 flex items-center justify-between text-sm font-semibold text-primary">
+                                        <span>Ver carrera</span>
+                                        <ArrowRight size={16} className="group-hover:translate-x-1 transition-transform" />
+                                    </div>
                                 </div>
-                             </GlassCard>
+                            </div>
                         </Link>
                     ))}
                  </div>

@@ -7,6 +7,7 @@ import FeaturedBadge from '../components/FeaturedBadge';
 import DemoDataNotice from '../components/DemoDataNotice';
 import { SHOPS_DATA } from '../data/shops';
 import { ISLANDS_DATA } from '../data/islands';
+import { getImageFallback, getImageAlt } from '../utils/getImageFallback';
 
 const Shops = () => {
   const navigate = useNavigate();
@@ -64,18 +65,32 @@ const Shops = () => {
               onClick={() => navigate(`/tiendas/${shop.slug}`)}
               className="cursor-pointer"
             >
-              <GlassCard className="bg-white dark:bg-gray-900 p-4 flex gap-4 shadow-sm hover:shadow-md h-full border-gray-100 dark:border-gray-800 hover:border-primary/30 dark:hover:border-primary/30 transition-all">
-                <div className="w-28 h-28 shrink-0 rounded-xl overflow-hidden">
-                  <img src={shop.image} alt={shop.name} className="w-full h-full object-cover" />
+              <GlassCard className="bg-white dark:bg-gray-900 p-0 flex flex-col shadow-sm hover:shadow-md h-full border-gray-100 dark:border-gray-800 hover:border-primary/30 dark:hover:border-primary/30 transition-all overflow-hidden">
+                <div className="h-48 overflow-hidden relative">
+                  <img 
+                    src={getImageFallback(shop, 'shop')} 
+                    alt={getImageAlt(shop, 'tienda')} 
+                    className="w-full h-full object-cover" 
+                    loading="lazy"
+                    onError={(e) => {
+                      e.currentTarget.onerror = null;
+                      e.currentTarget.src = '/placeholders/shop.svg';
+                    }}
+                  />
+                  <div className="absolute inset-0 bg-gradient-to-t from-black/60 to-transparent" />
+                  <div className="absolute bottom-3 left-4">
+                    <h2 className="text-xl font-bold text-white mb-1">{shop.name}</h2>
+                    <div className="flex items-center text-white/80 text-sm gap-1">
+                      <MapPin size={14} />
+                      <span>{shop.island.replace('-', ' ').toUpperCase()}</span>
+                    </div>
+                  </div>
                 </div>
 
-                <div className="flex-1 flex flex-col justify-between">
+                <div className="p-4 flex-1 flex flex-col justify-between">
                   <div>
-                    <div className="flex items-start justify-between gap-2">
-                      <h3 className="font-bold text-lg text-gray-900 dark:text-white">{shop.name}</h3>
-                      {shop.featured && <FeaturedBadge />}
-                    </div>
-
+                    {shop.featured && <FeaturedBadge />}
+                    
                     {shop.rating && (
                       <div className="flex items-center gap-1 mt-1 text-sm text-gray-500 dark:text-gray-400">
                         <Star size={14} className="text-yellow-400 fill-yellow-400" />

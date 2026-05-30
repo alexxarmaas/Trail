@@ -1,0 +1,14 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1200 800">
+  <defs>
+    <linearGradient id="bg" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#0ea5e9" />
+      <stop offset="100%" stop-color="#0369a1" />
+    </linearGradient>
+  </defs>
+  <rect width="1200" height="800" fill="url(#bg)" />
+  <!-- Water Waves -->
+  <path d="M0 600C300 550 600 650 1200 600L1200 800L0 800Z" fill="#fff" opacity="0.1" />
+  <path d="M0 650C400 700 800 600 1200 650L1200 800L0 800Z" fill="#fff" opacity="0.15" />
+  <!-- Island Shape -->
+  <path d="M300 650C300 650 400 350 600 350C800 350 900 650 900 650Z" fill="#fff" opacity="0.3" />
+</svg>

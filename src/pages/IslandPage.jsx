@@ -5,10 +5,12 @@ import { getIslandBySlug } from '../data/islands';
 import { useRaces } from '../context/RacesContext';
 import { CLUBS_DATA } from '../data/clubs';
 import { SHOPS_DATA } from '../data/shops';
+import { REAL_ROUTES } from '../data/routes.real';
 import SEO from '../components/SEO';
 import DemoDataNotice from '../components/DemoDataNotice';
 import FeaturedBadge from '../components/FeaturedBadge';
 import { SITE_CONFIG } from '../config/site';
+import { getImageFallback, getImageAlt } from '../utils/getImageFallback';
 
 const IslandPage = () => {
   const { island } = useParams();
@@ -19,6 +21,7 @@ const IslandPage = () => {
   const islandRaces = races.filter((r) => r.island === island);
   const clubs = CLUBS_DATA.filter((c) => c.island === island);
   const shops = SHOPS_DATA.filter((s) => s.island === island);
+  const islandRoutes = REAL_ROUTES.filter((r) => r.island === island);
 
   if (!islandData) {
     return (
@@ -49,7 +52,15 @@ const IslandPage = () => {
         {/* Hero */}
         <div className="relative h-72">
           <div className="absolute inset-0 bg-gradient-to-t from-black/80 to-transparent z-10" />
-          <img src={islandData.image} alt={islandData.name} className="w-full h-full object-cover" />
+          <img 
+            src={getImageFallback(islandData, 'island')} 
+            alt={getImageAlt(islandData, 'isla')} 
+            className="w-full h-full object-cover" 
+            onError={(e) => {
+              e.currentTarget.onerror = null;
+              e.currentTarget.src = '/placeholders/island.svg';
+            }}
+          />
           <div className="absolute top-4 left-4 z-20">
             <button
               onClick={() => navigate(-1)}
@@ -93,9 +104,13 @@ const IslandPage = () => {
                   >
                     <div className="flex gap-3">
                       <img
-                        src={race.image}
-                        alt={race.name}
+                        src={getImageFallback(race, 'race')}
+                        alt={getImageAlt(race, 'carrera trail')}
                         className="w-16 h-16 rounded-xl object-cover shrink-0"
+                        onError={(e) => {
+                          e.currentTarget.onerror = null;
+                          e.currentTarget.src = '/placeholders/race.svg';
+                        }}
                       />
                       <div>
                         <div className="flex items-center gap-2 flex-wrap">
@@ -144,9 +159,13 @@ const IslandPage = () => {
                     className="flex items-center gap-3 p-4 rounded-2xl bg-white dark:bg-gray-900 border border-gray-100 dark:border-gray-800 hover:border-primary/30 transition-colors"
                   >
                     <img
-                      src={club.image}
-                      alt={club.name}
+                      src={getImageFallback(club, 'club')}
+                      alt={getImageAlt(club, 'club')}
                       className="w-12 h-12 rounded-full object-cover shrink-0"
+                      onError={(e) => {
+                        e.currentTarget.onerror = null;
+                        e.currentTarget.src = '/placeholders/club.svg';
+                      }}
                     />
                     <div>
                       <h3 className="font-bold text-sm text-gray-900 dark:text-white">{club.name}</h3>
@@ -186,9 +205,13 @@ const IslandPage = () => {
                     className="flex items-center gap-3 p-4 rounded-2xl bg-white dark:bg-gray-900 border border-gray-100 dark:border-gray-800 hover:border-primary/30 transition-colors"
                   >
                     <img
-                      src={shop.image}
-                      alt={shop.name}
+                      src={getImageFallback(shop, 'shop')}
+                      alt={getImageAlt(shop, 'tienda')}
                       className="w-12 h-12 rounded-xl object-cover shrink-0"
+                      onError={(e) => {
+                        e.currentTarget.onerror = null;
+                        e.currentTarget.src = '/placeholders/shop.svg';
+                      }}
                     />
                     <div>
                       <h3 className="font-bold text-sm text-gray-900 dark:text-white">{shop.name}</h3>
@@ -205,6 +228,40 @@ const IslandPage = () => {
               </div>
             )}
           </section>
+
+          {/* Routes */}
+          {islandRoutes.length > 0 && (
+            <section>
+              <div className="flex items-center justify-between mb-4">
+                <h2 className="text-xl font-bold text-gray-900 dark:text-white flex items-center gap-2">
+                  <MapPin size={20} className="text-primary" />
+                  Rutas en {islandData.name}
+                </h2>
+                <Link to="/rutas" className="text-sm text-primary hover:underline">
+                  Ver todas →
+                </Link>
+              </div>
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                {islandRoutes.map((route) => (
+                  <div
+                    key={route.slug}
+                    className="flex flex-col p-4 rounded-2xl bg-white dark:bg-gray-900 border border-gray-100 dark:border-gray-800 hover:border-primary/30 transition-colors"
+                  >
+                    <div className="flex items-center gap-2 flex-wrap mb-2">
+                      <h3 className="font-bold text-gray-900 dark:text-white text-sm">{route.name}</h3>
+                      {route.demo && (
+                        <span className="text-[10px] text-amber-600 dark:text-amber-400 font-semibold">⚠ Demo</span>
+                      )}
+                    </div>
+                    <div className="flex items-center gap-2 text-xs text-gray-500 mb-2">
+                      <span className="bg-gray-100 dark:bg-gray-800 px-2 py-0.5 rounded-full">{route.distanceLabel || 'Distancia pendiente'}</span>
+                      <span className="bg-gray-100 dark:bg-gray-800 px-2 py-0.5 rounded-full">{route.elevationLabel || 'Desnivel pendiente'}</span>
+                    </div>
+                  </div>
+                ))}
+              </div>
+            </section>
+          )}
 
           {/* SEO description */}
           <div className="p-5 rounded-2xl bg-white dark:bg-gray-900 border border-gray-100 dark:border-gray-800">

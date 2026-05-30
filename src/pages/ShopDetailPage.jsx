@@ -6,6 +6,7 @@ import SEO from '../components/SEO';
 import DemoDataNotice from '../components/DemoDataNotice';
 import BusinessCTA from '../components/BusinessCTA';
 import FeaturedBadge from '../components/FeaturedBadge';
+import { getImageFallback, getImageAlt } from '../utils/getImageFallback';
 
 const ShopDetailPage = () => {
   const { slug } = useParams();
@@ -40,9 +41,17 @@ const ShopDetailPage = () => {
 
       <div className="min-h-screen bg-gray-50 dark:bg-gray-950">
         {/* Hero */}
-        <div className="relative h-64">
-          <div className="absolute inset-0 bg-gradient-to-t from-black/70 to-transparent z-10" />
-          <img src={shop.image} alt={shop.name} className="w-full h-full object-cover" />
+        <div className="h-64 md:h-80 relative overflow-hidden">
+          <img 
+            src={getImageFallback(shop, 'shop')} 
+            alt={getImageAlt(shop, 'tienda')} 
+            className="w-full h-full object-cover" 
+            onError={(e) => {
+              e.currentTarget.onerror = null;
+              e.currentTarget.src = '/placeholders/shop.svg';
+            }}
+          />
+          <div className="absolute inset-0 bg-gradient-to-t from-gray-900 to-transparent" />
           <div className="absolute top-4 left-4 z-20">
             <button
               onClick={() => navigate('/tiendas')}
