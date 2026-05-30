@@ -1,6 +1,7 @@
 /**
  * Trail Canarias — Event Tracking Utility
  * Logs events to console and persists last 100 to localStorage.
+ * Safe for environments where localStorage is unavailable.
  */
 
 export function trackEvent(eventName, payload = {}) {
@@ -10,7 +11,9 @@ export function trackEvent(eventName, payload = {}) {
     createdAt: new Date().toISOString(),
   };
 
-  console.log('[trackEvent]', event);
+  try {
+    console.log('[trackEvent]', event);
+  } catch (_) {}
 
   try {
     const previous = JSON.parse(localStorage.getItem('trailcanarias_events') || '[]');
@@ -18,7 +21,7 @@ export function trackEvent(eventName, payload = {}) {
       'trailcanarias_events',
       JSON.stringify([event, ...previous].slice(0, 100))
     );
-  } catch (e) {
-    // localStorage might be unavailable
+  } catch (_) {
+    // localStorage might be unavailable (private browsing, etc.)
   }
 }

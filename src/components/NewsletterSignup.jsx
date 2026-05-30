@@ -1,9 +1,10 @@
 import React, { useState } from 'react';
 import { Mail, CheckCircle } from 'lucide-react';
+import { trackEvent } from '../utils/trackEvent';
 
 /**
  * NewsletterSignup — email capture form.
- * Saves email to localStorage. No backend required.
+ * Saves email to localStorage. Tracks newsletter_signup event.
  */
 const NewsletterSignup = ({ compact = false }) => {
   const [email, setEmail] = useState('');
@@ -12,20 +13,21 @@ const NewsletterSignup = ({ compact = false }) => {
 
   const handleSubmit = (e) => {
     e.preventDefault();
-    if (!email || !email.includes('@')) {
+    const trimmed = email.trim();
+    if (!trimmed || !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(trimmed)) {
       setError('Introduce un email válido.');
       return;
     }
     setError('');
 
-    // Save to localStorage
     try {
       const existing = JSON.parse(localStorage.getItem('trailcanarias_newsletter') || '[]');
-      if (!existing.includes(email)) {
-        localStorage.setItem('trailcanarias_newsletter', JSON.stringify([...existing, email]));
+      if (!existing.includes(trimmed)) {
+        localStorage.setItem('trailcanarias_newsletter', JSON.stringify([...existing, trimmed]));
       }
     } catch (_) {}
 
+    trackEvent('newsletter_signup', { email: trimmed });
     setSubmitted(true);
   };
 
@@ -41,7 +43,9 @@ const NewsletterSignup = ({ compact = false }) => {
   if (compact) {
     return (
       <form onSubmit={handleSubmit} className="flex gap-2">
+        <label className="sr-only" htmlFor="newsletter-email-compact">Email</label>
         <input
+          id="newsletter-email-compact"
           type="email"
           value={email}
           onChange={(e) => setEmail(e.target.value)}
@@ -54,6 +58,7 @@ const NewsletterSignup = ({ compact = false }) => {
         >
           Suscribirme
         </button>
+        {error && <p className="text-red-500 text-xs mt-1 absolute">{error}</p>}
       </form>
     );
   }
@@ -65,10 +70,12 @@ const NewsletterSignup = ({ compact = false }) => {
         <h3 className="font-bold text-gray-900 dark:text-white">Newsletter Trail Canarias</h3>
       </div>
       <p className="text-sm text-gray-600 dark:text-gray-400 mb-4">
-        Recibe el calendario de carreras, novedades de clubes y recursos para corredores de montaña en Canarias.
+        Recibe nuevas carreras, aperturas de inscripciones y rutas destacadas en Canarias.
       </p>
       <form onSubmit={handleSubmit} className="flex flex-col sm:flex-row gap-2">
+        <label className="sr-only" htmlFor="newsletter-email">Email</label>
         <input
+          id="newsletter-email"
           type="email"
           value={email}
           onChange={(e) => setEmail(e.target.value)}

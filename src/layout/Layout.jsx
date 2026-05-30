@@ -12,6 +12,9 @@ import ShopDetailPage from '../pages/ShopDetailPage';
 import IslandPage from '../pages/IslandPage';
 import Anunciate from '../pages/Anunciate';
 import PublicaCarrera from '../pages/PublicaCarrera';
+import RoutesPage from '../pages/RoutesPage';
+import DataNotice from '../pages/DataNotice';
+import Dashboard from '../pages/Dashboard';
 
 const Layout = () => {
   return (
@@ -34,7 +37,10 @@ const Layout = () => {
             <Route path="/anunciate" element={<Anunciate />} />
             <Route path="/publica-tu-carrera" element={<PublicaCarrera />} />
             <Route path="/perfil" element={<UserProfile />} />
-            {/* Legacy redirect */}
+            <Route path="/rutas" element={<RoutesPage />} />
+            <Route path="/legal/aviso-datos" element={<DataNotice />} />
+            <Route path="/dashboard" element={<Dashboard />} />
+            {/* Catch-all */}
             <Route path="*" element={<Navigate to="/" replace />} />
           </Routes>
         </div>

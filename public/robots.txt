@@ -1,4 +1,4 @@
 User-agent: *
 Allow: /
 
-Sitemap: https://trailcanarias.com/sitemap.xml
+Sitemap: https://trailcanarias.vercel.app/sitemap.xml
