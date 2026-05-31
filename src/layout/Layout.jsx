@@ -18,6 +18,11 @@ import Dashboard from '../pages/Dashboard';
 import AddListing from '../pages/AddListing';
 import Pricing from '../pages/Pricing';
 import FavoritesPage from '../pages/FavoritesPage';
+import RouteDetailPage from '../pages/RouteDetailPage';
+import CorrectionRequest from '../pages/CorrectionRequest';
+import ForOrganizers from '../pages/ForOrganizers';
+import ForShops from '../pages/ForShops';
+import ForClubs from '../pages/ForClubs';
 
 const Layout = () => {
   return (
@@ -44,8 +49,13 @@ const Layout = () => {
             <Route path="/publica-tu-carrera" element={<PublicaCarrera />} />
             <Route path="/perfil" element={<UserProfile />} />
             <Route path="/rutas" element={<RoutesPage />} />
+            <Route path="/rutas/:slug" element={<RouteDetailPage />} />
             <Route path="/legal/aviso-datos" element={<DataNotice />} />
             <Route path="/dashboard" element={<Dashboard />} />
+            <Route path="/corregir-ficha" element={<CorrectionRequest />} />
+            <Route path="/para-organizadores" element={<ForOrganizers />} />
+            <Route path="/para-tiendas" element={<ForShops />} />
+            <Route path="/para-clubes" element={<ForClubs />} />
             {/* Catch-all */}
             <Route path="*" element={<Navigate to="/" replace />} />
           </Routes>

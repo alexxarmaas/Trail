@@ -1,15 +1,17 @@
 import React, { useState } from 'react';
 import { MapPin, Phone, Star, ExternalLink, Filter, Search } from 'lucide-react';
-import { Link } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
 import GlassCard from '../components/GlassCard';
 import SEO from '../components/SEO';
 import FeaturedBadge from '../components/FeaturedBadge';
 import DemoDataNotice from '../components/DemoDataNotice';
+import QualityBadge from '../components/QualityBadge';
 import { SHOPS_DATA } from '../data/shops';
 import { ISLANDS_DATA } from '../data/islands';
 import { getImageFallback, getImageAlt } from '../utils/getImageFallback';
 
 const Shops = () => {
+  const navigate = useNavigate();
   const [islandFilter, setIslandFilter] = useState('all');
   const [searchTerm, setSearchTerm] = useState('');
   const [qualityFilter, setQualityFilter] = useState('all');
@@ -98,10 +100,10 @@ const Shops = () => {
         {/* Grid */}
         <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
           {filteredShops.map((shop) => (
-            <Link
+            <div
               key={shop.id}
-              to={`/tiendas/${shop.slug}`}
-              className="block group"
+              onClick={() => navigate(`/tiendas/${shop.slug}`)}
+              className="block group cursor-pointer"
             >
               <GlassCard className="bg-white dark:bg-gray-900 p-0 flex flex-col shadow-sm hover:shadow-md h-full border-gray-100 dark:border-gray-800 hover:border-primary/30 dark:hover:border-primary/30 transition-all overflow-hidden">
                 <div className="h-48 overflow-hidden relative">
@@ -127,7 +129,10 @@ const Shops = () => {
 
                 <div className="p-4 flex-1 flex flex-col justify-between">
                   <div>
-                    {shop.featured && <FeaturedBadge />}
+                    <div className="flex gap-2 mb-2">
+                      {shop.featured && <FeaturedBadge />}
+                      <QualityBadge item={shop} />
+                    </div>
                     
                     {shop.rating && (
                       <div className="flex items-center gap-1 mt-1 text-sm text-gray-500 dark:text-gray-400">
@@ -162,13 +167,14 @@ const Shops = () => {
                   </div>
 
                   <div className="mt-3 flex gap-2">
-                    <button 
+                    <Link 
+                      to={`/tiendas/${shop.slug}`}
                       className="flex items-center gap-1 px-3 py-1.5 text-xs font-semibold text-primary border border-primary/30 rounded-lg group-hover:bg-primary group-hover:text-white transition-colors"
-                      onClick={(e) => { e.preventDefault(); e.stopPropagation(); }}
+                      onClick={(e) => e.stopPropagation()}
                     >
                       <ExternalLink size={12} />
                       Ver tienda
-                    </button>
+                    </Link>
                     {shop.phone && (
                       <button 
                         className="p-2 rounded-lg bg-gray-100 dark:bg-gray-800 text-gray-600 dark:text-gray-300 hover:bg-gray-200 transition-colors"
@@ -180,7 +186,7 @@ const Shops = () => {
                   </div>
                 </div>
               </GlassCard>
-            </Link>
+            </div>
           ))}
         </div>
 

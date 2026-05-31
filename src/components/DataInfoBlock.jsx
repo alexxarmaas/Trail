@@ -1,12 +1,13 @@
 import React from 'react';
 import { ShieldCheck, ShieldAlert, FileText, AlertTriangle, ExternalLink, Calendar, Info } from 'lucide-react';
+import { Link } from 'react-router-dom';
 import { trackEvent } from '../utils/trackEvent';
 import { SITE_CONFIG } from '../config/site';
 
 const DataInfoBlock = ({ item, type }) => {
   if (!item) return null;
 
-  const mailtoHref = `mailto:${SITE_CONFIG.email}?subject=${encodeURIComponent(`Corrección de ficha: ${item.name}`)}`;
+  const correctionUrl = `/corregir-ficha?type=${encodeURIComponent(type)}&slug=${encodeURIComponent(item.slug)}&name=${encodeURIComponent(item.name)}`;
 
   const handleCorrectionClick = () => {
     trackEvent('correction_request_click', { type, slug: item.slug, name: item.name });
@@ -71,13 +72,15 @@ const DataInfoBlock = ({ item, type }) => {
 
       <div className="pt-4 border-t border-gray-200 dark:border-gray-800 flex flex-col sm:flex-row items-center justify-between gap-4">
         <span className="text-gray-500 text-xs">¿Ves algún dato incorrecto o desactualizado?</span>
-        <a
-          href={mailtoHref}
-          onClick={handleCorrectionClick}
-          className="text-xs font-semibold px-4 py-2 rounded-lg bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-700 transition-colors"
-        >
-          Solicitar corrección
-        </a>
+        <div className="flex flex-col sm:flex-row items-center gap-2">
+          <Link
+            to={correctionUrl}
+            onClick={handleCorrectionClick}
+            className="text-xs font-semibold px-4 py-2 rounded-lg bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-700 transition-colors"
+          >
+            Solicitar corrección
+          </Link>
+        </div>
       </div>
     </div>
   );

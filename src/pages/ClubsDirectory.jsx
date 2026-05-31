@@ -7,9 +7,15 @@ import { useLanguage } from '../context/LanguageContext';
 import SEO from '../components/SEO';
 import FeaturedBadge from '../components/FeaturedBadge';
 import DemoDataNotice from '../components/DemoDataNotice';
+import QualityBadge from '../components/QualityBadge';
 import { CLUBS_DATA } from '../data/clubs';
 import { ISLANDS_DATA } from '../data/islands';
 import { getImageFallback, getImageAlt } from '../utils/getImageFallback';
+
+const formatMembers = (members) => {
+  if (!members) return 'Miembros pendientes';
+  return `${members} miembros`;
+};
 
 const ClubsDirectory = () => {
   const { t } = useLanguage();
@@ -124,7 +130,10 @@ const ClubsDirectory = () => {
                 </div>
               </div>
 
-              {club.featured && <FeaturedBadge className="mb-2" />}
+              <div className="flex gap-2 flex-wrap justify-center mb-2">
+                {club.featured && <FeaturedBadge />}
+                <QualityBadge item={club} />
+              </div>
 
               <h3 className="text-lg font-bold text-gray-900 dark:text-white mb-1">{club.name}</h3>
 
@@ -145,11 +154,18 @@ const ClubsDirectory = () => {
               </p>
 
               <div className="mt-auto w-full space-y-3">
-                <div className="flex items-center justify-center gap-2 text-sm text-gray-500 bg-gray-50 dark:bg-gray-800 py-2 rounded-lg">
-                  <Users size={16} />
-                  <span className="font-semibold text-gray-900 dark:text-white">{club.members}</span>
-                  <span>miembros</span>
-                </div>
+                {club.members ? (
+                  <div className="flex items-center justify-center gap-2 text-sm text-gray-500 bg-gray-50 dark:bg-gray-800 py-2 rounded-lg">
+                    <Users size={16} />
+                    <span className="font-semibold text-gray-900 dark:text-white">{club.members}</span>
+                    <span>miembros</span>
+                  </div>
+                ) : (
+                  <div className="flex items-center justify-center gap-2 text-sm text-gray-500 bg-gray-50 dark:bg-gray-800 py-2 rounded-lg opacity-70">
+                    <Users size={16} />
+                    <span>Miembros pendientes</span>
+                  </div>
+                )}
                 <Button
                   variant="outline"
                   className="w-full py-2 text-sm hover:bg-primary hover:text-white transition-colors"

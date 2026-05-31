@@ -1,6 +1,6 @@
 import React from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
-import { ChevronLeft, MapPin, Phone, Globe, Tag, ExternalLink } from 'lucide-react';
+import { ChevronLeft, MapPin, Phone, Globe, Tag, ExternalLink, Instagram } from 'lucide-react';
 import { SHOPS_DATA } from '../data/shops';
 import SEO from '../components/SEO';
 import DemoDataNotice from '../components/DemoDataNotice';
@@ -8,6 +8,11 @@ import BusinessCTA from '../components/BusinessCTA';
 import FeaturedBadge from '../components/FeaturedBadge';
 import DataInfoBlock from '../components/DataInfoBlock';
 import { getImageFallback, getImageAlt } from '../utils/getImageFallback';
+
+const normalizeInstagram = (value) => {
+  if (!value) return '';
+  return value.replace('@', '').trim();
+};
 
 const ShopDetailPage = () => {
   const { slug } = useParams();
@@ -128,6 +133,18 @@ const ShopDetailPage = () => {
               >
                 <Phone size={18} />
                 Llamar
+              </a>
+            )}
+            {shop.instagram && (
+              <a
+                href={`https://instagram.com/${normalizeInstagram(shop.instagram)}`}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="flex items-center gap-2 px-4 py-3 rounded-xl border border-gray-200 dark:border-gray-700 text-gray-900 dark:text-white font-semibold hover:bg-gray-50 dark:hover:bg-gray-800 transition-colors"
+              >
+                <Instagram size={18} />
+                @{normalizeInstagram(shop.instagram)}
+                <ExternalLink size={14} className="ml-auto" />
               </a>
             )}
           </div>

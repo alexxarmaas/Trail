@@ -9,6 +9,11 @@ import FeaturedBadge from '../components/FeaturedBadge';
 import DataInfoBlock from '../components/DataInfoBlock';
 import { getImageFallback, getImageAlt } from '../utils/getImageFallback';
 
+const normalizeInstagram = (value) => {
+  if (!value) return '';
+  return value.replace('@', '').trim();
+};
+
 const ClubDetailPage = () => {
   const { slug } = useParams();
   const navigate = useNavigate();
@@ -79,10 +84,16 @@ const ClubDetailPage = () => {
 
           {/* Stats */}
           <div className="grid grid-cols-2 gap-4">
-            <div className="p-4 rounded-2xl bg-white dark:bg-gray-900 border border-gray-100 dark:border-gray-800 text-center">
+            <div className="p-4 rounded-2xl bg-white dark:bg-gray-900 border border-gray-100 dark:border-gray-800 text-center flex flex-col justify-center">
               <Users size={24} className="mx-auto text-primary mb-1" />
-              <p className="text-2xl font-bold text-gray-900 dark:text-white">{club.members}</p>
-              <p className="text-xs text-gray-500 uppercase font-semibold">Miembros</p>
+              {club.members ? (
+                <>
+                  <p className="text-2xl font-bold text-gray-900 dark:text-white">{club.members}</p>
+                  <p className="text-xs text-gray-500 uppercase font-semibold">Miembros</p>
+                </>
+              ) : (
+                <p className="text-sm font-bold text-gray-500 dark:text-gray-400 mt-2">Pendiente de confirmar</p>
+              )}
             </div>
             <div className="p-4 rounded-2xl bg-white dark:bg-gray-900 border border-gray-100 dark:border-gray-800 text-center">
               <MapPin size={24} className="mx-auto text-primary mb-1" />
@@ -113,13 +124,13 @@ const ClubDetailPage = () => {
             )}
             {club.instagram && (
               <a
-                href={`https://instagram.com/${club.instagram}`}
+                href={`https://instagram.com/${normalizeInstagram(club.instagram)}`}
                 target="_blank"
                 rel="noopener noreferrer"
                 className="flex items-center gap-2 px-4 py-3 rounded-xl border border-gray-200 dark:border-gray-700 text-gray-900 dark:text-white font-semibold hover:bg-gray-50 dark:hover:bg-gray-800 transition-colors"
               >
                 <Instagram size={18} />
-                @{club.instagram}
+                @{normalizeInstagram(club.instagram)}
                 <ExternalLink size={14} className="ml-auto" />
               </a>
             )}

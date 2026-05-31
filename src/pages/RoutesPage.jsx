@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { Link } from 'react-router-dom';
+import { useNavigate, Link } from 'react-router-dom';
 import { Map, Mail, AlertCircle, ArrowRight, Search, Filter } from 'lucide-react';
 import SEO from '../components/SEO';
 import DemoDataNotice from '../components/DemoDataNotice';
@@ -8,6 +8,7 @@ import { SITE_CONFIG } from '../config/site';
 import { REAL_ROUTES } from '../data/routes.real';
 import { getImageFallback, getImageAlt } from '../utils/getImageFallback';
 import { ISLANDS_DATA } from '../data/islands';
+import QualityBadge from '../components/QualityBadge';
 
 const DIFFICULTY_COLOR = {
   'muy-alta': 'bg-red-200 text-red-900 dark:bg-red-900/50 dark:text-red-300 font-bold',
@@ -18,6 +19,7 @@ const DIFFICULTY_COLOR = {
 };
 
 const RoutesPage = () => {
+  const navigate = useNavigate();
   const mailtoHref = `mailto:${SITE_CONFIG.email}?subject=${encodeURIComponent('Sugerencia de ruta trail en Canarias')}`;
 
   const [searchTerm, setSearchTerm] = useState('');
@@ -129,7 +131,8 @@ const RoutesPage = () => {
           {filteredRoutes.map((route) => (
             <div
               key={route.id}
-              className="rounded-2xl border border-gray-100 dark:border-gray-800 bg-white dark:bg-gray-900 overflow-hidden hover:border-primary/30 transition-all hover:-translate-y-0.5"
+              onClick={() => navigate(`/rutas/${route.slug}`)}
+              className="rounded-2xl border border-gray-100 dark:border-gray-800 bg-white dark:bg-gray-900 overflow-hidden hover:border-primary/30 transition-all hover:-translate-y-0.5 cursor-pointer flex flex-col h-full group"
             >
               <div className="relative h-44">
                 <img
@@ -147,24 +150,12 @@ const RoutesPage = () => {
                   <p className="font-bold text-lg leading-tight">{route.name}</p>
                   <p className="text-sm text-white/80 capitalize">{route.island.replace('-', ' ')} {route.municipality ? `- ${route.municipality}` : ''}</p>
                 </div>
-                {/* Demo badge */}
-                {route.demo && (
-                  <div className="absolute top-3 right-3">
-                    <span className="flex items-center gap-1 bg-amber-500/90 text-white text-[10px] font-bold px-2 py-0.5 rounded-full">
-                      <AlertCircle size={10} /> Demo / Pendiente
-                    </span>
-                  </div>
-                )}
-                {route.verified && (
-                  <div className="absolute top-3 right-3">
-                    <span className="flex items-center gap-1 bg-green-500/90 text-white text-[10px] font-bold px-2 py-0.5 rounded-full">
-                      Verificado
-                    </span>
-                  </div>
-                )}
+                <div className="absolute top-3 right-3 flex flex-wrap gap-2 justify-end">
+                  <QualityBadge item={route} />
+                </div>
               </div>
 
-              <div className="p-4 space-y-3">
+              <div className="p-4 space-y-3 flex flex-col flex-grow">
                 <div className="flex gap-2 flex-wrap">
                   <span className="text-xs font-semibold bg-gray-100 dark:bg-gray-800 text-gray-700 dark:text-gray-300 px-2 py-0.5 rounded-full">
                     {route.distanceLabel || 'Distancia pendiente'}
@@ -187,30 +178,15 @@ const RoutesPage = () => {
                   </p>
                 )}
 
-                {route.officialInfoUrl ? (
-                  <a href={route.officialInfoUrl} target="_blank" rel="noopener noreferrer" className="block text-xs text-primary hover:underline mt-2">
-                    Ver fuente oficial: {route.sourceName || 'Enlace'}
-                  </a>
-                ) : null}
-
-                {route.gpxUrl ? (
-                  <a
-                    href={route.gpxUrl}
-                    className="w-full flex items-center justify-center gap-2 py-2 mt-4 rounded-xl border border-primary text-sm font-semibold text-primary hover:bg-primary hover:text-white transition-colors"
+                <div className="mt-auto pt-4">
+                  <Link
+                    to={`/rutas/${route.slug}`}
+                    onClick={(e) => e.stopPropagation()}
+                    className="w-full flex items-center justify-center gap-2 py-2 rounded-xl border border-primary text-sm font-semibold text-primary group-hover:bg-primary group-hover:text-white transition-colors"
                   >
-                    <Map size={14} />
-                    Descargar GPX
-                  </a>
-                ) : (
-                  <button
-                    className="w-full flex items-center justify-center gap-2 py-2 mt-4 rounded-xl border border-gray-200 dark:border-gray-700 text-sm font-semibold text-gray-500 dark:text-gray-400 cursor-not-allowed opacity-60"
-                    disabled
-                    title="GPX pendiente de añadir"
-                  >
-                    <Map size={14} />
-                    GPX pendiente de añadir
-                  </button>
-                )}
+                    Ver ruta
+                  </Link>
+                </div>
               </div>
             </div>
           ))}

@@ -9,6 +9,7 @@ import SEO from '../components/SEO';
 import FeaturedBadge from '../components/FeaturedBadge';
 import DemoDataNotice from '../components/DemoDataNotice';
 import NewsletterSignup from '../components/NewsletterSignup';
+import QualityBadge from '../components/QualityBadge';
 import { ISLANDS_DATA, getIslandName } from '../data/islands';
 
 const RACE_TYPES = [
@@ -71,9 +72,15 @@ const RaceCalendar = () => {
     });
 
     // Sort
+    const getDateTime = (date) => {
+      if (!date) return Number.MAX_SAFE_INTEGER;
+      const time = new Date(date).getTime();
+      return Number.isNaN(time) ? Number.MAX_SAFE_INTEGER : time;
+    };
+
     list = [...list].sort((a, b) => {
       if (sortBy === 'date-asc') {
-        return new Date(a.date) - new Date(b.date);
+        return getDateTime(a.date) - getDateTime(b.date);
       }
       if (sortBy === 'dist-desc') {
         return (b.distVal || 0) - (a.distVal || 0);
@@ -289,6 +296,7 @@ const RaceCalendar = () => {
                           Nueva
                         </span>
                       )}
+                      <QualityBadge item={race} />
                     </div>
 
                     {/* Island name top-right */}
