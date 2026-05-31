@@ -116,7 +116,7 @@ const RouteDetailPage = () => {
               <p className="text-xs text-gray-500 uppercase font-semibold mt-2">Dificultad</p>
             </div>
             <div className="p-4 rounded-2xl bg-white dark:bg-gray-900 border border-gray-100 dark:border-gray-800 text-center flex flex-col justify-center">
-              <p className="font-bold text-gray-900 dark:text-white capitalize">{route.typeLabel || '-'}</p>
+              <p className="font-bold text-gray-900 dark:text-white capitalize">{route.routeType || '-'}</p>
               <p className="text-xs text-gray-500 uppercase font-semibold mt-1">Tipo</p>
             </div>
           </div>

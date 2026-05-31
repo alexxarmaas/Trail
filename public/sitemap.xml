@@ -17,7 +17,6 @@
   <url><loc>https://trailcanarias.vercel.app/para-organizadores</loc><changefreq>monthly</changefreq><priority>0.6</priority></url>
   <url><loc>https://trailcanarias.vercel.app/para-tiendas</loc><changefreq>monthly</changefreq><priority>0.6</priority></url>
   <url><loc>https://trailcanarias.vercel.app/para-clubes</loc><changefreq>monthly</changefreq><priority>0.6</priority></url>
-  <url><loc>https://trailcanarias.vercel.app/corregir-ficha</loc><changefreq>monthly</changefreq><priority>0.5</priority></url>
   <url><loc>https://trailcanarias.vercel.app/fuentes-de-datos</loc><changefreq>monthly</changefreq><priority>0.5</priority></url>
 
   <!-- Islands -->
@@ -81,5 +80,17 @@
   <url><loc>https://trailcanarias.vercel.app/clubes/cd-riqueza-natural</loc><changefreq>monthly</changefreq><priority>0.6</priority></url>
   <url><loc>https://trailcanarias.vercel.app/clubes/cd-rebotica-trail</loc><changefreq>monthly</changefreq><priority>0.6</priority></url>
   <url><loc>https://trailcanarias.vercel.app/clubes/cd-rempujo</loc><changefreq>monthly</changefreq><priority>0.6</priority></url>
+
+  <!-- Routes -->
+  <url><loc>https://trailcanarias.vercel.app/rutas/ruta-de-los-volcanes</loc><changefreq>monthly</changefreq><priority>0.6</priority></url>
+  <url><loc>https://trailcanarias.vercel.app/rutas/pico-de-las-nieves-desde-tunte</loc><changefreq>monthly</changefreq><priority>0.6</priority></url>
+  <url><loc>https://trailcanarias.vercel.app/rutas/circular-afur-taganana</loc><changefreq>monthly</changefreq><priority>0.6</priority></url>
+  <url><loc>https://trailcanarias.vercel.app/rutas/circular-parque-nacional-garajonay</loc><changefreq>monthly</changefreq><priority>0.6</priority></url>
+  <url><loc>https://trailcanarias.vercel.app/rutas/caldera-blanca</loc><changefreq>monthly</changefreq><priority>0.6</priority></url>
+  <url><loc>https://trailcanarias.vercel.app/rutas/camino-de-la-virgen</loc><changefreq>monthly</changefreq><priority>0.6</priority></url>
+  <url><loc>https://trailcanarias.vercel.app/rutas/calderon-hondo</loc><changefreq>monthly</changefreq><priority>0.6</priority></url>
+  <url><loc>https://trailcanarias.vercel.app/rutas/subida-al-teide-montana-blanca</loc><changefreq>monthly</changefreq><priority>0.6</priority></url>
+  <url><loc>https://trailcanarias.vercel.app/rutas/tamadaba-circular</loc><changefreq>monthly</changefreq><priority>0.6</priority></url>
+  <url><loc>https://trailcanarias.vercel.app/rutas/parque-rural-teno</loc><changefreq>monthly</changefreq><priority>0.6</priority></url>
 
 </urlset>

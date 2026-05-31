@@ -1,5 +1,3 @@
-import { trackEvent } from './trackEvent';
-
 export function exportToCsv(filename, rows) {
   if (!Array.isArray(rows) || rows.length === 0) return;
 

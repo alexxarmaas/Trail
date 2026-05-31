@@ -15,6 +15,7 @@ import { CLUBS_DATA } from '../data/clubs';
 import { REAL_ROUTES } from '../data/routes.real';
 import { exportToCsv } from '../utils/exportCsv';
 import { trackEvent } from '../utils/trackEvent';
+import { getImageFallback, getImageAlt } from '../utils/getImageFallback';
 
 const Dashboard = () => {
   const { t } = useLanguage();
@@ -28,10 +29,17 @@ const Dashboard = () => {
     return races.filter(race => favorites.includes(race.id));
   }, [favorites, races]);
 
+  // Helper for safe date sorting
+  const getDateTime = (date) => {
+    if (!date) return Number.MAX_SAFE_INTEGER;
+    const time = new Date(date).getTime();
+    return Number.isNaN(time) ? Number.MAX_SAFE_INTEGER : time;
+  };
+
   // Get upcoming favorited races (next 3)
   const upcomingFavorites = useMemo(() => {
     return favoritedRaces
-      .sort((a, b) => new Date(a.date) - new Date(b.date))
+      .sort((a, b) => getDateTime(a.date) - getDateTime(b.date))
       .slice(0, 3);
   }, [favoritedRaces]);
 
@@ -235,11 +243,19 @@ const Dashboard = () => {
                   onClick={() => navigate('/carreras')}
                 >
                   <div className="h-32 relative">
-                    <img src={race.image} alt={race.name} className="w-full h-full object-cover" />
+                    <img
+                      src={getImageFallback(race, 'race')}
+                      alt={getImageAlt(race, 'carrera trail')}
+                      className="w-full h-full object-cover"
+                      onError={(e) => {
+                        e.currentTarget.onerror = null;
+                        e.currentTarget.src = '/placeholders/race.svg';
+                      }}
+                    />
                     <div className="absolute inset-0 bg-gradient-to-t from-black/60 to-transparent" />
                     <div className="absolute bottom-2 left-2 text-white">
                       <h3 className="font-bold text-sm">{race.name}</h3>
-                      <p className="text-xs opacity-90">{race.location}</p>
+                      <p className="text-xs opacity-90">{race.location || race.municipality || 'Canarias'}</p>
                     </div>
                     {daysUntil > 0 && (
                       <div className="absolute top-2 right-2">
@@ -252,11 +268,11 @@ const Dashboard = () => {
                   <div className="p-3 flex items-center justify-between">
                     <div className="flex items-center gap-2 text-xs text-gray-600 dark:text-gray-400">
                       <Mountain size={14} />
-                      <span>{race.elevation}</span>
+                      <span>{race.elevationLabel || race.elevation || 'Desnivel pendiente'}</span>
                     </div>
                     <div className="flex items-center gap-2 text-xs text-gray-600 dark:text-gray-400">
                       <Clock size={14} />
-                      <span>{race.distance}</span>
+                      <span>{race.distanceLabel || race.distance || 'Distancia pendiente'}</span>
                     </div>
                   </div>
                 </GlassCard>
@@ -283,19 +299,27 @@ const Dashboard = () => {
                 onClick={() => navigate('/carreras')}
               >
                 <div className="h-32 relative">
-                  <img src={race.image} alt={race.name} className="w-full h-full object-cover" />
+                  <img
+                    src={getImageFallback(race, 'race')}
+                    alt={getImageAlt(race, 'carrera trail')}
+                    className="w-full h-full object-cover"
+                    onError={(e) => {
+                      e.currentTarget.onerror = null;
+                      e.currentTarget.src = '/placeholders/race.svg';
+                    }}
+                  />
                   <div className="absolute inset-0 bg-gradient-to-t from-black/60 to-transparent" />
                   <div className="absolute bottom-2 left-2 text-white">
                     <h3 className="font-bold text-sm">{race.name}</h3>
                     <p className="text-xs opacity-90 flex items-center gap-1">
                       <MapPin size={12} />
-                      {race.location}
+                      {race.location || race.municipality || 'Canarias'}
                     </p>
                   </div>
                 </div>
                 <div className="p-3 flex items-center justify-between">
-                  <span className="text-xs text-gray-500 dark:text-gray-400">{race.date}</span>
-                  <Badge variant="neutral" className="text-xs">{race.distance}</Badge>
+                  <span className="text-xs text-gray-500 dark:text-gray-400">{race.dateLabel || race.date || 'Fecha pendiente'}</span>
+                  <Badge variant="neutral" className="text-xs">{race.distanceLabel || race.distance || 'Distancia pendiente'}</Badge>
                 </div>
               </GlassCard>
             ))}
