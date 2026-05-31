@@ -8,7 +8,8 @@ import { useLanguage } from '../context/LanguageContext';
 import { useFavorites } from '../context/FavoritesContext';
 import { useUser } from '../context/UserContext';
 import { useRaces } from '../context/RacesContext';
-import { BarChart3, Download, Database, ShieldAlert } from 'lucide-react';
+import { BarChart3, Download, Database, ShieldAlert, CheckCircle2, Inbox } from 'lucide-react';
+import { useState, useEffect } from 'react';
 import { SHOPS_DATA } from '../data/shops';
 import { CLUBS_DATA } from '../data/clubs';
 import { REAL_ROUTES } from '../data/routes.real';
@@ -73,6 +74,45 @@ const Dashboard = () => {
       };
     }
   }, []);
+
+  // Admin state
+  const [correctionRequests, setCorrectionRequests] = useState([]);
+  const [listingRequests, setListingRequests] = useState([]);
+  const [refreshKey, setRefreshKey] = useState(0);
+
+  useEffect(() => {
+    try {
+      setCorrectionRequests(JSON.parse(localStorage.getItem('trailcanarias_correction_requests') || '[]'));
+      setListingRequests(JSON.parse(localStorage.getItem('trailcanarias_listing_requests') || '[]'));
+    } catch (e) {
+      console.error(e);
+    }
+  }, [refreshKey]);
+
+  const markAsReviewed = (key, id) => {
+    try {
+      const data = JSON.parse(localStorage.getItem(key) || '[]');
+      const updated = data.map(item => item.id === id ? { ...item, status: 'reviewed' } : item);
+      localStorage.setItem(key, JSON.stringify(updated));
+      setRefreshKey(prev => prev + 1);
+    } catch (err) {
+      console.error(err);
+    }
+  };
+
+  // Pending entities logic
+  const pendingEntities = useMemo(() => {
+    const filterPending = (arr, type) => arr
+      .filter(i => i.status === 'pending' || i.demo || !i.verified)
+      .map(i => ({ ...i, entityType: type }));
+    
+    return [
+      ...filterPending(races, 'Carrera'),
+      ...filterPending(SHOPS_DATA, 'Tienda'),
+      ...filterPending(CLUBS_DATA, 'Club'),
+      ...filterPending(REAL_ROUTES, 'Ruta')
+    ].sort((a, b) => (b.featured ? 1 : 0) - (a.featured ? 1 : 0)).slice(0, 5);
+  }, [races]);
 
   // Calculate days until next race
   const getDaysUntil = (dateStr) => {
@@ -358,7 +398,7 @@ const Dashboard = () => {
       </div>
 
       {/* Exportación CSV */}
-      <div className="mt-12 pb-8">
+      <div className="mt-12">
         <div className="flex items-center gap-3 mb-6">
           <div className="w-10 h-10 rounded-xl bg-green-100 dark:bg-green-900/30 text-green-600 flex items-center justify-center">
             <Download size={20} />
@@ -382,6 +422,101 @@ const Dashboard = () => {
           <Button variant="outline" className="flex items-center gap-2 py-3" onClick={() => handleExport('trailcanarias_events', 'eventos_tracking.csv', 'events')}>
             <Download size={16} /> Eventos Tracking
           </Button>
+        </div>
+      </div>
+
+      {/* Admin Local */}
+      <div className="mt-12 pb-8">
+        <div className="flex items-center gap-3 mb-6">
+          <div className="w-10 h-10 rounded-xl bg-indigo-100 dark:bg-indigo-900/30 text-indigo-600 flex items-center justify-center">
+            <Inbox size={20} />
+          </div>
+          <div>
+            <h2 className="text-xl font-bold text-gray-900 dark:text-white">Bandeja de Entrada (Local)</h2>
+            <p className="text-sm text-gray-500 dark:text-gray-400">Revisa sugerencias de usuarios y fichas de alta.</p>
+          </div>
+        </div>
+
+        <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+          {/* Correction Requests */}
+          <GlassCard className="p-5 bg-white/60 dark:bg-gray-900/60">
+            <h3 className="font-bold text-lg mb-4 flex items-center justify-between">
+              Correcciones
+              <span className="bg-primary/10 text-primary text-xs px-2 py-1 rounded-full">{correctionRequests.filter(r => r.status === 'pending').length} pdt</span>
+            </h3>
+            <div className="space-y-3 max-h-64 overflow-y-auto pr-2 scrollbar-hide">
+              {correctionRequests.length === 0 ? (
+                <p className="text-sm text-gray-500">No hay correcciones pendientes.</p>
+              ) : (
+                correctionRequests.map(req => (
+                  <div key={req.id} className={`p-3 rounded-xl border ${req.status === 'reviewed' ? 'bg-gray-50/50 dark:bg-gray-800/50 border-gray-100 dark:border-gray-800 opacity-60' : 'bg-white dark:bg-gray-800 border-gray-200 dark:border-gray-700 shadow-sm'}`}>
+                    <div className="flex justify-between items-start mb-2">
+                      <span className="text-xs font-bold uppercase text-primary">{req.type || 'General'}</span>
+                      {req.status === 'pending' && (
+                        <button onClick={() => markAsReviewed('trailcanarias_correction_requests', req.id)} className="text-xs flex items-center gap-1 text-gray-500 hover:text-green-600 transition-colors">
+                          <CheckCircle2 size={14}/> Revisado
+                        </button>
+                      )}
+                    </div>
+                    <p className="font-bold text-sm text-gray-900 dark:text-white mb-1">{req.itemName}</p>
+                    <p className="text-xs text-gray-600 dark:text-gray-400 mb-2 break-words"><span className="font-semibold text-gray-700 dark:text-gray-300">Problema:</span> {req.issue}</p>
+                    {req.correction && <p className="text-xs text-gray-600 dark:text-gray-400 break-words"><span className="font-semibold text-gray-700 dark:text-gray-300">Dato correcto:</span> {req.correction}</p>}
+                  </div>
+                ))
+              ).reverse()}
+            </div>
+          </GlassCard>
+
+          {/* Listing Requests */}
+          <GlassCard className="p-5 bg-white/60 dark:bg-gray-900/60">
+            <h3 className="font-bold text-lg mb-4 flex items-center justify-between">
+              Nuevas Fichas
+              <span className="bg-primary/10 text-primary text-xs px-2 py-1 rounded-full">{listingRequests.filter(r => r.status === 'pending').length} pdt</span>
+            </h3>
+            <div className="space-y-3 max-h-64 overflow-y-auto pr-2 scrollbar-hide">
+              {listingRequests.length === 0 ? (
+                <p className="text-sm text-gray-500">No hay solicitudes nuevas.</p>
+              ) : (
+                listingRequests.map(req => (
+                  <div key={req.id} className={`p-3 rounded-xl border ${req.status === 'reviewed' ? 'bg-gray-50/50 dark:bg-gray-800/50 border-gray-100 dark:border-gray-800 opacity-60' : 'bg-white dark:bg-gray-800 border-gray-200 dark:border-gray-700 shadow-sm'}`}>
+                    <div className="flex justify-between items-start mb-2">
+                      <span className="text-xs font-bold uppercase text-primary">{req.type}</span>
+                      {req.status === 'pending' && (
+                        <button onClick={() => markAsReviewed('trailcanarias_listing_requests', req.id)} className="text-xs flex items-center gap-1 text-gray-500 hover:text-green-600 transition-colors">
+                          <CheckCircle2 size={14}/> Revisado
+                        </button>
+                      )}
+                    </div>
+                    <p className="font-bold text-sm text-gray-900 dark:text-white mb-1">{req.name}</p>
+                    <p className="text-xs text-gray-600 dark:text-gray-400 mb-1">{req.island} {req.municipality ? `- ${req.municipality}` : ''}</p>
+                    <div className="flex gap-2 mt-2">
+                      {req.web && <a href={req.web} target="_blank" rel="noreferrer" className="text-xs text-primary hover:underline">Web</a>}
+                      {req.instagram && <a href={`https://instagram.com/${req.instagram.replace('@','')}`} target="_blank" rel="noreferrer" className="text-xs text-primary hover:underline">Instagram</a>}
+                    </div>
+                  </div>
+                ))
+              ).reverse()}
+            </div>
+          </GlassCard>
+
+          {/* Pending Priority Entities */}
+          <GlassCard className="p-5 bg-white/60 dark:bg-gray-900/60 lg:col-span-2">
+            <h3 className="font-bold text-lg mb-4">Entidades Demo/Pendientes Prioritarias</h3>
+            <p className="text-sm text-gray-500 mb-4">Top 5 entidades de la BD real que necesitan verificación (priorizadas por destacado).</p>
+            <div className="space-y-2">
+              {pendingEntities.map((ent, idx) => (
+                <div key={`${ent.entityType}-${ent.slug}-${idx}`} className="flex items-center justify-between p-3 rounded-xl bg-white dark:bg-gray-800 border border-gray-100 dark:border-gray-700">
+                  <div className="flex items-center gap-3">
+                    <span className="text-xs font-bold text-gray-500 uppercase w-16">{ent.entityType}</span>
+                    <span className="font-semibold text-sm text-gray-900 dark:text-white">{ent.name}</span>
+                    {ent.featured && <span className="bg-yellow-100 text-yellow-800 text-[10px] px-2 py-0.5 rounded-full font-bold">Destacado</span>}
+                    {ent.demo && <span className="bg-amber-100 text-amber-800 text-[10px] px-2 py-0.5 rounded-full font-bold">Demo</span>}
+                  </div>
+                  <span className="text-xs text-gray-500">{ent.island?.replace('-', ' ')}</span>
+                </div>
+              ))}
+            </div>
+          </GlassCard>
         </div>
       </div>
     </div>

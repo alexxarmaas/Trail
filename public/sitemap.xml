@@ -18,6 +18,7 @@
   <url><loc>https://trailcanarias.vercel.app/para-tiendas</loc><changefreq>monthly</changefreq><priority>0.6</priority></url>
   <url><loc>https://trailcanarias.vercel.app/para-clubes</loc><changefreq>monthly</changefreq><priority>0.6</priority></url>
   <url><loc>https://trailcanarias.vercel.app/corregir-ficha</loc><changefreq>monthly</changefreq><priority>0.5</priority></url>
+  <url><loc>https://trailcanarias.vercel.app/fuentes-de-datos</loc><changefreq>monthly</changefreq><priority>0.5</priority></url>
 
   <!-- Islands -->
   <url><loc>https://trailcanarias.vercel.app/islas/tenerife</loc><changefreq>weekly</changefreq><priority>0.8</priority></url>

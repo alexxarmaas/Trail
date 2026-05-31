@@ -13,6 +13,14 @@ const DataInfoBlock = ({ item, type }) => {
     trackEvent('correction_request_click', { type, slug: item.slug, name: item.name });
   };
 
+  const getEmailTemplate = () => {
+    const subject = encodeURIComponent(`Trail Canarias - Ficha de ${item.name}`);
+    const body = encodeURIComponent(
+      `Hola,\n\nOs contactamos desde Trail Canarias (https://trailcanarias.vercel.app).\n\nNos gustaría mejorar vuestra ficha "${item.name}" en nuestro directorio.\n\n¿Podríais confirmarnos los datos oficiales para actualizarla o verificarla? Podéis hacerlo respondiendo a este email o a través de la web.\n\nUn saludo.`
+    );
+    return `mailto:?subject=${subject}&body=${body}`;
+  };
+
   return (
     <div className="mt-8 p-5 bg-gray-50 dark:bg-gray-900/50 rounded-2xl border border-gray-100 dark:border-gray-800 text-sm">
       <div className="flex items-center gap-2 mb-4">
@@ -73,6 +81,14 @@ const DataInfoBlock = ({ item, type }) => {
       <div className="pt-4 border-t border-gray-200 dark:border-gray-800 flex flex-col sm:flex-row items-center justify-between gap-4">
         <span className="text-gray-500 text-xs">¿Ves algún dato incorrecto o desactualizado?</span>
         <div className="flex flex-col sm:flex-row items-center gap-2">
+          {!item.verified && (
+            <a
+              href={getEmailTemplate()}
+              className="text-xs font-semibold px-4 py-2 rounded-lg bg-primary/10 text-primary border border-primary/20 hover:bg-primary/20 transition-colors"
+            >
+              Contactar responsable
+            </a>
+          )}
           <Link
             to={correctionUrl}
             onClick={handleCorrectionClick}

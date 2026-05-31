@@ -23,6 +23,7 @@ import CorrectionRequest from '../pages/CorrectionRequest';
 import ForOrganizers from '../pages/ForOrganizers';
 import ForShops from '../pages/ForShops';
 import ForClubs from '../pages/ForClubs';
+import DataSources from '../pages/DataSources';
 
 const Layout = () => {
   return (
@@ -56,6 +57,7 @@ const Layout = () => {
             <Route path="/para-organizadores" element={<ForOrganizers />} />
             <Route path="/para-tiendas" element={<ForShops />} />
             <Route path="/para-clubes" element={<ForClubs />} />
+            <Route path="/fuentes-de-datos" element={<DataSources />} />
             {/* Catch-all */}
             <Route path="*" element={<Navigate to="/" replace />} />
           </Routes>

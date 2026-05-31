@@ -20,7 +20,7 @@ const Shops = () => {
     const searchStr = `${shop.name} ${shop.municipality} ${shop.island} ${shop.tags?.join(' ')} ${shop.description || ''}`.toLowerCase();
     const matchesSearch = !searchTerm || searchStr.includes(searchTerm.toLowerCase());
     const matchesIsland = islandFilter === 'all' || shop.island === islandFilter;
-    
+
     let matchesQuality = true;
     if (qualityFilter === 'verified') matchesQuality = shop.verified === true;
     else if (qualityFilter === 'pending') matchesQuality = shop.status === 'pending' || shop.verified === false;
@@ -66,7 +66,7 @@ const Shops = () => {
                 onChange={(e) => setSearchTerm(e.target.value)}
               />
             </div>
-            
+
             <div className="flex items-center gap-1">
               <Filter size={14} className="text-gray-400" />
               <select
@@ -107,10 +107,10 @@ const Shops = () => {
             >
               <GlassCard className="bg-white dark:bg-gray-900 p-0 flex flex-col shadow-sm hover:shadow-md h-full border-gray-100 dark:border-gray-800 hover:border-primary/30 dark:hover:border-primary/30 transition-all overflow-hidden">
                 <div className="h-48 overflow-hidden relative">
-                  <img 
-                    src={getImageFallback(shop, 'shop')} 
-                    alt={getImageAlt(shop, 'tienda')} 
-                    className="w-full h-full object-cover" 
+                  <img
+                    src={getImageFallback(shop, 'shop')}
+                    alt={getImageAlt(shop, 'tienda')}
+                    className="w-full h-full object-cover"
                     loading="lazy"
                     onError={(e) => {
                       e.currentTarget.onerror = null;
@@ -133,7 +133,7 @@ const Shops = () => {
                       {shop.featured && <FeaturedBadge />}
                       <QualityBadge item={shop} />
                     </div>
-                    
+
                     {shop.rating && (
                       <div className="flex items-center gap-1 mt-1 text-sm text-gray-500 dark:text-gray-400">
                         <Star size={14} className="text-yellow-400 fill-yellow-400" />
@@ -167,7 +167,7 @@ const Shops = () => {
                   </div>
 
                   <div className="mt-3 flex gap-2">
-                    <Link 
+                    <Link
                       to={`/tiendas/${shop.slug}`}
                       className="flex items-center gap-1 px-3 py-1.5 text-xs font-semibold text-primary border border-primary/30 rounded-lg group-hover:bg-primary group-hover:text-white transition-colors"
                       onClick={(e) => e.stopPropagation()}
@@ -176,7 +176,7 @@ const Shops = () => {
                       Ver tienda
                     </Link>
                     {shop.phone && (
-                      <button 
+                      <button
                         className="p-2 rounded-lg bg-gray-100 dark:bg-gray-800 text-gray-600 dark:text-gray-300 hover:bg-gray-200 transition-colors"
                         onClick={(e) => { e.preventDefault(); e.stopPropagation(); window.location.href = `tel:${shop.phone}`; }}
                       >

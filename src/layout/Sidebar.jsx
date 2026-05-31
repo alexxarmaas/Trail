@@ -1,6 +1,6 @@
 import React from 'react';
 import { NavLink } from 'react-router-dom';
-import { Calendar, Users, MapPin, User, Mountain, Sun, Moon, Megaphone, PlusCircle } from 'lucide-react';
+import { Calendar, Users, MapPin, User, Mountain, Sun, Moon, Megaphone, PlusCircle, Database } from 'lucide-react';
 import { useLanguage } from '../context/LanguageContext';
 import { useTheme } from '../context/ThemeContext';
 
@@ -18,6 +18,7 @@ const Sidebar = () => {
   const extraItems = [
     { to: '/publica-tu-carrera', label: 'Publicar carrera', icon: PlusCircle },
     { to: '/anunciate', label: 'Anúnciate', icon: Megaphone },
+    { to: '/fuentes-de-datos', label: 'Fuentes y calidad', icon: Database },
   ];
 
   const linkClass = ({ isActive }) =>
